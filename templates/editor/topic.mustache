@@ -1,0 +1,73 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_learninggoalwidget/editor/topic
+
+    Renders the learning goal widget form in the activity settings
+    This template is not for use within moodle.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * topicheader
+    * btnnewtopic
+    * goalheader
+    * btnnewgoal
+    * course
+    * coursemodule
+    * instance
+    * taxonomy
+
+    Example context (json):
+    {
+        "topicid": "1",
+        "topicname": "Einführung in die AI"
+    }
+}}
+<li id="topic-item-{{topicid}}" class="listitem listitem-topics list-group-item list-group-item-action" data-topicid="{{topicid}}" data-expandable="0" data-expanded="0" data-selected="0" data-visible="1" aria-expanded="false">
+    <div class="clearfix">
+        <span id="{{topicid}}-topicname" class="float-left" data-topicid="{{topicid}}">{{{topicname}}}</span>
+        <div class="float-right d-flex">
+            <div class="action-menu moodle-actionmenu topics-item-actions item-actions d-inline">
+                <div class="menubar d-flex">
+                    <div class="action-menu-item">
+                        <div class="float-right">
+                            <span class="goals-item-actions item-actions">
+                                <a id="{{topicid}}-action-edit" class="action-edit" role="button" data-topicid="{{topicid}}">
+                                    <i class="icon fa fa-cog fa-fw" title="Editieren" aria-label="Editieren"></i>
+                                </a>
+                                <a id="{{topicid}}-action-delete" class="action-delete" role="button" data-topicid="{{topicid}}">
+                                    <i class="icon fa fa-trash fa-fw" title="Löschen" aria-label="Löschen"></i>
+                                </a>
+                                <a id="{{topicid}}-action-moveup" class="action-moveup" data-action="moveup" role="button" data-topicid="{{topicid}}">
+                                    <i class="icon fa fa-arrow-up fa-fw" title="Nach oben" aria-label="Nach oben"></i>
+                                </a>
+                                <a id="{{topicid}}-action-movedown" class="action-movedown" data-action="movedown" role="button" data-topicid="{{topicid}}">
+                                    <i class="icon fa fa-arrow-down fa-fw" title="Nach unten" aria-label="Nach unten"></i>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>

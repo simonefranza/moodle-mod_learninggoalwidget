@@ -1,0 +1,122 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_learninggoalwidget/editor/form_settings
+
+    Renders the learning goal widget form in the activity settings
+    This template is not for use within moodle.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * topicheader
+    * btnnewtopic
+    * goalheader
+    * btnnewgoal
+    * jsonheader
+    * btnjsonupload
+    * btnjsondownload
+    * course
+    * coursemodule
+    * instance
+    * taxonomy
+    * notopicsmessage
+
+    Example context (json):
+    {
+        "topicheader": "Themenbereiche",
+        "btnnewtopic": "Neuen Themenbereich erstellen",
+        "goalheader": "Lernziele",
+        "btnnewgoal": "Neues Lernziele erstellen",
+        "jsonheader": "JSON Format",
+        "btnjsonupload": "Upload",
+        "btnjsondownload": "Download",
+        "course": "1",
+        "coursemodule": "2",
+        "instance": "3",
+        "taxonomy": "{}",
+        "notopicsmessage": "Es sind noch keine Themenbereiche vorhanden"
+    }
+}}
+<div class="fcontainer clearfix">
+   <div class="columns-2 viewmode-cobmined grid-start grid-row-r d-flex flex-wrap row" id="goals-topics-listings">
+      <div class="col-sm d-flex flex-wrap px-3 mb-3 grid_column_start" id="topics-listing">
+         <div class="topics-listing card w-50">
+            <h3 class="card-header" id="topics-listing-title">{{topicheader}}</h3>
+            <div class="card-body">
+               <div class="listing-actions topics-listing-actions mb-3">
+                  <a class="btn btn-secondary" id="newtopic">{{btnnewtopic}}</a>
+               </div>
+               <div id="notopics" class="ml-1 clearfix d-none">
+                  <span class="float-left">{{{notopicsmessage}}}</span>
+               </div>
+               <ul id="topics-list" class="ml-1 list-unstyled" role="tree" aria-labelledby="topics-listing-title">
+               </ul>
+            </div>
+         </div>
+         <div class="col-sm d-flex flex-wrap px-3 mb-3 grid_column_start" id="goals-listing">
+            <div class="card goals-listing w-100 firstpage lastpage" data-topics="1" data-page="0" data-totalpages="1" data-totalgoalss="1" data-canmoveoutof="1">
+               <h3 id="goals-listing-title" tabindex="0" class="card-header">{{goalheader}}</h3>
+               <div class="card-body">
+                  <div class="listing-actions goals-listing-actions mb-3">
+                     <a class="btn btn-secondary" id="newgoal">{{btnnewgoal}}</a>
+                  </div>
+                  <div id="goalsfortopic" class="ml-1 clearfix d-none">
+                     <span id="goalsfortopicstatusmessage" class="float-left"></span>
+                  </div>
+                  <ul id="learninggoals-list" class="ml-1 list-unstyled">
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div class="columns-1 viewmode-cobmined grid-start grid-row-r d-flex flex-wrap row" id="json-goals-listings">
+      <div class="col-sm d-flex flex-wrap px-3 mb-3 grid_column_start" id="json-listing">
+         <div class="topics-listing card w-100">
+            <h3 class="card-header" id="json-listing-title">{{jsonheader}}</h3>
+            <div class="card-body">
+               <div class="listing-actions mb-3">
+                  <input id="json-file" type="file" />
+                  <a class="btn btn-secondary" id="json-upload">{{btnjsonupload}}</a>
+               </div>
+               <div class="listing-actions mb-3">
+                  <a class="btn btn-secondary" id="json-download">{{btnjsondownload}}</a>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+{{#js}}
+require(
+[
+   'jquery',
+   'mod_learninggoalwidget/form_settings',
+],
+function(
+    $,
+    FormSettings
+) {
+    FormSettings.init({{course}}, {{coursemodule}}, {{instance}}, '{{{taxonomy}}}');
+});
+{{/js}}

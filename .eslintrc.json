@@ -1,0 +1,72 @@
+{
+  "plugins": [
+    "jsdoc",
+    "promise"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
+  "rules": {
+    "no-console": ["error", { "allow": ["warn"] }],
+    "curly": 2,
+    "no-unused-vars" : "error",
+    "no-undef": "error",
+    "no-return-assign": "error",
+    "no-unexpected-multiline": "error",
+    "max-len": ["error", { "code": 132 }],
+    "no-unused-expressions": "error",
+    "require-jsdoc": ["error", {
+      "require": {
+        "FunctionDeclaration": true,
+        "MethodDefinition": false,
+        "ClassDeclaration": false,
+        "ArrowFunctionExpression": false,
+        "FunctionExpression": false
+      }
+    }],
+    "no-loop-func": "error",
+    "no-eq-null": "error",
+    "no-trailing-spaces": "error",
+    "semi": "error",
+    "no-cond-assign": "error",
+    "space-before-function-paren": ["error", {
+        "anonymous": "never",
+        "named": "never",
+        "asyncArrow": "never"
+    }],
+    "capitalized-comments": ["error"],
+    "dot-notation": ["error"],
+    "brace-style": ["error", "1tbs"],
+    "spaced-comment": ["error", "always"],
+    "object-curly-spacing": ["error", "never"],
+    "no-floating-decimal": "error",
+    "no-empty-function": "error",
+    "consistent-return": "error",
+    "new-cap": "error",
+    "no-useless-escape": "error",
+    "complexity": ["error", 20],
+    "no-empty": "error",
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "camelcase": "error",
+    "no-undef-init": "error",
+    "block-scoped-var": "error",
+    "no-redeclare": "error",
+    "key-spacing": "error",
+    "no-throw-literal": "error",
+    "no-global-assign": "error",
+    "no-restricted-globals": ["error"],
+    "no-multi-spaces": "error",
+    "no-whitespace-before-property": "error",
+    "jsdoc/check-alignment": 1,
+    "jsdoc/check-param-names": 1,
+    "valid-jsdoc": ["error", {"requireReturn": false}],
+    "promise/always-return": "error",
+    "promise/param-names": "error",
+    "promise/catch-or-return" : ["error"]
+  }
+}

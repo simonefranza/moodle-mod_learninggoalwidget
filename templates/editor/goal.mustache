@@ -1,0 +1,59 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_learninggoalwidget/editor/goal
+
+    Renders a goal in the learning goals section
+    This template is not for use within moodle.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * topicid
+    * goalid
+
+    Example context (json):
+    {
+        "topicid": "1",
+        "goalid": "1"
+    }
+}}
+<li class="listitem listitem-goals list-group-item list-group-item-action" data-selected="0" data-visible="1">
+    <div class="clearfix">
+        <span id="{{topicid}}-{{goalid}}-goalname" class="float-left" data-topicid="{{topicid}}" data-goalid="{{goalid}}">{{{learninggoaltitle}}}</span>
+        <div class="float-right">
+            <span class="goals-item-actions item-actions">
+                <a id="{{topicid}}-goal-{{goalid}}-action-edit" class="action-edit" role="button" data-topicid="{{topicid}}" data-goalid="{{goalid}}">
+                    <i class="icon fa fa-cog fa-fw" title="Edit" aria-label="Edit"></i>
+                </a>
+                <a id="{{topicid}}-goal-{{goalid}}-action-delete" class="action-delete" role="button"  data-topicid="{{topicid}}" data-goalid="{{goalid}}">
+                    <i class="icon fa fa-trash fa-fw" title="Delete" aria-label="Delete"></i>
+                </a>
+                <a id="{{topicid}}-goal-{{goalid}}-action-moveup" class="action-moveup" data-action="moveup" role="button" data-topicid="{{topicid}}" data-goalid="{{goalid}}">
+                    <i class="icon fa fa-arrow-up fa-fw" title="Nach oben" aria-label="Nach oben"></i>
+                </a>
+                <a id="{{topicid}}-goal-{{goalid}}-action-movedown" class="action-movedown" data-action="movedown" role="button" data-topicid="{{topicid}}" data-goalid="{{goalid}}">
+                    <i class="icon fa fa-arrow-down fa-fw" title="Nach unten" aria-label="Nach unten"></i>
+                </a>
+            </span>
+        </div>
+    </div>
+</li>

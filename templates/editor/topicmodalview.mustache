@@ -1,0 +1,80 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_learninggoalwidget/editor/topicmodalview
+
+    Renders the modal view for editing a topic
+    This template is not for use within moodle.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * title
+    * shortname
+    * weburl
+    * goaltitle
+    * goalshortname
+    * goalurl
+
+    Example context (json):
+    {
+        "title": "Titel",
+        "shortname": "Kurzbezeichnung",
+        "weburl": "Web-Adresse",
+        "goaltitle": "Grundlagen der AI",
+        "goalshortname": "bai",
+        "goalurl": "http://orf.at"
+    }
+}}
+<div class="form-group row fitem">
+    <div class="col-md-3">
+        <label class="col-form-label d-inline">
+            {{title}}
+        </label>
+    </div>
+    <div class="col-md-9 form-inline felement" data-fieldtype="text">
+        <input type="text" class="form-control" name="itemtitle" data-action="itemtitle" value="{{topictitle}}">
+        <div id="topictitle_invalid_feedback" class="invalid-feedback" data-action="titlefeedback"></div>
+   </div>
+</div>
+
+<div class="form-group row fitem">
+    <div class="col-md-3">
+        <label class="col-form-label d-inline">
+            {{shortname}}
+        </label>
+    </div>
+    <div class="col-md-9 form-inline felement" data-fieldtype="text">
+        <input type="text" class="form-control" name="shortname" data-action="itemshortname" value="{{topicshortname}}" maxlength="100">
+    </div>
+</div>
+
+<div class="form-group row fitem">
+    <div class="col-md-3">
+        <label class="col-form-label d-inline">
+            {{weburl}}
+        </label>
+    </div>
+    <div class="col-md-9 form-inline felement" data-fieldtype="text">
+        <input type="text" class="form-control" name="itemurl" data-action="itemurl" value="{{topicurl}}" >
+        <div id="topicurl_invalid_feedback" class="invalid-feedback" data-action="urlfeedback"></div>
+    </div>
+</div>

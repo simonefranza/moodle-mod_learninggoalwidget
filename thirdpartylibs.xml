@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>js/d3.v4.min.js</location>
+        <name>d3js</name>
+        <version>4.13.0</version>
+        <license>BSD</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>

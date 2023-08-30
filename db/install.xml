@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/learninggoalwidget/db" VERSION="20120122" COMMENT="XMLDB file for Moodle mod/learninggoalwidget"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="learninggoalwidget" COMMENT="Defines and tracks learning goals for a course">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lgw_course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Timestamp of when the instance was added to the course."/>
+        <FIELD NAME="lgw_timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_course" TYPE="foreign" FIELDS="lgw_course" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="lgw_course" UNIQUE="false" FIELDS="lgw_course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="learninggoalwidget_topic" COMMENT="themenbereich">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lgw_title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lgw_shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lgw_url" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="stores the web url"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="learninggoalwidget_goal" COMMENT="lernziel in einem themenbereich">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lgw_title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="lgw_shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="lgw_url" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="stores the web url"/>
+        <FIELD NAME="lgw_topic" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_topic" TYPE="foreign" FIELDS="lgw_topic" REFTABLE="learninggoalwidget_topic" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="lgw_topic" UNIQUE="false" FIELDS="lgw_topic"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="learninggoalwidget_i_topics" COMMENT="Reihenfolge der Themenbereiche">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lgw_course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_coursemodule" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_instance" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_topic" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_rank" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_topic" TYPE="foreign" FIELDS="lgw_topic" REFTABLE="learninggoalwidget_topic" REFFIELDS="id"/>
+        <KEY NAME="fk_course" TYPE="foreign" FIELDS="lgw_course" REFTABLE="lgw_course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="lgw_topic" UNIQUE="false" FIELDS="lgw_topic"/>
+        <INDEX NAME="lgw_course" UNIQUE="false" FIELDS="lgw_course"/>
+        <INDEX NAME="lgw_coursemodule" UNIQUE="false" FIELDS="lgw_coursemodule"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="learninggoalwidget_i_goals" COMMENT="Reihenfolge der Themenbereiche">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lgw_course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_coursemodule" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_instance" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_topic" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_goal" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_rank" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_topic" TYPE="foreign" FIELDS="lgw_topic" REFTABLE="learninggoalwidget_topic" REFFIELDS="id"/>
+        <KEY NAME="fk_goal" TYPE="foreign" FIELDS="lgw_goal" REFTABLE="learninggoalwidget_goal" REFFIELDS="id"/>
+        <KEY NAME="fk_course" TYPE="foreign" FIELDS="lgw_course" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="lgw_topic" UNIQUE="false" FIELDS="lgw_topic"/>
+        <INDEX NAME="lgw_goal" UNIQUE="false" FIELDS="lgw_goal"/>
+        <INDEX NAME="lgw_course" UNIQUE="false" FIELDS="lgw_course"/>
+        <INDEX NAME="lgw_coursemodule" UNIQUE="false" FIELDS="lgw_coursemodule"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="learninggoalwidget_i_userpro" COMMENT="Lernziel Fortschritt Kursteilnehmerinnen">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="lgw_course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_coursemodule" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_instance" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_topic" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_goal" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_user" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lgw_progress" TYPE="number" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_topic" TYPE="foreign" FIELDS="lgw_topic" REFTABLE="learninggoalwidget_topic" REFFIELDS="id"/>
+        <KEY NAME="fk_goal" TYPE="foreign" FIELDS="lgw_goal" REFTABLE="learninggoalwidget_goal" REFFIELDS="id"/>
+        <KEY NAME="fk_course" TYPE="foreign" FIELDS="lgw_course" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="fk_user" TYPE="foreign" FIELDS="lgw_user" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="lgw_topic" UNIQUE="false" FIELDS="lgw_topic"/>
+        <INDEX NAME="lgw_goal" UNIQUE="false" FIELDS="lgw_goal"/>
+        <INDEX NAME="lgw_course" UNIQUE="false" FIELDS="lgw_course"/>
+        <INDEX NAME="lgw_coursemodule" UNIQUE="false" FIELDS="lgw_coursemodule"/>
+        <INDEX NAME="lgw_user" UNIQUE="false" FIELDS="lgw_user"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
