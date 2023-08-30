@@ -21,9 +21,6 @@
 /* eslint no-eval: 0 */
 /* eslint no-bitwise: 0 */
 
-// TODO
-// Zoomed text jammed when going back after zoomed whil isZoomedIn
-
 define(
   [
     "jquery",

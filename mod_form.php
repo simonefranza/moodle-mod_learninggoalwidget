@@ -51,7 +51,9 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements();
 
-        $mform->addElement('header', 'Themenbereiche und Lernziele', 'Themenbereiche und Lernziele');
+        $mform->addElement('header',
+          get_string('settings:header', 'mod_learninggoalwidget'),
+          get_string('settings:header', 'mod_learninggoalwidget'));
 
         // Load topics and goals.
         $taxonomy = new taxonomy(($this->_cm) ? $this->_cm->id : null,
@@ -64,18 +66,18 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
 
         $widgetrenderer = $PAGE->get_renderer('mod_learninggoalwidget', 'widget');
         $templatecontext = [
-            'topicheader' => "Themenbereiche",
-            'goalheader' => "Lernziele",
-            'btnnewtopic' => "Neuer Themenbereich",
-            'btnnewgoal' => "Neues Lernziel",
-            'jsonheader' => "JSON Format",
-            'btnjsonupload' => "Hochladen",
-            'btnjsondownload' => "Herunterladen",
+            'topicheader' => get_string('settings:topicheader', 'mod_learninggoalwidget'),
+            'goalheader' => get_string('settings:topicheader', 'mod_learninggoalwidget'),
+            'btnnewtopic' => get_string('settings:btnnewtopic', 'mod_learninggoalwidget'),
+            'btnnewgoal' => get_string('settings:btnnewgoal', 'mod_learninggoalwidget'),
+            'jsonheader' => get_string('settings:jsonheader', 'mod_learninggoalwidget'),
+            'btnjsonupload' => get_string('settings:btnjsonupload', 'mod_learninggoalwidget'),
+            'btnjsondownload' => get_string('settings:btnjsondownload', 'mod_learninggoalwidget'),
             'course' => $this->_course->id,
             'coursemodule' => ($this->_cm !== null) ? $this->_cm->id : -1,
             'instance' => ($this->_instance !== null && $this->_instance !== "") ? $this->_instance : -1,
             'taxonomy' => $jsontaxonomy,
-            'notopicsmessage' => 'Es sind noch keine Themenbereiche vorhanden'
+            'notopicsmessage' => get_string('settings:notopicsmessage', 'mod_learninggoalwidget')
         ];
         $learninggoalsettings = $widgetrenderer->render_from_template(
             'mod_learninggoalwidget/editor/form_settings',

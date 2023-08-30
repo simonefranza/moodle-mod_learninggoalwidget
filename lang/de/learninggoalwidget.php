@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['title'] = 'Lernziele Taxonomie';
 $string['learninggoalwidget:addinstance'] = 'Lernziele Widget hinzufügen';
 $string['learninggoalwidget:view'] = 'Lernziele Widget anzeigen';
 $string['learninggoalwidgettext'] = 'Lernziele Widget Text';
@@ -33,6 +34,56 @@ $string['privacy:metadata'] = '';
 $string['pluginadministration'] = 'Lernziele Widget administration';
 $string['pluginname'] = 'Lernziele Widget';
 $string['search:activity'] = 'learninggoalwidget';
+
+$string['settings:header'] = 'Themenbereiche und Lernziele';
+$string['settings:topic'] = 'Themenbereich';
+$string['settings:goal'] = 'Lernziel';
+$string['settings:description'] = 'Kurzbezeichnung';
+$string['settings:link'] = 'Web Adresse';
+$string['settings:addtopic'] = 'Neuen Themenbereich hinzufügen';
+$string['settings:edittopic'] = 'Themenbereich editieren';
+$string['settings:deletetopic'] = 'Themenbereich löschen';
+$string['settings:deletetopicmsg'] = 'Möchten Sie den Themenbereich wirklich löschen?';
+$string['settings:save'] = 'Speichern';
+$string['settings:delete'] = 'Löschen';
+$string['settings:addgoal'] = 'Neues Lernziel hinzufügen';
+$string['settings:editgoal'] = 'Lernziel editieren';
+$string['settings:deletegoal'] = 'Lernziel löschen';
+$string['settings:deletegoalmsg'] = 'Möchten Sie das Lernziel wirklich löschen?';
+$string['settings:showgoals'] = 'Klicken Sie auf einen Themenbereich, um die Lernziele hier anzuzeigen';
+$string['settings:nogoals'] = 'Für den gewählten Themenbereich sind keine Lernziele vorhanden';
+$string['settings:topicheader'] = 'Themenbereiche';
+$string['settings:goalheader'] = 'Lernziele';
+$string['settings:btnnewtopic'] = 'Neuer Themenbereich';
+$string['settings:btnnewgoal'] = 'Neuer Lernziel';
+$string['settings:jsonheader'] = 'JSON Format';
+$string['settings:btnjsonupload'] = 'Hochladen';
+$string['settings:btnjsondownload'] = 'Herunterladen';
+$string['settings:notopicsmessage'] = 'Es sind noch keine Themenbereiche vorhanden';
+$string['settings:newtaxonomyheader'] = 'Neue Themenbereiche und Lernziele';
+$string['settings:newtaxonomymsg'] = 'Möchten Sie die aktuellen Themenbereiche und Lernziele mit den folgenden ersetzen?';
+$string['settings:replace'] = 'Ersetzen';
+
+$string['validation:missingtitle'] = 'Der Titel ist verpflichtend einzugeben';
+$string['validation:invalidlink'] = 'Die URL ist ungültig';
+$string['validation:invalid'] = 'Ungültige Taxonomie';
+$string['validation:close'] = 'Schließen';
+$string['validation:invalidfile'] = 'Die hochgeladene Datei ist ungültig';
+$string['validation:jsontop1'] = '"name" Eigenschaft fehlt.';
+$string['validation:jsontop2'] = '"children" Eigenschaft fehlt.';
+$string['validation:jsontop3'] = '"children" Eigenschaft ist kein Array.';
+$string['validation:jsontop4'] = '"children" Array ist leer.';
+$string['validation:jsontopic1'] = '"name" Eigenschaft fehlt bei einem Themenbereich.';
+$string['validation:jsontopic2'] = '"name" Eigenschaft bei dem Themenbereich "{$a}" ist kein String.';
+$string['validation:jsontopic3'] = '"link" Eigenschaft bei dem Themenbereich "{$a}" ist kein String.';
+$string['validation:jsontopic4'] = '"link" Eigenschaft bei dem Themenbereich "{$a}" ist ungültig.';
+$string['validation:jsontopic5'] = '"keyword" Eigenschaft bei dem Themenbereich "{$a}" ist kein String.';
+$string['validation:jsontopic6'] = '"children" Eigenschaft bei dem Themenbereich "{$a}" ist kein Array.';
+$string['validation:jsongoal1'] = 'Ein Lernziel von dem Themenbereich "{$a}" hat keine "name" Eigenschaft.';
+$string['validation:jsongoal2'] = '"name" Eigenschaft bei einem Lernziel von dem Themenbereich "{$a}" ist kein String.';
+$string['validation:jsongoal3'] = '"link" Eigenschaft bei dem Lernziel "{$a}" ist kein String.';
+$string['validation:jsongoal4'] = '"link" Eigenschaft bei dem Lernziel "{$a}" ist ungültig.';
+$string['validation:jsongoal5'] = '"keyword" Eigenschaft bei dem Lernziel "{$a}" ist kein String.';
 
 $string['guestaccess'] = 'Dafür müssen sie angemeldet sein';
 $string['noaccess'] = 'Dafür müssen sie angemeldet sein';

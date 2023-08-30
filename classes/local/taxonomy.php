@@ -80,7 +80,7 @@ class taxonomy {
      */
     public function get_taxonomy_as_json(): string {
         $taxonomy = new stdClass;
-        $taxonomy->name = "Learning Goal's Taxonomy";
+        $taxonomy->name = get_string('title', 'mod_learninggoalwidget');
         $taxonomy->children = $this->get_topics();
         return json_encode($taxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     }

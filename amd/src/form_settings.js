@@ -41,9 +41,10 @@ define(
     "mod_learninggoalwidget/controller",
     "core/templates",
     'core/modal_factory',
-    'core/modal_events'
+    'core/modal_events',
+    'core/str'
   ],
-  ($, Controller, Templates, ModalFactory, ModalEvents) => {
+  ($, Controller, Templates, ModalFactory, ModalEvents, CoreStr) => {
 
     var TEMPLATES = {
       GOAL_MODAL_VIEW: "mod_learninggoalwidget/editor/goalmodalview",
@@ -102,20 +103,26 @@ define(
           topicname: topic[2],
           topicid: topic[1]
         };
-        Templates.render(TEMPLATES.TOPIC, topicContext)
-          .then((html) => {
-            $("#notopics").addClass("d-none");
-            $("#goalsfortopic").removeClass("d-none");
-            $("#goalsfortopicstatusmessage")
-              .html("Klicken Sie auf einen Themenbereich, um die Lernziele hier anzuzeigen");
-            $("#topics-list").append(html);
-            var topicId = topicContext.topicid;
-            $("#topic-item-" + topicId).click(clickedTopicName);
-            $("#" + topicId + "-action-edit").click(clickedEditTopic);
-            $("#" + topicId + "-action-delete").click(clickedDeleteTopic);
-            $("#" + topicId + "-action-moveup").click(clickedMoveupTopic);
-            $("#" + topicId + "-action-movedown").click(clickedMovedownTopic);
-            return html;
+        CoreStr.get_string('settings:showgoals', 'mod_learninggoalwidget')
+          .then((showGoalStr) => {
+            Templates.render(TEMPLATES.TOPIC, topicContext)
+              .then((html) => {
+                $("#notopics").addClass("d-none");
+                $("#goalsfortopic").removeClass("d-none");
+                $("#goalsfortopicstatusmessage").html(showGoalStr);
+                $("#topics-list").append(html);
+                var topicId = topicContext.topicid;
+                $("#topic-item-" + topicId).click(clickedTopicName);
+                $("#" + topicId + "-action-edit").click(clickedEditTopic);
+                $("#" + topicId + "-action-delete").click(clickedDeleteTopic);
+                $("#" + topicId + "-action-moveup").click(clickedMoveupTopic);
+                $("#" + topicId + "-action-movedown").click(clickedMovedownTopic);
+                return html;
+              })
+              .catch(() => {
+                // Do nothing
+              });
+            return 0;
           })
           .catch(() => {
             // Do nothing
@@ -154,8 +161,15 @@ define(
             });
         });
       } else {
-        $("#goalsfortopic").removeClass("d-none");
-        $("#goalsfortopicstatusmessage").html("Für den gewählten Themenbereich sind keine Lernziele vorhanden");
+        CoreStr.get_string('settings:nogoals', 'mod_learninggoalwidget')
+        .then((noGoalStr) => {
+          $("#goalsfortopic").removeClass("d-none");
+          $("#goalsfortopicstatusmessage").html(noGoalStr);
+          return 0;
+        })
+        .catch(() => {
+          // Do nothing
+        });
       }
     };
 
@@ -187,37 +201,50 @@ define(
      * Show 'New Topic' Modal
      */
     const clickedNewTopic = () => {
-      const context = {
-        title: "Themenbereich",
-        shortname: "Kurzbezeichnung",
-        weburl: "Web Adresse",
-      };
+      let strings = [
+        {key: 'settings:topic', component: 'mod_learninggoalwidget'},
+        {key: 'settings:description', component: 'mod_learninggoalwidget'},
+        {key: 'settings:addtopic', component: 'mod_learninggoalwidget'},
+        {key: 'settings:link', component: 'mod_learninggoalwidget'},
+      ];
+      CoreStr.get_strings(strings)
+        .then((results) => {
+          const context = {
+            title: results[0],
+            shortname: results[1],
+            weburl: results[3],
+          };
 
-      showModal(
-        context,
-        "Neuen Themenbereich hinzufügen",
-        TEMPLATES.TOPIC_MODAL_VIEW,
-        "Speichern",
-        (modal, topicName, topicShortname, topicUrl) => {
-          // Make insert topic call
-          Controller.insertTopic({
-            course: course,
-            coursemodule: coursemodule,
-            instance: instance,
-            topicname: topicName,
-            topicshortname: topicShortname,
-            topicurl: topicUrl,
-          })
-            .then((jsonTaxonomy) => {
-              modal.hide();
-              $("#topics-list").children().remove();
-              taxonomy = JSON.parse(jsonTaxonomy);
-              loadTopics(taxonomy);
-              return;
-            })
-            .catch(() => {
-              // Do nothing
+          showModal(
+            context,
+            results[2],
+            TEMPLATES.TOPIC_MODAL_VIEW,
+            "Speichern",
+            (modal, topicName, topicShortname, topicUrl) => {
+              // Make insert topic call
+              Controller.insertTopic({
+                course: course,
+                coursemodule: coursemodule,
+                instance: instance,
+                topicname: topicName,
+                topicshortname: topicShortname,
+                topicurl: topicUrl,
+              })
+                .then((jsonTaxonomy) => {
+                  modal.hide();
+                  $("#topics-list").children().remove();
+                  taxonomy = JSON.parse(jsonTaxonomy);
+                  loadTopics(taxonomy);
+                  return;
+                })
+                .catch(() => {
+                  // Do nothing
+                });
             });
+          return 0;
+        })
+        .catch(() => {
+          // Do nothing
         });
     };
 
@@ -241,44 +268,57 @@ define(
           topicUrl = topic[4];
         }
       });
-
-      var context = {
-        title: "Themenbereich",
-        shortname: "Kurzbezeichnung",
-        weburl: "Web Adresse",
-        topictitle: topicTitle,
-        topicshortname: topicShortname,
-        topicurl: topicUrl,
-      };
-
-      showModal(
-        context,
-        "Themenbereich editieren",
-        TEMPLATES.TOPIC_MODAL_VIEW,
-        "Speichern",
-        (modal, topicName, topicShortname, topicUrl) => {
-          // Make update topic call
-          Controller.updateTopic({
-            course: course,
-            coursemodule: coursemodule,
-            instance: instance,
-            topicid: topicId,
-            topicname: topicName,
+      let strings = [
+        {key: 'settings:topic', component: 'mod_learninggoalwidget'},
+        {key: 'settings:description', component: 'mod_learninggoalwidget'},
+        {key: 'settings:edittopic', component: 'mod_learninggoalwidget'},
+        {key: 'settings:link', component: 'mod_learninggoalwidget'},
+        {key: 'settings:save', component: 'mod_learninggoalwidget'},
+      ];
+      CoreStr.get_strings(strings)
+        .then((results) => {
+          var context = {
+            title: results[0],
+            shortname: results[1],
+            weburl: results[3],
+            topictitle: topicTitle,
             topicshortname: topicShortname,
             topicurl: topicUrl,
-          })
-            .then((jsonTaxonomy) => {
-              modal.hide();
-              $("#topics-list").children().remove();
-              taxonomy = JSON.parse(jsonTaxonomy);
-              loadTopics(taxonomy);
-              return;
-            })
-            .catch(() => {
-              // Do nothing
-            });
-        }
-      );
+          };
+
+          showModal(
+            context,
+            results[2],
+            TEMPLATES.TOPIC_MODAL_VIEW,
+            results[4],
+            (modal, topicName, topicShortname, topicUrl) => {
+              // Make update topic call
+              Controller.updateTopic({
+                course: course,
+                coursemodule: coursemodule,
+                instance: instance,
+                topicid: topicId,
+                topicname: topicName,
+                topicshortname: topicShortname,
+                topicurl: topicUrl,
+              })
+                .then((jsonTaxonomy) => {
+                  modal.hide();
+                  $("#topics-list").children().remove();
+                  taxonomy = JSON.parse(jsonTaxonomy);
+                  loadTopics(taxonomy);
+                  return;
+                })
+                .catch(() => {
+                  // Do nothing
+                });
+            }
+          );
+          return 0;
+        })
+        .catch(() => {
+          // Do nothing
+        });
     };
 
     /**
@@ -289,30 +329,41 @@ define(
       e.preventDefault();
 
       const topicId = $(e.currentTarget).data('topicid');
-
-      showMessage(
-        'Themenbereich löschen',
-        "Möchten Sie den Themenbereich wirklich löschen?",
-        'Löschen',
-        (modal) => {
-          // Make delete topic call
-          Controller.deleteTopic({
-            course: course,
-            coursemodule: coursemodule,
-            instance: instance,
-            topicid: topicId
-          })
-            .then((jsonTaxonomy) => {
-              modal.hide();
-              $("#topics-list").children().remove();
-              $("#learninggoals-list").children().remove();
-              taxonomy = JSON.parse(jsonTaxonomy);
-              loadTopics(taxonomy);
-              return;
-            })
-            .catch(() => {
-              // Do nothing
+      let strings = [
+        {key: 'settings:deletetopic', component: 'mod_learninggoalwidget'},
+        {key: 'settings:deletetopicmsg', component: 'mod_learninggoalwidget'},
+        {key: 'settings:delete', component: 'mod_learninggoalwidget'},
+      ];
+      CoreStr.get_strings(strings)
+        .then((results) => {
+          showMessage(
+            results[0],
+            results[1],
+            results[2],
+            (modal) => {
+              // Make delete topic call
+              Controller.deleteTopic({
+                course: course,
+                coursemodule: coursemodule,
+                instance: instance,
+                topicid: topicId
+              })
+                .then((jsonTaxonomy) => {
+                  modal.hide();
+                  $("#topics-list").children().remove();
+                  $("#learninggoals-list").children().remove();
+                  taxonomy = JSON.parse(jsonTaxonomy);
+                  loadTopics(taxonomy);
+                  return;
+                })
+                .catch(() => {
+                  // Do nothing
+                });
             });
+          return 0;
+        })
+        .catch(() => {
+          // Do nothing
         });
     };
 
@@ -385,46 +436,60 @@ define(
           topicTitle = topic[2];
         }
       });
+      let strings = [
+        {key: 'settings:topic', component: 'mod_learninggoalwidget'},
+        {key: 'settings:goal', component: 'mod_learninggoalwidget'},
+        {key: 'settings:description', component: 'mod_learninggoalwidget'},
+        {key: 'settings:link', component: 'mod_learninggoalwidget'},
+        {key: 'settings:addgoal', component: 'mod_learninggoalwidget'},
+        {key: 'settings:save', component: 'mod_learninggoalwidget'},
+      ];
+      CoreStr.get_strings(strings)
+        .then((results) => {
+          const context = {
+            topiclabel: results[0],
+            title: results[1],
+            shortname: results[2],
+            weburl: results[3],
+            topictitle: topicTitle,
+          };
 
-      const context = {
-        topiclabel: "Themenbereich",
-        topictitle: topicTitle,
-        title: 'Lernziel',
-        shortname: 'Kurzbezeichnung',
-        weburl: 'Web Adresse',
-      };
+          showModal(
+            context,
+            results[4],
+            TEMPLATES.GOAL_MODAL_VIEW,
+            results[5],
+            (modal, goalName, goalShortname, goalUrl) => {
+              // Make insert goal call
+              Controller.insertGoal({
+                course: course,
+                coursemodule: coursemodule,
+                instance: instance,
+                topicid: selectedTopic,
+                goalname: goalName,
+                goalshortname: goalShortname,
+                goalurl: goalUrl,
+              })
+                .then((jsonTaxonomy) => {
+                  modal.hide();
 
-      showModal(
-        context,
-        "Neues Lernziel hinzufügen",
-        TEMPLATES.GOAL_MODAL_VIEW,
-        "Speichern",
-        (modal, goalName, goalShortname, goalUrl) => {
-          // Make insert goal call
-          Controller.insertGoal({
-            course: course,
-            coursemodule: coursemodule,
-            instance: instance,
-            topicid: selectedTopic,
-            goalname: goalName,
-            goalshortname: goalShortname,
-            goalurl: goalUrl,
-          })
-            .then((jsonTaxonomy) => {
-              modal.hide();
-
-              taxonomy = JSON.parse(jsonTaxonomy);
-              $('#learninggoals-list').children().remove();
-              taxonomy.children.forEach((topic) => {
-                if (topic[1] === selectedTopic) {
-                  loadGoals(selectedTopic, topic[5]);
-                }
-              });
-              return;
-            })
-            .catch(() => {
-              // Do nothing
+                  taxonomy = JSON.parse(jsonTaxonomy);
+                  $('#learninggoals-list').children().remove();
+                  taxonomy.children.forEach((topic) => {
+                    if (topic[1] === selectedTopic) {
+                      loadGoals(selectedTopic, topic[5]);
+                    }
+                  });
+                  return;
+                })
+                .catch(() => {
+                  // Do nothing
+                });
             });
+          return 0;
+        })
+        .catch(() => {
+          // Do nothing
         });
     };
 
@@ -457,50 +522,64 @@ define(
         });
       });
 
-      const context = {
-        topiclabel: "Themenbereich",
-        topictitle: topicTitle,
-        title: 'Lernziel',
-        shortname: 'Kurzbezeichnung',
-        weburl: 'Web Adresse',
-        goaltitle: goalTitle,
-        goalshortname: goalShortname,
-        goalurl: goalUrl,
-      };
-
-      showModal(
-        context,
-        "Lernziel editieren",
-        TEMPLATES.GOAL_MODAL_VIEW,
-        "Speichern",
-        (modal, goalName, goalShortname, goalUrl) => {
-          // Make insert goal call
-          Controller.updateGoal({
-            course: course,
-            coursemodule: coursemodule,
-            instance: instance,
-            topicid: topicId,
-            goalid: goalId,
-            goalname: goalName,
+      let strings = [
+        {key: 'settings:topic', component: 'mod_learninggoalwidget'},
+        {key: 'settings:goal', component: 'mod_learninggoalwidget'},
+        {key: 'settings:description', component: 'mod_learninggoalwidget'},
+        {key: 'settings:link', component: 'mod_learninggoalwidget'},
+        {key: 'settings:editgoal', component: 'mod_learninggoalwidget'},
+        {key: 'settings:save', component: 'mod_learninggoalwidget'},
+      ];
+      CoreStr.get_strings(strings)
+        .then((results) => {
+          const context = {
+            topiclabel: results[0],
+            topictitle: topicTitle,
+            title: results[1],
+            shortname: results[2],
+            weburl: results[3],
+            goaltitle: goalTitle,
             goalshortname: goalShortname,
             goalurl: goalUrl,
-          })
-            .then((jsonTaxonomy) => {
-              modal.hide();
-              taxonomy = JSON.parse(jsonTaxonomy);
-              $('#learninggoals-list').children().remove();
-              taxonomy.children.forEach((topic) => {
-                if (topic[1] === topicId) {
-                  loadGoals(topicId, topic[5]);
-                }
-              });
-              return;
-            })
-            .catch(() => {
-              // Do nothing
-            });
-        });
+          };
 
+          showModal(
+            context,
+            results[4],
+            TEMPLATES.GOAL_MODAL_VIEW,
+            results[5],
+            (modal, goalName, goalShortname, goalUrl) => {
+              // Make insert goal call
+              Controller.updateGoal({
+                course: course,
+                coursemodule: coursemodule,
+                instance: instance,
+                topicid: topicId,
+                goalid: goalId,
+                goalname: goalName,
+                goalshortname: goalShortname,
+                goalurl: goalUrl,
+              })
+                .then((jsonTaxonomy) => {
+                  modal.hide();
+                  taxonomy = JSON.parse(jsonTaxonomy);
+                  $('#learninggoals-list').children().remove();
+                  taxonomy.children.forEach((topic) => {
+                    if (topic[1] === topicId) {
+                      loadGoals(topicId, topic[5]);
+                    }
+                  });
+                  return;
+                })
+                .catch(() => {
+                  // Do nothing
+                });
+            });
+          return 0;
+        })
+        .catch(() => {
+          // Do nothing
+        });
     };
 
     /**
@@ -513,33 +592,45 @@ define(
       const topicId = $(e.currentTarget).data('topicid');
       const goalId = $(e.currentTarget).data('goalid');
 
-      showMessage(
-        'Lernziel löschen',
-        "Möchten Sie das Lernziel wirklich löschen?",
-        'Löschen',
-        (modal) => {
-          // Make delete topic call
-          Controller.deleteGoal({
-            course: course,
-            coursemodule: coursemodule,
-            instance: instance,
-            topicid: topicId,
-            goalid: goalId
-          })
-            .then((jsonTaxonomy) => {
-              modal.hide();
-              taxonomy = JSON.parse(jsonTaxonomy);
-              $('#learninggoals-list').children().remove();
-              taxonomy.children.forEach((topic) => {
-                if (topic[1] === topicId) {
-                  loadGoals(topicId, topic[5]);
-                }
-              });
-              return;
-            })
-            .catch(() => {
-              // Do nothing
+      let strings = [
+        {key: 'settings:deletegoal', component: 'mod_learninggoalwidget'},
+        {key: 'settings:deletegoalmsg', component: 'mod_learninggoalwidget'},
+        {key: 'settings:delete', component: 'mod_learninggoalwidget'},
+      ];
+      CoreStr.get_strings(strings)
+        .then((results) => {
+          showMessage(
+            results[0],
+            results[1],
+            results[2],
+            (modal) => {
+              // Make delete topic call
+              Controller.deleteGoal({
+                course: course,
+                coursemodule: coursemodule,
+                instance: instance,
+                topicid: topicId,
+                goalid: goalId
+              })
+                .then((jsonTaxonomy) => {
+                  modal.hide();
+                  taxonomy = JSON.parse(jsonTaxonomy);
+                  $('#learninggoals-list').children().remove();
+                  taxonomy.children.forEach((topic) => {
+                    if (topic[1] === topicId) {
+                      loadGoals(topicId, topic[5]);
+                    }
+                  });
+                  return;
+                })
+                .catch(() => {
+                  // Do nothing
+                });
             });
+          return 0;
+        })
+        .catch(() => {
+          // Do nothing
         });
     };
 
@@ -621,58 +712,69 @@ define(
      * @param {function} onSaveCallback Function callback when user clicks save
      */
     const showModal = (context, title, templateName, btnSaveText, onSaveCallback) => {
-      ModalFactory.create({
-        type: ModalFactory.types.SAVE_CANCEL,
-        title: title,
-        body: Templates.render(templateName, context)
-      })
-        .done((modal) => {
-          modal.setSaveButtonText(btnSaveText);
-          modal.getRoot().on(ModalEvents.save, (event) => {
-            var titleInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_TITLE_FIELD);
-            var shortnameInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_SHORTNAME_FIELD);
-            var urlInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_URL_FIELD);
+      let strings = [
+        {key: 'validation:missingtitle', component: 'mod_learninggoalwidget'},
+        {key: 'validation:invalidlink', component: 'mod_learninggoalwidget'},
+      ];
+      CoreStr.get_strings(strings)
+        .then((results) => {
+          ModalFactory.create({
+            type: ModalFactory.types.SAVE_CANCEL,
+            title: title,
+            body: Templates.render(templateName, context)
+          })
+            .done((modal) => {
+              modal.setSaveButtonText(btnSaveText);
+              modal.getRoot().on(ModalEvents.save, (event) => {
+                var titleInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_TITLE_FIELD);
+                var shortnameInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_SHORTNAME_FIELD);
+                var urlInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_URL_FIELD);
 
-            let titleValid = false;
-            let urlValid = false;
-            if (titleInputfield[0].value !== undefined && titleInputfield[0].value !== "") {
-              titleValid = true;
-            }
-            if (isValidUrl(urlInputfield[0].value)) {
-              urlValid = true;
-            }
-            if (titleValid && urlValid) {
-              onSaveCallback(
-                modal,
-                titleInputfield[0].value,
-                shortnameInputfield[0].value,
-                urlInputfield[0].value
-              );
-            } else {
-              event.preventDefault();
-              event.stopPropagation();
-              if (titleValid === false) {
-                modal.getRoot().find('[data-action="titlefeedback"]')
-                  .text("Der Titel ist verpflichtend einzugeben");
-                modal.getRoot().find('[data-action="titlefeedback"]')
-                  .css("display", "inline");
-              }
-              if (urlValid === false) {
-                modal.getRoot().find('[data-action="urlfeedback"]')
-                  .text("Der Wert für die URL ist ungültig");
-                modal.getRoot().find('[data-action="urlfeedback"]')
-                  .css("display", "inline");
-              }
-            }
-          });
-          modal.show();
+                let titleValid = false;
+                let urlValid = false;
+                if (titleInputfield[0].value !== undefined && titleInputfield[0].value !== "") {
+                  titleValid = true;
+                }
+                if (isValidUrl(urlInputfield[0].value)) {
+                  urlValid = true;
+                }
+                if (titleValid && urlValid) {
+                  onSaveCallback(
+                    modal,
+                    titleInputfield[0].value,
+                    shortnameInputfield[0].value,
+                    urlInputfield[0].value
+                  );
+                } else {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  if (titleValid === false) {
+                    modal.getRoot().find('[data-action="titlefeedback"]')
+                      .text(results[0]);
+                    modal.getRoot().find('[data-action="titlefeedback"]')
+                      .css("display", "inline");
+                  }
+                  if (urlValid === false) {
+                    modal.getRoot().find('[data-action="urlfeedback"]')
+                      .text(results[1]);
+                    modal.getRoot().find('[data-action="urlfeedback"]')
+                      .css("display", "inline");
+                  }
+                }
+              });
+              modal.show();
 
-          // Destroy when hidden.
-          modal.getRoot().on(ModalEvents.hidden, () => {
-            modal.destroy();
-          });
+              // Destroy when hidden.
+              modal.getRoot().on(ModalEvents.hidden, () => {
+                modal.destroy();
+              });
 
-          return modal;
+              return modal;
+            });
+          return 0;
+        })
+        .catch(() => {
+          // Do nothing
         });
     };
 
@@ -732,17 +834,17 @@ define(
      *
      * @param {Object} json The json to be parsed
      *
-     * @returns {Object} //{error: boolean, msg?: string}
+     * @returns {Object} //{error: boolean, code?: string}
      */
     const isValidTopLevelJSON = (json) => {
       if (!('name' in json) || json.name === null || json.name === undefined) {
-        return {error: true, msg: "'name' Eigenschaft fehlt."};
+        return {error: true, code: "validation:jsontop1"};
       } else if (!('children' in json) || json.children === null || json.children === undefined) {
-        return {error: true, msg: "'children' Eigenschaft fehlt."};
+        return {error: true, code: "validation:jsontop2"};
       } else if (!Array.isArray(json.children)) {
-        return {error: true, msg: "'children' Eigenschaft ist kein Array."};
+        return {error: true, code: "validation:jsontop3"};
       } else if (json.children.length === 0) {
-        return {error: true, msg: "'children' Array ist leer."};
+        return {error: true, code: "validation:jsontop4"};
       }
       return {error: false};
     };
@@ -756,21 +858,21 @@ define(
      */
     const isValidTopicJSON = (topic) => {
       if (!('name' in topic) || topic.name === null || topic.name === undefined) {
-        return {error: true, msg: `'name' Eigenschaft fehlt bei einem Themenbereich.`};
+        return {error: true, code: "validation:jsontopic1", codeParam: undefined};
       } else if (typeof (topic.name) !== 'string') {
-        return {error: true, msg: `'name' Eigenschaft bei dem Themenbereich '${topic.name}' ist kein String.`};
+        return {error: true, code: "validation:jsontopic2", codeParam: topic.name};
       } else if ('link' in topic) {
         if (typeof (topic.link) !== 'string') {
-          return {error: true, msg: `'link' Eigenschaft bei dem Themenbereich '${topic.name}' ist kein String.`};
+          return {error: true, code: "validation:jsontopic3", codeParam: topic.name};
         } else if (!isValidUrl(topic.link)) {
-          return {error: true, msg: `'link' Eigenschaft bei dem Themenbereich '${topic.name}' ist ungültig.`};
+          return {error: true, code: "validation:jsontopic4", codeParam: topic.name};
         }
       } else if ('keyword' in topic && typeof (topic.keyword) !== 'string') {
-        return {error: true, msg: `'keyword' Eigenschaft bei dem Themenbereich ${topic.name} ist kein String.`};
+        return {error: true, code: "validation:jsontopic5", codeParam: topic.name};
       } else if (!('children' in topic) || topic.children === null || topic.children === undefined) {
         return {error: false};
       } else if (!Array.isArray(topic.children)) {
-        return {error: true, msg: `'children' Eigenschaft bei dem Themenbereich '${topic.name}' ist kein Array.`};
+        return {error: true, code: "validation:jsontopic6", codeParam: topic.name};
       }
       return {error: false};
     };
@@ -785,17 +887,17 @@ define(
      */
     const isValidGoalJSON = (topicName, goal) => {
       if (!('name' in goal) || goal.name === null || goal.name === undefined) {
-        return {error: true, msg: `Ein Lernziel von dem Themenbereich '${topicName}' hat keine 'name' Eigenschaft.`};
+        return {error: true, code: "validation:jsongoal1", codeParam: topicName};
       } else if (typeof (goal.name) !== 'string') {
-        return {error: true, msg: `'name' Eigenschaft bei einem Lernziel von dem Themenbereich '${topicName}' ist kein String.`};
+        return {error: true, code: "validation:jsongoal2", codeParam: topicName};
       } else if ('link' in goal) {
         if (typeof (goal.link) !== 'string') {
-          return {error: true, msg: `'link' Eigenschaft bei dem Lernziel '${goal.name}' ist kein String.`};
+          return {error: true, code: "validation:jsongoal3", codeParam: goal.name};
         } else if (!isValidUrl(goal.link)) {
-          return {error: true, msg: `'link' Eigenschaft bei dem Lernziel '${goal.name}' ist ungültig.`};
+          return {error: true, code: "validation:jsongoal4", codeParam: goal.name};
         }
       } else if ('keyword' in goal && typeof (goal.keyword) !== 'string') {
-        return {error: true, msg: `'keyword' Eigenschaft bei dem Lernziel '${goal.name}' ist kein String.`};
+        return {error: true, code: "validation:jsongoal5", codeParam: goal.name};
       }
       return {error: false};
     };
@@ -810,9 +912,10 @@ define(
      * @param {string} json The json to be parsed
      * @returns {Object} //{error: boolean, preview ?:string, msg?: string}
      */
-    const parseJSON = (json) => {
+    const parseJSON = async(json) => {
       const res = isValidTopLevelJSON(json);
       if (res.error) {
+        res.msg = await CoreStr.get_string(res.code, 'mod_learninggoalwidget');
         return res;
       }
       let preview = '<pre>';
@@ -822,6 +925,7 @@ define(
         const topic = json.children[topicIdx];
         const check = isValidTopicJSON(topic);
         if (check.error) {
+          check.msg = await CoreStr.get_string(check.code, 'mod_learninggoalwidget', check.codeParam);
           return check;
         }
         preview += `${topic.name.replaceAll('&', '&amp').replaceAll('<', '&lt').replaceAll('>', '&gt')}\n`;
@@ -831,6 +935,7 @@ define(
           const goal = topic.children[goalIdx];
           const goalCheck = isValidGoalJSON(topic.name, goal);
           if (goalCheck.error) {
+            goalCheck.msg = await CoreStr.get_string(goalCheck.code, 'mod_learninggoalwidget', goalCheck.codeParam);
             return goalCheck;
           }
           let isLast = goalIdx == topic.children.length - 1;
@@ -852,18 +957,27 @@ ${isLast ? '\n\n' : '\n'}`;
       }
       const reader = new FileReader();
       reader.readAsText(fileInput.files[0], "UTF-8");
-      reader.onload = (evt) => {
+      reader.onload = async(evt) => {
         if (evt.target === null) {
           return;
         }
         try {
           const parsed = JSON.parse(reader.result);
-          const check = parseJSON(parsed);
+          const check = await parseJSON(parsed);
+          let strings = [
+            {key: 'validation:invalid', component: 'mod_learninggoalwidget'},
+            {key: 'validation:invalidfile', component: 'mod_learninggoalwidget'},
+            {key: 'validation:close', component: 'mod_learninggoalwidget'},
+            {key: 'settings:newtaxonomyheader', component: 'mod_learninggoalwidget'},
+            {key: 'settings:newtaxonomymsg', component: 'mod_learninggoalwidget'},
+            {key: 'settings:replace', component: 'mod_learninggoalwidget'},
+          ];
+          const results = await CoreStr.get_strings(strings);
           if (check.error) {
             showMessage(
-              'Ungültige Taxonomie',
-              "Die hochgeladene Datei ist ungültig:<br/>" + check.msg,
-              'Schließen',
+              results[0],
+              results[1] + ":<br/>" + check.msg,
+              results[2],
               (modal) => {
                 modal.hide();
               }
@@ -872,9 +986,9 @@ ${isLast ? '\n\n' : '\n'}`;
           }
 
           showMessage(
-            'Neue Themenbereiche und Lernziele',
-            "Möchten Sie die aktuellen Themenbereiche und Lernziele mit den folgenden ersetzen?\n" + check.preview,
-            'Ersetzen',
+            results[3],
+            results[4] + "\n" + check.preview,
+            results[5],
             async(modal) => {
               let jsonTaxonomy = {};
               jsonTaxonomy = await new Promise((resolve, reject) => {

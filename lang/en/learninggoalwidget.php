@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['title'] = 'Learning Goal\'s Taxonomy';
 $string['learninggoalwidget:addinstance'] = 'Add a new Learning Goal Widget';
 $string['learninggoalwidget:view'] = 'View Learning Goal Widget';
 $string['learninggoalwidgettext'] = 'Learning Goal Widget Text';
@@ -33,6 +34,56 @@ $string['privacy:metadata'] = '';
 $string['pluginadministration'] = 'Learning Goal Widget administration';
 $string['pluginname'] = 'Learning Goal Widget';
 $string['search:activity'] = 'learninggoalwidget';
+
+$string['settings:header'] = 'Topics and Learning Goals';
+$string['settings:topic'] = 'Topic';
+$string['settings:goal'] = 'Learning Goal';
+$string['settings:description'] = 'Short description';
+$string['settings:link'] = 'Web Link';
+$string['settings:addtopic'] = 'Add a new Topic';
+$string['settings:edittopic'] = 'Edit Topic';
+$string['settings:deletetopic'] = 'Delete Topic';
+$string['settings:deletetopicmsg'] = 'Do you really want to delete the Topic?';
+$string['settings:save'] = 'Save';
+$string['settings:delete'] = 'Delete';
+$string['settings:addgoal'] = 'Add a new Learning Goal';
+$string['settings:editgoal'] = 'Edit Learning Goal';
+$string['settings:deletegoal'] = 'Delete Learning Goal';
+$string['settings:deletegoalmsg'] = 'Do you really want to delete the Learning Goal?';
+$string['settings:showgoals'] = 'Click on a Topic to show its Learning Goals';
+$string['settings:nogoals'] = 'There are no Learning Goals for the chosen Topic';
+$string['settings:topicheader'] = 'Topics';
+$string['settings:goalheader'] = 'Learning Goals';
+$string['settings:btnnewtopic'] = 'New Topic';
+$string['settings:btnnewgoal'] = 'New Learning Goal';
+$string['settings:jsonheader'] = 'JSON Format';
+$string['settings:btnjsonupload'] = 'Upload';
+$string['settings:btnjsondownload'] = 'Download';
+$string['settings:notopicsmessage'] = 'There are no topics yet';
+$string['settings:newtaxonomyheader'] = 'New Topics and Learning Goals';
+$string['settings:newtaxonomymsg'] = 'Do you want to replace the current Topics and Learning Goals with the following?';
+$string['settings:replace'] = 'Replace';
+
+$string['validation:missingtitle'] = 'The title is mandatory';
+$string['validation:invalidlink'] = 'The URL is invalid';
+$string['validation:invalid'] = 'Invalid Taxonomy';
+$string['validation:close'] = 'Close';
+$string['validation:invalidfile'] = 'The uploaded file is invalid';
+$string['validation:jsontop1'] = 'The "name" property is missing.';
+$string['validation:jsontop2'] = 'The "children" property is missing.';
+$string['validation:jsontop3'] = 'The "children" property is not an Array.';
+$string['validation:jsontop4'] = 'The "children" array is empty.';
+$string['validation:jsontopic1'] = 'A topic is missing the "name" property.';
+$string['validation:jsontopic2'] = 'The "name" property of the topic "{$a}" is not a string.';
+$string['validation:jsontopic3'] = 'The "link" property of the topic "{$a}" is not a string.';
+$string['validation:jsontopic4'] = 'The "link" property of the topic "{$a}" is invalid.';
+$string['validation:jsontopic5'] = 'The "keyword" property of the topic "{$a}" is not a string.';
+$string['validation:jsontopic6'] = 'The "children" property of the topic "{$a}" is not an array.';
+$string['validation:jsongoal1'] = 'A Learning Goal of the Topic "{$a}" has no "name" property.';
+$string['validation:jsongoal2'] = 'The "name" property of a Learning Goal of the Topic "{$a}" is not a string.';
+$string['validation:jsongoal3'] = 'The "link" property of the Learning Goal "{$a}" is not a string.';
+$string['validation:jsongoal4'] = 'The "link" property of the Learning Goal "{$a}" is invalid.';
+$string['validation:jsongoal5'] = 'The "keyword" property of the Learning Goal "{$a}" is not a string.';
 
 $string['guestaccess'] = 'You need to login first';
 $string['noaccess'] = 'You need to login first';

@@ -97,7 +97,7 @@ class userTaxonomy {
      */
     public function get_taxonomy_as_json(): string {
         $usertaxonomy = new stdClass;
-        $usertaxonomy->name = "Learning Goal's Taxonomy";
+        $usertaxonomy->name = get_string('title', 'mod_learninggoalwidget');
         $usertaxonomy->children = $this->get_topics();
         return json_encode($usertaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     }
