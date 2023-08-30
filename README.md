@@ -31,7 +31,7 @@ provide external links to lecture or supplementary material. The 'taxonomy'
 (e.g. the list of topics and learning goals) can be entered manually via the settings 
 or via a JSON file (see [JSON structure](#json-structure)).
 
-*Treemap View*
+*Treemap View with expanded colorscheme menu*
 
 ![colorschemes](https://github.com/simonefranza/moodle-mod_learninggoalwidget/assets/6499758/9877535d-416c-4776-9ad9-bf0f84019d8d)
 
