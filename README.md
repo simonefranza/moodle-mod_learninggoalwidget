@@ -18,7 +18,7 @@
   </tr>
   <tr>
     <td>Maintainer(s)</td>
-    <td>[Simone Franza](https://github.com/simonefranza)</td>
+    <td>Alfred Wertner, <a href="https://github.com/simonefranza">Simone Franza</a></td>
   </tr>
 </table>
 
@@ -31,11 +31,13 @@ provide external links to lecture or supplementary material. The 'taxonomy'
 (e.g. the list of topics and learning goals) can be entered manually via the settings 
 or via a JSON file (see [JSON structure](#json-structure)).
 
-Picture with colorschemes
-*Treemap View*
+*Treemap View with expanded colorscheme menu*
 
-Picture
+![colorschemes](https://github.com/simonefranza/moodle-mod_learninggoalwidget/assets/6499758/9877535d-416c-4776-9ad9-bf0f84019d8d)
+
 *Sunburst View*
+
+![sunburst](https://github.com/simonefranza/moodle-mod_learninggoalwidget/assets/6499758/3ed50661-8195-4605-8541-74afa4f82dfa)
 
 ### Table of contents
 
@@ -48,7 +50,7 @@ Picture
 The users can move sliders to track their learning progress on each goal as 
 well as open links to supplementary material or anything related to the topic/learning goal.
 
-Picture with slider selection
+![slider](https://github.com/simonefranza/moodle-mod_learninggoalwidget/assets/6499758/48e8ad46-4d4f-4f69-8e3d-f60ae2cac163)
 
 The treemap view allows the users to choose the preferred colorscheme, which is then 
 saved in the local storage of the browser. Accessible color schemes suitable for 
