@@ -1435,9 +1435,6 @@ define(
      * @returns {array} The array of learning goal event parameters
      */
     var createLearningGoalEvent = function(courseId, courseModuleId, instanceId, userId) {
-
-        var eventParam = new Object();
-
         var eventCourseParam = new Object();
         eventCourseParam.name = "courseid";
         eventCourseParam.value = courseId;
@@ -1458,7 +1455,7 @@ define(
         timestampParam.name = "timestamp";
         timestampParam.value = Math.trunc(new Date().getTime() / 1000);
 
-        return [eventParam, eventCourseParam, eventCourseModuleParam, eventInstanceParam, eventUserParam, timestampParam];
+        return [eventCourseParam, eventCourseModuleParam, eventInstanceParam, eventUserParam, timestampParam];
     };
 
     /**

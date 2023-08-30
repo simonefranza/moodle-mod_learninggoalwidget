@@ -165,14 +165,13 @@ define(
    * @returns {Array} The array of learning goal event parameters
    */
   const createLearningGoalEvent = (courseId, courseModuleId, instanceId, userId) => {
-    const eventParam = {};
     const eventCourseParam = {name: "courseid", value: courseId};
     const eventCourseModuleParam = {name: "coursemoduleid", value: courseModuleId};
     const eventInstanceParam = {name: "instanceid", value: instanceId};
     const eventUserParam = {name: "userid", value: userId};
     const timestampParam = {name: "timestamp", value: Math.trunc(new Date().getTime() / 1000)};
 
-    return [eventParam, eventCourseParam, eventCourseModuleParam, eventInstanceParam, eventUserParam, timestampParam];
+    return [eventCourseParam, eventCourseModuleParam, eventInstanceParam, eventUserParam, timestampParam];
   };
 
   /**
