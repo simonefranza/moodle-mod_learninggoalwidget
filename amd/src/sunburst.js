@@ -67,12 +67,9 @@ define(
      * @param {*} progressLegendLabel The legend string
      */
     var renderSunburst = function(sunburstId, userId, courseId, courseModuleId, instanceId, progressLegendLabel) {
-
-        // Console.log("mod_learninggoalwidget.sunburst> *********** Render Sunburst ******************");
-
         require.config({
             paths: {
-                d3v4: Configuration.wwwroot + "/mod/learninggoalwidget/js/d3.v4.min"
+                d3v7: Configuration.wwwroot + "/mod/learninggoalwidget/js/d3.v7.min"
             }
         });
 
@@ -90,8 +87,7 @@ define(
                 }
             )
             .catch(function() {
-                // Console.log("exception happened here");
-                // Console.log(e);
+                // Do nothing
             });
 
         // Adding functionality to the elements
@@ -158,12 +154,9 @@ define(
      * @param {*} sunburstId The sunburst instance ID
      */
     var renderTextualBulletPointList = function(courseTaxonomy, sunburstId) {
-        // Console.log("renderTextualBulletPointList call");
-
         var rootElement = document.getElementById(sunburstId + "-listing-view");
-
+        rootElement.style.position = "relative";
         addChildren(rootElement, courseTaxonomy.children, sunburstId);
-
     };
 
     /**
@@ -173,22 +166,17 @@ define(
      * @param {*} sunburstId The sunburst instance ID
      */
     var addChildren = function(element, children, sunburstId) {
-        // Console.log("add children");
-        // Console.log(children);
         var unorderedListNode = document.createElement("ul");
         unorderedListNode.style = "list-style: none";
         children.forEach(
             function(child) {
                 if (child.type == "topic") {
-                    // //console.log("AddChildren> AppendTopic");
                     appendTopic(sunburstId, $("#" + sunburstId + "-listing-view"), child);
                 }
                 if (child.type == "goal") {
-                    // //console.log("AddChildren> AppendGoal");
                     appendGoal(sunburstId, unorderedListNode, child);
                 }
                 if (child.children) {
-                    // //console.log("AddChildren> AddChildren");
                     addChildren($("#" + sunburstId + "-listing-view"), child.children, sunburstId);
                 }
             }
@@ -234,12 +222,6 @@ define(
      * @param {*} goal The goal element
      */
     var appendGoal = function(sunburstId, element, goal) {
-
-        // Console.log("****************** AppendGoal ****************");
-
-        // Console.log("id", sunburstId + "-" + goal.goalid);
-        // Console.log(goal);
-
         var listItemNode = document.createElement("li");
 
         listItemNode.setAttribute("id", sunburstId + "-goal-" + goal.goalid);
@@ -279,9 +261,6 @@ define(
      * @param {*} highlight True if element should get highlighted otherwise false
      */
     var updateItemInTextualHierachy = function(sunburstId, item, color, highlight) {
-
-        // Console.log("UpdateItemInTextualHierachy(" + sunburstId + ", " + item + ", " + color + ", " + highlight);
-
         let element;
         if (item.data.type === "goal") {
             element = $("#" + sunburstId + "-goal-" + item.data.goalid);
@@ -322,18 +301,18 @@ define(
      */
     var scrollToTopic = function(sunburstId, item) {
         let element;
-        if (item.parent && item.parent.parent === null) {
-            if (item.data.type === "goal") {
-                element = $("#" + sunburstId + "-goal-" + item.data.goalid);
+        if ('data' in item && 'type' in item.data) {
+            switch (item.data.type) {
+              case 'goal':
+                element = document.getElementById(sunburstId + "-goal-" + item.data.goalid);
+                break;
+              case 'topic':
+                element = document.getElementById(sunburstId + "-topic-" + item.data.topicid);
+                break;
+              default:
+                throw new Error("Unknown type: " + item.data.type);
             }
-            if (item.data.type === "topic") {
-                element = $("#" + sunburstId + "-topic-" + item.data.topicid);
-            }
-            if (element) {
-                $('#' + sunburstId + '-listing-view-container').animate({scrollTop: element[0].offsetTop - 8, duration: 'fast'});
-            }
-        } else {
-            scrollToTopic(sunburstId, item.parent);
+            element.scrollIntoView({behavior: "smooth", block: "nearest"});
         }
     };
 
@@ -382,10 +361,7 @@ define(
      * @param {*} sunburstId The sunburst instance ID
      */
     var renderSunburstView = function(courseTaxonomy, sunburstId) {
-        // Console.log("Widget> renderSunburstView");
-        require(["d3v4"], function(d3) {
-            // Console.log("*************** D3 loaded now *****************");
-
+        require(["d3v7"], function(d3) {
             // Reading the header name of the json data and pasting it before chart container
             d3.select("#" + sunburstId + "-taxonomy")
                 .append("p")
@@ -543,22 +519,22 @@ define(
                 )
                 .attr("d", arc)
                 .on(
-                    "mouseover", function(d) {
+                    "mouseover", function(e, d) {
                         div
                             .transition()
                             .duration(200)
                             .style("opacity", 0.8);
                         div
                             .html(d.data.name)
-                            .style("left", "" + d3.event.pageX + "px")
-                            .style("top", "" + (d3.event.pageY - height / 10) + "px");
+                            .style("left", "" + e.pageX + "px")
+                            .style("top", "" + (e.pageY - height / 10) + "px");
 
                         // Highlight the topic / goal in the textual represenation of the chart
                         updateItemInTextualHierachy(sunburstId, d, getColor(percentage(d)), true);
                     }
                 )
                 .on(
-                    "mouseout", function(d) {
+                    "mouseout", function(_, d) {
                         div
                             .transition()
                             .duration(500)
@@ -569,7 +545,7 @@ define(
                     }
                 )
                 .on(
-                    "click", function(d) {
+                    "click", function(_, d) {
                         if (d.depth >= 1) {
                             if (d.data.link) {
                                 window.open(d.data.link);
@@ -588,18 +564,13 @@ define(
                                 logLearningGoalEvent(courseId, courseModuleId, instanceId, userId, learningGoalEvent);
                             }
 
-                            // Console.log("mod_learninggoalwidget> click event");
                             const sunburstClickEvent = new CustomEvent('sunburstclick', {
                                 bubbles: true,
                                 detail: {
                                     data: () => d.data
                                 }
                             });
-
-                            // Console.log("mod_learninggoalwidget> trigger sunburstclick event");
                             $('#' + sunburstId + '-taxonomy')[0].dispatchEvent(sunburstClickEvent);
-                            // Console.log("mod_learninggoalwidget> done");
-
                         }
                     }
                 )
@@ -738,10 +709,7 @@ define(
      * @param {*} progressLegendLabel The legend string
      */
     var renderSunburstWithProgressView = function(courseTaxonomy, sunburstId, progressLegendLabel) {
-        // Console.log("Widget> renderSunburstWithProgressView");
-        require(["d3v4"], function(d3) {
-            // Console.log("*************** D3 loaded now *****************");
-
+        require(["d3v7"], function(d3) {
             // Reading the header name of the json data and pasting it before chart container
             d3.select("#" + sunburstId + "-taxonomy-userprogress-chart")
                 .append("p")
@@ -798,7 +766,6 @@ define(
 
             // Retrieving sizes of the arcs
             partition(root);
-            // Console.log(root);
             var arc = d3
                 .arc()
                 .startAngle(
@@ -868,21 +835,21 @@ define(
                     }
                 )
                 .attr("d", arc)
-                .on("mouseover", (d) => {
+                .on("mouseover", (e, d) => {
                         div
                             .transition()
                             .duration(200)
                             .style("opacity", 0.8);
                         div
                             .html(d.data.name)
-                            .style("left", d3.event.pageX + "px")
-                            .style("top", d3.event.pageY - height / 10 + "px");
+                            .style("left", e.pageX + "px")
+                            .style("top", e.pageY - height / 10 + "px");
 
                         // Highlight the topic / goal in the textual represenation of the chart
                         updateItemInTextualHierachy(sunburstId, d, getColor(percentage(d)), true);
                     }
                 )
-                .on("mouseout", (d) => {
+                .on("mouseout", (_, d) => {
                         div
                             .transition()
                             .duration(500)
@@ -893,9 +860,8 @@ define(
                     }
                 )
                 .on(
-                    "click", function(d) {
+                    "click", function (e, d) {
                         if (!d.children) {
-
                             var courseId = getCourseId(this);
                             var courseModuleId = getCourseModuleId(this);
                             var instanceId = getInstanceId(this);
@@ -1019,12 +985,7 @@ define(
                 )
                 .style(
                     "font-size", function(d) {
-                        if (d.depth > 1) {
-                            // Console.log("size = 10");
-                            return 10;
-                        }
-                        // Console.log("size = 12");
-                        return 12;
+                        return d.depth > 1 ? 10 : 12;
                     }
                 )
                 .attr("dx", "-20")
@@ -1068,12 +1029,7 @@ define(
                 .attr("startOffset", "50%")
                 .style(
                     "font-size", function(d) {
-                        if (d.depth > 1) {
-                            // Console.log("size = 10");
-                            return 10;
-                        }
-                        // Console.log("size = 12");
-                        return 12;
+                        return d.depth > 1 ? 10 : 12;
                     }
                 )
                 .attr("letter-spacing", 2.75)
@@ -1124,12 +1080,7 @@ define(
                 .attr("startOffset", "50%")
                 .style(
                     "font-size", function(d) {
-                        if (d.depth > 1) {
-                            // Console.log("size = 10");
-                            return 10;
-                        }
-                        // Console.log("size = 12");
-                        return 12;
+                        return d.depth > 1 ? 10 : 12;
                     }
                 )
                 .attr("letter-spacing", 2.75)
@@ -1139,10 +1090,7 @@ define(
                             if (per !== null) {
                                 if (per.toString().length > 0) {
                                     return per + "%";
-                                } else {
-                                    // Console.error("no data for:");
-                                    // Console.log(d);
-                                }
+                                } 
                             }
                         }
                         return undefined;
@@ -1325,9 +1273,8 @@ define(
             }
             sum = Math.round(sum / d.children.length);
             return typeof sum === "undefined" || isNaN(sum) ? "" : sum;
-        } else {
-            return d.data.pro;
-        }
+        } 
+        return d.data.pro;
     };
 
     /**
@@ -1346,7 +1293,6 @@ define(
         courseId, courseModuleId, instanceId, userId, topicId,
         goalId,
         goalName, goalProgressValue) {
-
         // Learninggoals webservice: save the learning goal progress for a learning goal
         Controller.updateUserProgress(
             {
@@ -1360,15 +1306,12 @@ define(
             }
         )
             .then((taxonomy) => {
-                    // Console.log("Widget> progress saved successfully");
                     var loadedTaxonomy = JSON.parse(taxonomy);
                     if (loadedTaxonomy.children.length > 0) {
                         $("div#" + sunburstId + "-taxonomy-userprogress-chart-fullgoal").remove();
                         $("#" + sunburstId + "-taxonomy-userprogress-chart").empty();
                         $("#" + sunburstId + "-taxonomy-userprogress-legend").empty();
                         renderSunburstWithProgressView(loadedTaxonomy, sunburstId);
-
-                        // Console.log("mod_learninggoalwidget.sunburst> send update progress event");
                         const updateLearningGoalProgressEvent = new CustomEvent('update_learning_goal_progress', {
                             bubbles: true,
                             detail: {
@@ -1378,9 +1321,7 @@ define(
                             }
                         });
 
-                        // Console.log("mod_learninggoalwidget.sunburst> trigger update Learning Goal Progress event");
                         $('#' + sunburstId + '-taxonomy')[0].dispatchEvent(updateLearningGoalProgressEvent);
-                        // Console.log("mod_learninggoalwidget.sunburst> event triggered");
                     }
                     return;
                 }
@@ -1419,10 +1360,8 @@ define(
             }
         )
         .then(() => {
-          // Console.log("Widget> event logged");
           return;
-        }
-        )
+        })
         .catch(Notification.exception);
     };
 
