@@ -645,6 +645,7 @@ define(
                     }
                 )
                 .style("font-size", 12)
+                .style('pointer-events', 'none')
                 .attr("dx", "-20")
                 .attr("dy", ".5em");
 
@@ -684,6 +685,7 @@ define(
                 .style("text-anchor", "middle") // Place the text halfway on the arc
                 .attr("startOffset", "50%")
                 .style("font-size", 12)
+                .style('pointer-events', 'none')
                 .attr("letter-spacing", 2.75)
                 .text((d) => {
                         if (d.depth > 0 && d.data.size > 0.1) {
@@ -860,7 +862,7 @@ define(
                     }
                 )
                 .on(
-                    "click", function (e, d) {
+                    "click", function(e, d) {
                         if (!d.children) {
                             var courseId = getCourseId(this);
                             var courseModuleId = getCourseModuleId(this);
@@ -951,6 +953,7 @@ define(
             g.selectAll(".node")
                 .data(root.descendants())
                 .append("text")
+                .style('pointer-events', 'none')
                 .text((d) => {
                         if (d.depth > 0 && d.data.size <= 0.1) {
                             var title = d.data.name.toString();
@@ -1001,6 +1004,7 @@ define(
             g.selectAll(".node")
                 .data(root.descendants())
                 .append("text")
+                .style('pointer-events', 'none')
                 .attr(
                     "dy", function(d) {
                         if ((d.depth == 1 && d.parent.children.length == 1)
@@ -1052,6 +1056,7 @@ define(
             g.selectAll(".node")
                 .data(root.descendants())
                 .append("text")
+                .style('pointer-events', 'none')
                 .attr(
                     "dy", function(d) {
                         if ((d.depth == 1 && d.parent.children.length == 1)
@@ -1090,7 +1095,7 @@ define(
                             if (per !== null) {
                                 if (per.toString().length > 0) {
                                     return per + "%";
-                                } 
+                                }
                             }
                         }
                         return undefined;
@@ -1273,7 +1278,7 @@ define(
             }
             sum = Math.round(sum / d.children.length);
             return typeof sum === "undefined" || isNaN(sum) ? "" : sum;
-        } 
+        }
         return d.data.pro;
     };
 
