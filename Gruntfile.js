@@ -123,6 +123,9 @@ module.exports = function (grunt) {
                 yui: {src: ['**/yui/src/**/*.js', '!*/**/yui/src/*/meta/*.js']}
             },
             uglify: {
+                options: {
+                    sourceMap: true                    
+                  },
                 amd: {
                     files: [{
                         expand: true,

@@ -67,7 +67,7 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
         $widgetrenderer = $PAGE->get_renderer('mod_learninggoalwidget', 'widget');
         $templatecontext = [
             'topicheader' => get_string('settings:topicheader', 'mod_learninggoalwidget'),
-            'goalheader' => get_string('settings:topicheader', 'mod_learninggoalwidget'),
+            'goalheader' => get_string('settings:goalheader', 'mod_learninggoalwidget'),
             'btnnewtopic' => get_string('settings:btnnewtopic', 'mod_learninggoalwidget'),
             'btnnewgoal' => get_string('settings:btnnewgoal', 'mod_learninggoalwidget'),
             'jsonheader' => get_string('settings:jsonheader', 'mod_learninggoalwidget'),
