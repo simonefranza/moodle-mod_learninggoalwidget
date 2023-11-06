@@ -99,6 +99,8 @@ define(function(require, exports) {
       .attr("class", "mainSvg")
       .style('z-index', 0)
       .attr("viewBox", [0, 0, width, height]);
+    d3.select('#' + treemapId).style('position', 'relative');
+    d3.select('#' + treemapId).style('width', '100%');
     d3.select('#' + treemapId).append(() => svg.node());
     svg.append('title')
       .classed('vis-title', true);
@@ -2260,7 +2262,7 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
           });
       }
       accessibilityIconG.transition('transform-' + treemapId).duration(700).ease(d3.easePolyInOut.exponent(4))
-        .attr('transform', isAccessibilityDialogShown ? 'translate(0,0)' : `translate(0, -200px)`);
+        .attr('transform', isAccessibilityDialogShown ? 'translate(0,0)' : 'translate(0,-200)');
 
       if (!isAccessibilityDialogShown) {
         blurDiv.style('z-index', 50);

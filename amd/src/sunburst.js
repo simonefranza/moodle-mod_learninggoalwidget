@@ -122,6 +122,7 @@ define(
         };
 
         // Setting the visualisation container to fit nicely ;)
+        document.querySelector("div[data-region='" + sunburstId + "-content-view']").parentElement.style.position = "relative";
         document.querySelector("div[data-region='" + sunburstId + "-content-view']").style.width = "33%";
         document.querySelector("div[data-region='" + sunburstId + "-content-view']").style.height = "100%";
         document.querySelector("div[data-region='" + sunburstId + "-exam-view']").style.width = "33%";

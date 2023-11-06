@@ -705,7 +705,7 @@ input[id^="progressvalue-"]::-moz-range-thumb {
     box-sizing: border-box;
     border-radius: 1em;
     max-height: 90%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 .zoom-bg {
     stroke: black;
