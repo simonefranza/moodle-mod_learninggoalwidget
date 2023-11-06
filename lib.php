@@ -34,8 +34,8 @@
  */
 function learninggoalwidget_add_instance(stdClass $data): int {
     global $DB, $COURSE;
-    $data->lgw_timecreated = time();
-    $data->lgw_timemodified = $data->lgw_timecreated;
+    $data->timecreated = time();
+    $data->timemodified = $data->timecreated;
     $data->name = $data->name;
     $data->lgw_course = $data->course;
     $data->id = $DB->insert_record('learninggoalwidget', $data);
@@ -83,7 +83,7 @@ function learninggoalwidget_add_instance(stdClass $data): int {
 function learninggoalwidget_update_instance(stdClass $data): bool {
     global $DB;
 
-    $data->lgw_timemodified = time();
+    $data->timemodified = time();
     $data->id = $data->instance;
     $data->name = $data->name;
     $data->intro = $data->intro;
