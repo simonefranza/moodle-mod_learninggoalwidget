@@ -204,18 +204,18 @@ class provider implements
             return;
         }
 
-        $DB->delete_records('learninggoalwidget_i_userpro', array(
+        $DB->delete_records('learninggoalwidget_i_userpro', [
             'lgw_coursemodule' => $cm->id,
-            'lgw_instance' => $cm->instance
-        ));
-        $DB->delete_records('learninggoalwidget_i_goals', array(
+            'lgw_instance' => $cm->instance,
+        ]);
+        $DB->delete_records('learninggoalwidget_i_goals', [
             'lgw_coursemodule' => $cm->id,
-            'lgw_instance' => $cm->instance
-        ));
-        $DB->delete_records('learninggoalwidget_i_topics', array(
+            'lgw_instance' => $cm->instance,
+        ]);
+        $DB->delete_records('learninggoalwidget_i_topics', [
             'lgw_coursemodule' => $cm->id,
-            'lgw_instance' => $cm->instance
-        ));
+            'lgw_instance' => $cm->instance,
+        ]);
     }
 
     /**
@@ -240,11 +240,11 @@ class provider implements
             // Fetch the details of the data to be removed.
             $user = $contextlist->get_user();
 
-            $DB->delete_records('learninggoalwidget_i_userpro', array(
+            $DB->delete_records('learninggoalwidget_i_userpro', [
                 'lgw_coursemodule' => $cm->id,
                 'lgw_instance' => $cm->instance,
-                'lgw_user' => $user->id
-            ));
+                'lgw_user' => $user->id,
+            ]);
         }
     }
 
@@ -272,11 +272,11 @@ class provider implements
         $userids = $userlist->get_userids();
 
         foreach ($userids as $userid) {
-            $DB->delete_records('learninggoalwidget_i_userpro', array(
+            $DB->delete_records('learninggoalwidget_i_userpro', [
                 'lgw_coursemodule' => $cm->id,
                 'lgw_instance' => $cm->instance,
-                'lgw_user' => $userid
-            ));
+                'lgw_user' => $userid,
+            ]);
         }
     }
 }

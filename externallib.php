@@ -70,11 +70,11 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::get_taxonomy_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
-            )
+            ]
         );
         return (new taxonomy($coursemodule, $course, null, $instance))->get_taxonomy_as_json();
     }
@@ -124,12 +124,12 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::get_taxonomy_for_user_parameters(),
-            array(
+            [
                 'courseid' => $courseid,
                 'userid' => $userid,
                 'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
-            )
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -193,15 +193,15 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::update_user_progress_parameters(),
-            array(
+            [
                 'courseid' => $courseid,
                 'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
                 'userid' => $userid,
                 'topicid' => $topicid,
                 'goalid' => $goalid,
-                'progress' => $progress
-            )
+                'progress' => $progress,
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -244,12 +244,12 @@ class mod_learninggoalwidget_external extends external_api {
                 'userid' => new external_value(PARAM_INT, 'ID of the user'),
                 'eventparams' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             "name" => new external_value(PARAM_TEXT, 'name'),
                             "value" => new external_value(PARAM_TEXT, 'keyword'),
-                        )
+                        ]
                     )
-                )
+                ),
             ]
         );
     }
@@ -284,26 +284,26 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         $params = self::validate_parameters(
             self::log_event_parameters(),
-            array(
+            [
                 'courseid' => $courseid,
                 'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
                 'userid' => $userid,
-                'eventparams' => $eventparams
-            )
+                'eventparams' => $eventparams,
+            ]
         );
 
         self::validate_context(context_user::instance($userid));
 
         $usercontext = context_user::instance($userid);
 
-        // Left out 'courseid' => $courseid, because it was causing problems
-        $params = array(
+        // Left out 'courseid' => $courseid, because it was causing problems.
+        $params = [
             'contextid' => $usercontext->id,
             'relateduserid' => $userid,
             'other' => $eventparams,
             'userid' => $userid,
-        );
+        ];
 
         $eventclass = 'mod_learninggoalwidget\event\learninggoal_updated';
         $event = $eventclass::create($params);
@@ -408,14 +408,14 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::insert_topic_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicname' => $topicname,
                 'topicshortname' => $topicshortname,
-                'topicurl' => $topicurl
-            )
+                'topicurl' => $topicurl,
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -479,15 +479,15 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::update_topic_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'topicname' => $topicname,
                 'topicshortname' => $topicshortname,
-                'topicurl' => $topicurl
-            )
+                'topicurl' => $topicurl,
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -548,12 +548,12 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::delete_topic_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
-                'topicid' => $topicid
-            )
+                'topicid' => $topicid,
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -619,12 +619,12 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::moveup_topic_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
-                'topicid' => $topicid
-            )
+                'topicid' => $topicid,
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -708,12 +708,12 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::movedown_topic_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
-                'topicid' => $topicid
-            )
+                'topicid' => $topicid,
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -856,7 +856,7 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::insert_goal_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
@@ -864,7 +864,7 @@ class mod_learninggoalwidget_external extends external_api {
                 'goalname' => $goalname,
                 'goalshortname' => $goalshortname,
                 'goalurl' => $goalurl,
-            )
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -932,7 +932,7 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::update_goal_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
@@ -941,7 +941,7 @@ class mod_learninggoalwidget_external extends external_api {
                 'goalname' => $goalname,
                 'goalshortname' => $goalshortname,
                 'goalurl' => $goalurl,
-            )
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -1005,13 +1005,13 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::delete_goal_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'goalid' => $goalid,
-            )
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -1072,11 +1072,11 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::delete_taxonomy_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
-            )
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -1154,12 +1154,12 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::add_taxonomy_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'taxonomy' => $taxonomy,
-            )
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -1226,13 +1226,13 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::moveup_goal_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'goalid' => $goalid,
-            )
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));
@@ -1320,13 +1320,13 @@ class mod_learninggoalwidget_external extends external_api {
         // Parameter validation.
         self::validate_parameters(
             self::movedown_goal_parameters(),
-            array(
+            [
                 'course' => $course,
                 'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'goalid' => $goalid,
-            )
+            ]
         );
 
         self::validate_context(context_user::instance($USER->id));

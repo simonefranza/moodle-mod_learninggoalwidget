@@ -51,7 +51,7 @@ function learninggoalwidget_add_instance(stdClass $data): int {
                  WHERE lgw_course=?
                  AND lgw_coursemodule = -1
                  AND lgw_instance = -1";
-        $DB->execute($sql, array($data->coursemodule, $data->id, $COURSE->id));
+        $DB->execute($sql, [$data->coursemodule, $data->id, $COURSE->id]);
     }
 
     $sql = "SELECT 1
@@ -66,7 +66,7 @@ function learninggoalwidget_add_instance(stdClass $data): int {
              WHERE lgw_course=?
              AND lgw_coursemodule = -1
              AND lgw_instance = -1";
-        $DB->execute($sql, array($data->coursemodule, $data->id, $COURSE->id));
+        $DB->execute($sql, [$data->coursemodule, $data->id, $COURSE->id]);
     }
     return $data->id;
 }

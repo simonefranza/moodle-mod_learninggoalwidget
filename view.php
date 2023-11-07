@@ -32,16 +32,16 @@ list($course, $cm) = get_course_and_cm_from_cmid($id, 'learninggoalwidget');
 require_login($course, true, $cm);
 
 if ($id) {
-    $PAGE->set_url('/mod/learninggoalwidget/index.php', array('id' => $id));
+    $PAGE->set_url('/mod/learninggoalwidget/index.php', ['id' => $id]);
     if (!$cm = get_coursemodule_from_id('learninggoalwidget', $id)) {
         throw new moodle_exception('invalidcoursemodule');
     }
 
-    if (!$course = $DB->get_record("course", array("id" => $cm->course))) {
+    if (!$course = $DB->get_record("course", ["id" => $cm->course])) {
         throw new moodle_exception('coursemisconf');
     }
 
-    if (!$label = $DB->get_record("learninggoalwidget", array("id" => $cm->instance))) {
+    if (!$label = $DB->get_record("learninggoalwidget", ["id" => $cm->instance])) {
         throw new moodle_exception('invalidcoursemodule');
     }
 }

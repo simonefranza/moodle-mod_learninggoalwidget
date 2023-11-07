@@ -48,7 +48,7 @@ trait utils {
         $this->resetAfterTest(true);
 
         $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', array('course' => $course1->id));
+        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
@@ -87,7 +87,7 @@ trait utils {
         $topicinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord2);
 
         return [$course1, $coursemodule, $widgetinstance, $topicrecord1,
-            $topicrecord2, $topicinstancerecord1, $topicinstancerecord2, $user1];
+            $topicrecord2, $topicinstancerecord1, $topicinstancerecord2, $user1, ];
     }
 
     /**

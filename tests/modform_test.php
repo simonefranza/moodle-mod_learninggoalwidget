@@ -44,7 +44,7 @@ class modform_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $COURSE->id = $course->id;
 
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', array('course' => $course->id));
+        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course->id, true);

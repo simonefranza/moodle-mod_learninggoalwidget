@@ -43,7 +43,7 @@ class taxonomy_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', array('course' => $course1->id));
+        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
@@ -71,7 +71,7 @@ class taxonomy_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', array('course' => $course1->id));
+        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
@@ -173,8 +173,8 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertIsArray($parsed->children);
         $this->assertEquals(0, count($parsed->children));
 
-        $this->assertFalse($DB->record_exists('learninggoalwidget_topic', array('id' => $result1[3]->id)));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_i_topics', array('id' => $result1[4]->id)));
+        $this->assertFalse($DB->record_exists('learninggoalwidget_topic', ['id' => $result1[3]->id]));
+        $this->assertFalse($DB->record_exists('learninggoalwidget_i_topics', ['id' => $result1[4]->id]));
     }
 
     /**
@@ -373,10 +373,10 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertIsArray($resulttopic[0]);
         $this->assertEquals(0, count($resulttopic[0]));
 
-        $this->assertTrue($DB->record_exists('learninggoalwidget_topic', array('id' => $resultcourse[3]->id)));
-        $this->assertTrue($DB->record_exists('learninggoalwidget_i_topics', array('id' => $resultcourse[5]->id)));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_goal', array('id' => $goalrecord->id)));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_i_goals', array('id' => $goalinstancerecord->id)));
+        $this->assertTrue($DB->record_exists('learninggoalwidget_topic', ['id' => $resultcourse[3]->id]));
+        $this->assertTrue($DB->record_exists('learninggoalwidget_i_topics', ['id' => $resultcourse[5]->id]));
+        $this->assertFalse($DB->record_exists('learninggoalwidget_goal', ['id' => $goalrecord->id]));
+        $this->assertFalse($DB->record_exists('learninggoalwidget_i_goals', ['id' => $goalinstancerecord->id]));
     }
 
     /**
@@ -663,7 +663,7 @@ class taxonomy_test extends \advanced_testcase {
                 "Artificial Intelligence Basics Part 1",
                 "AIBasics 1",
                 "http://aibasics1.at",
-                []
+                [],
             ],
             [
                 $resultcourse[6]->lgw_rank,
@@ -671,7 +671,7 @@ class taxonomy_test extends \advanced_testcase {
                 "Artificial Intelligence Basics Part 2",
                 "AIBasics 2",
                 "http://aibasics2.at",
-                []
+                [],
             ],
         ];
         $this->check_json($parsed, $expectedjson);
@@ -687,7 +687,7 @@ class taxonomy_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         $course = $this->getDataGenerator()->create_course();
-        $instance = $this->getDataGenerator()->create_module('learninggoalwidget', array('course' => $course->id));
+        $instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
@@ -711,7 +711,7 @@ class taxonomy_test extends \advanced_testcase {
                             "keyword" => "goal2topic1keyword",
                             "link" => "http://goal2.topic1.com",
                         ],
-                    ]
+                    ],
                 ],
                 (object) [
                     "name" => "topic2",
@@ -728,9 +728,9 @@ class taxonomy_test extends \advanced_testcase {
                             "keyword" => "goal2topic2keyword",
                             "link" => "http://goal2.topic2.com",
                         ],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         $result = mod_learninggoalwidget_external::add_taxonomy(
             $course->id,
@@ -756,7 +756,7 @@ class taxonomy_test extends \advanced_testcase {
                 $topic->name,
                 $topic->keyword,
                 $topic->link,
-                []
+                [],
             ];
             foreach ($topic->children as $goalidx => $goal) {
                 $expectedjson->children[$topicidx][5][] = [
@@ -781,7 +781,7 @@ class taxonomy_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         $course = $this->getDataGenerator()->create_course();
-        $instance = $this->getDataGenerator()->create_module('learninggoalwidget', array('course' => $course->id));
+        $instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
@@ -805,9 +805,9 @@ class taxonomy_test extends \advanced_testcase {
                             "keyword" => "goal2topickeyword",
                             "link" => "http://goal2.topic.com",
                         ],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         $result = mod_learninggoalwidget_external::add_taxonomy(
             $course->id,
@@ -956,7 +956,7 @@ class taxonomy_test extends \advanced_testcase {
         $this->resetAfterTest(true);
 
         $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', array('course' => $course1->id));
+        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 

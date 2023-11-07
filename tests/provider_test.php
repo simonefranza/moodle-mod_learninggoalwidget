@@ -241,7 +241,7 @@ class provider_test extends provider_testcase {
         $records = $DB->get_records('learninggoalwidget_i_topics');
         $this->assertEmpty($records);
 
-        $widgetinstance1 = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $widgetinstance1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
         $coursemodule1 = get_coursemodule_from_instance('quiz', $widgetinstance1->id, $course->id);
         $cmcontext1 = \context_module::instance($coursemodule1->id);
         // Delete all user data for this assignment.
@@ -285,7 +285,7 @@ class provider_test extends provider_testcase {
         $records = $DB->get_records('learninggoalwidget_i_userpro', ['lgw_user' => $user->id]);
         $this->assertEmpty($records);
 
-        $widgetinstance1 = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+        $widgetinstance1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
         $coursemodule1 = get_coursemodule_from_instance('quiz', $widgetinstance1->id, $course->id);
         $cmcontext1 = \context_module::instance($coursemodule1->id);
 
@@ -356,7 +356,7 @@ class provider_test extends provider_testcase {
         $records = $DB->get_records('learninggoalwidget_i_userpro', ['lgw_user' => $user1->id]);
         $this->assertNotEmpty($records);
 
-        $widgetinstance2 = $this->getDataGenerator()->create_module('quiz', array('course' => $course1->id));
+        $widgetinstance2 = $this->getDataGenerator()->create_module('quiz', ['course' => $course1->id]);
         $coursemodule2 = get_coursemodule_from_instance('quiz', $widgetinstance2->id, $course1->id);
         $cmcontext2 = \context_module::instance($coursemodule2->id);
 

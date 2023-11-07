@@ -141,7 +141,7 @@ class userTaxonomy {
                 $topics[] = [
                     "topicid" => $topicrecord->id, "name" => $topic->get_title(),
                     "keyword" => $topic->get_shortname(), "link" => $topic->get_url(), "type" => "topic",
-                    "children" => $goals
+                    "children" => $goals,
                 ];
             }
         }

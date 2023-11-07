@@ -77,7 +77,7 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
             'coursemodule' => ($this->_cm !== null) ? $this->_cm->id : -1,
             'instance' => ($this->_instance !== null && $this->_instance !== "") ? $this->_instance : -1,
             'taxonomy' => $jsontaxonomy,
-            'notopicsmessage' => get_string('settings:notopicsmessage', 'mod_learninggoalwidget')
+            'notopicsmessage' => get_string('settings:notopicsmessage', 'mod_learninggoalwidget'),
         ];
         $learninggoalsettings = $widgetrenderer->render_from_template(
             'mod_learninggoalwidget/editor/form_settings',

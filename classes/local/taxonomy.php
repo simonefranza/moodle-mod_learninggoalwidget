@@ -103,7 +103,7 @@ class taxonomy {
             foreach ($topicrecords as $topicrecord) {
                 $topic = Topic::from_record($topicrecord);
                 $topics[] = [$topicrecord->lgw_rank, $topicrecord->id, $topic->get_title(), $topic->get_shortname(),
-                $topic->get_url(), $topic->get_goals()];
+                $topic->get_url(), $topic->get_goals(), ];
             }
         }
         return $topics;
