@@ -17,6 +17,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once($CFG->libdir . "/formslib.php");
 
 use mod_learninggoalwidget\local\taxonomy;
 

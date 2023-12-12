@@ -18,6 +18,6 @@
         "learninggoals"
     ],
 	"require": {
-		"moodle/moodle": "4.1.*"
+		"moodle/moodle": "4.2.*"
     }
 }

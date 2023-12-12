@@ -28,8 +28,6 @@
         <include>
             <directory suffix=".php">classes</directory>
             <file>lib.php</file>
-            <file>externallib.php</file>
-            <file>mod_form.php</file>
         </include>
     </coverage>
 </phpunit>

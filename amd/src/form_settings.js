@@ -234,7 +234,14 @@ define(
             topicurl: topicUrl,
           })]);
         })
-        .then(([modal, jsonTaxonomy]) => {
+        .then(([modal, id]) => {
+          return Promise.all([modal, id, Controller.getTaxonomy({
+            course: course,
+            coursemodule: coursemodule,
+            instance: instance,
+          })]);
+        })
+        .then(([modal, , jsonTaxonomy]) => {
           modal.hide();
           $("#topics-list").children().remove();
           taxonomy = JSON.parse(jsonTaxonomy);
@@ -477,7 +484,14 @@ define(
             goalurl: goalUrl,
           })]);
         })
-        .then(([modal, jsonTaxonomy]) => {
+        .then(([modal, id]) => {
+          return Promise.all([modal, id, Controller.getTaxonomy({
+            course: course,
+            coursemodule: coursemodule,
+            instance: instance,
+          })]);
+        })
+        .then(([modal, , jsonTaxonomy]) => {
           modal.hide();
 
           taxonomy = JSON.parse(jsonTaxonomy);

@@ -18,8 +18,11 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/mod/learninggoalwidget/mod_form.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
+require_once($CFG->dirroot . '/mod/learninggoalwidget/mod_form.php');
+require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+
+use core_external\external_api;
 
 /**
  * Learning Goal Taxonomy Mod Form Test
@@ -30,9 +33,8 @@ require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
  *
  * @runTestsInSeparateProcesses
  */
-class modform_test extends \advanced_testcase {
-    use mod_learninggoalwidget\utils;
-
+class mod_form_test extends externallib_advanced_testcase {
+    use \mod_learninggoalwidget\utils;
     /**
      * testing class mod_learninggoalwidget_mod_form
      *
@@ -40,8 +42,7 @@ class modform_test extends \advanced_testcase {
      */
     public function test_definition() {
         global $COURSE;
-        // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
+        $this->setUp();
 
         $course = $this->getDataGenerator()->create_course();
         $COURSE->id = $course->id;
@@ -51,7 +52,7 @@ class modform_test extends \advanced_testcase {
         $this->setUser($user);
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course->id, true);
 
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->instance = $widgetinstance->id;
         $moodleform = new mod_learninggoalwidget_mod_form($data, $coursemodule->sectionnum, $coursemodule, $course);
         $this->assertDebuggingNotCalled();

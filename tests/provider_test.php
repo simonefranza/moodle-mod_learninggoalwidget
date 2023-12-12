@@ -18,15 +18,17 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->dirroot . '/mod/learninggoalwidget/externallib.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
+require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
+use core_external\external_api;
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\contextlist_collection;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\approved_contextlist;
 use mod_learninggoalwidget\privacy\provider;
+use mod_learninggoalwidget\external\update_user_progress;
 
 /**
  * Learning Goal Taxonomy Privacy Provider Test
@@ -34,10 +36,21 @@ use mod_learninggoalwidget\privacy\provider;
  * @package   mod_learninggoalwidget
  * @copyright 2023 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
  * @runTestsInSeparateProcesses
  */
 class provider_test extends provider_testcase {
     use mod_learninggoalwidget\utils;
+    /**
+     * helper function, sets up test environment
+     *
+     * @return void
+     */
+    protected function setUp(): void {
+        global $CFG;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+    }
     /**
      * testing privacy provider: get metadata
      *
@@ -45,7 +58,7 @@ class provider_test extends provider_testcase {
      */
     public function test_get_metadata() {
         // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
+        $this->setUp();
         $metadata = provider::get_metadata(new collection('mod_learninggoalwidget'));
         $itemcollection = $metadata->get_collection();
         $this->assertCount(1, $itemcollection);
@@ -72,7 +85,7 @@ class provider_test extends provider_testcase {
      */
     public function test_get_contexts_for_userid() {
         // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
+        $this->setUp();
         $res = $this->setup_course_and_insert_goals();
         $coursedata = $res[0];
         $course = $coursedata[0];
@@ -88,7 +101,7 @@ class provider_test extends provider_testcase {
             $cmcontext,
         ];
 
-        mod_learninggoalwidget_external::update_user_progress(
+        update_user_progress::execute(
             $course->id,
             $coursemodule->id,
             $instance->id,
@@ -107,7 +120,7 @@ class provider_test extends provider_testcase {
      */
     public function test_get_users_in_context() {
         // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
+        $this->setUp();
         $res = $this->setup_course_and_insert_goals();
         $coursedata = $res[0];
         $course = $coursedata[0];
@@ -130,7 +143,7 @@ class provider_test extends provider_testcase {
         $this->getDataGenerator()->enrol_user($user4->id, $course->id, 'student');
         $this->getDataGenerator()->enrol_user($user5->id, $course->id, 'editingteacher');
 
-        mod_learninggoalwidget_external::update_user_progress(
+        update_user_progress::execute(
             $course->id,
             $coursemodule->id,
             $instance->id,
@@ -154,7 +167,7 @@ class provider_test extends provider_testcase {
      * Test exporting data with empty contextlist
      */
     public function test_empty_export_user_data_student() {
-        $this->resetAfterTest(true);
+        $this->setUp();
         $user = $this->getDataGenerator()->create_user();
         $approvedlist = new approved_contextlist($user, '', []);
         $this->assertEquals(provider::export_user_data($approvedlist), null);
@@ -165,7 +178,7 @@ class provider_test extends provider_testcase {
      */
     public function test_export_user_data_student() {
         // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
+        $this->setUp();
         $res = $this->setup_course_and_insert_goals();
         $coursedata = $res[0];
         $course = $coursedata[0];
@@ -177,7 +190,7 @@ class provider_test extends provider_testcase {
         $goalrecord = $res[1];
         $cmcontext = \context_module::instance($coursemodule->id);
 
-        mod_learninggoalwidget_external::update_user_progress(
+        update_user_progress::execute(
             $course->id,
             $coursemodule->id,
             $instance->id,
@@ -207,10 +220,10 @@ class provider_test extends provider_testcase {
      * Test delete all users data wrt training amplifier widget
      */
     public function test_delete_data_for_all_users_in_context() {
+        $this->setUp();
         global $DB;
 
         // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
         $coursedata = $res[0];
         $course = $coursedata[0];
@@ -221,7 +234,7 @@ class provider_test extends provider_testcase {
         $goalrecord = $res[1];
         $cmcontext = \context_module::instance($coursemodule->id);
 
-        mod_learninggoalwidget_external::update_user_progress(
+        update_user_progress::execute(
             $course->id,
             $coursemodule->id,
             $instance->id,
@@ -254,9 +267,9 @@ class provider_test extends provider_testcase {
      */
     public function test_delete_data_for_user() {
         global $DB;
+        $this->setUp();
 
         // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
         $coursedata = $res[0];
         $course = $coursedata[0];
@@ -268,7 +281,7 @@ class provider_test extends provider_testcase {
         $cmcontext = \context_module::instance($coursemodule->id);
         $coursecontext = \context_course::instance($course->id);
 
-        mod_learninggoalwidget_external::update_user_progress(
+        update_user_progress::execute(
             $course->id,
             $coursemodule->id,
             $instance->id,
@@ -299,8 +312,8 @@ class provider_test extends provider_testcase {
      */
     public function test_delete_data_for_users() {
         global $DB;
+        $this->setUp();
         // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
         $coursedata = $res[0];
         $course1 = $coursedata[0];
@@ -318,7 +331,7 @@ class provider_test extends provider_testcase {
         $this->getDataGenerator()->enrol_user($user2->id, $course1->id, 'student');
         $this->getDataGenerator()->enrol_user($user3->id, $course1->id, 'student');
 
-        mod_learninggoalwidget_external::update_user_progress(
+        update_user_progress::execute(
             $course1->id,
             $cm->id,
             $widgetinstance->id,
@@ -327,7 +340,7 @@ class provider_test extends provider_testcase {
             $goalrecord->id,
             50,
         );
-        mod_learninggoalwidget_external::update_user_progress(
+        update_user_progress::execute(
             $course1->id,
             $cm->id,
             $widgetinstance->id,
@@ -336,7 +349,7 @@ class provider_test extends provider_testcase {
             $goalrecord->id,
             60,
         );
-        mod_learninggoalwidget_external::update_user_progress(
+        update_user_progress::execute(
             $course1->id,
             $cm->id,
             $widgetinstance->id,

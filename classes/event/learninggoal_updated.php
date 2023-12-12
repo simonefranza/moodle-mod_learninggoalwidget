@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 namespace mod_learninggoalwidget\event;
 
 /**
@@ -57,34 +56,12 @@ class learninggoal_updated extends \core\event\base {
     }
 
     /**
-     * Does this event replace a legacy event?
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'learninggoal_updated';
-    }
-
-    /**
      * Returns relevant URL.
      *
      * @return \moodle_url
      */
     public function get_url() {
         return null;
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $legacyeventdata = new \stdClass();
-        $legacyeventdata->component = 'local_learninggoals';
-        $legacyeventdata->timestamp = time();
-        $legacyeventdata->userid = $this->relateduserid;
-        return $legacyeventdata;
     }
 
     /**

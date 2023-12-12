@@ -385,6 +385,7 @@ define(
                 .style("color", "white")
                 .style("border-radius", "0.2rem")
                 .style("padding-inline", "5px")
+
                 .style("pointer-events", "none");
 
             // Dimensions
@@ -531,8 +532,8 @@ define(
                             .style("opacity", 0.95);
                         div
                             .html(d.data.name)
-                            .style("left", "" + (e.pageX - rect.x) + "px")
-                            .style("top", "" + (e.pageY - height / 10 - rect.y) + "px");
+                            .style("left", "" + (e.clientX - rect.x) + "px")
+                            .style("top", "" + (e.clientY - height / 10 - rect.y) + "px");
 
                         // Highlight the topic / goal in the textual represenation of the chart
                         updateItemInTextualHierachy(sunburstId, d, getColor(percentage(d)), true);
@@ -853,8 +854,8 @@ define(
                             .style("opacity", 0.95);
                         div
                             .html(d.data.name)
-                            .style("left", (e.pageX - rect.x) + "px")
-                            .style("top", (e.pageY - height / 10 - rect.y) + "px");
+                            .style("left", (e.clientX - rect.x) + "px")
+                            .style("top", (e.clientY - height / 10 - rect.y) + "px");
 
                         // Highlight the topic / goal in the textual represenation of the chart
                         updateItemInTextualHierachy(sunburstId, d, getColor(percentage(d)), true);

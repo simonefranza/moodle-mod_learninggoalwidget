@@ -26,133 +26,154 @@ defined('MOODLE_INTERNAL') || die();
 
 // We defined the web service functions to install.
 $functions = [
-    'mod_learninggoalwidget_insert_topic' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'insert_topic',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_update_topic' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'update_topic',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_delete_topic' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'delete_topic',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_moveup_topic' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'moveup_topic',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_movedown_topic' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'movedown_topic',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_insert_goal' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'insert_goal',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_update_goal' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'update_goal',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_delete_goal' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'delete_goal',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_delete_taxonomy' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'delete_taxonomy',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Deletes the entire taxonomy',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_add_taxonomy' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'add_taxonomy',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Adds a whole taxonomy',
-        'type' => 'write',
-        'ajax' => true,
-    ],
+    // Taxonomy services.
     'mod_learninggoalwidget_get_taxonomy' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'get_taxonomy',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'gets the taxonomy',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_moveup_goal' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'moveup_goal',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
-    ],
-    'mod_learninggoalwidget_movedown_goal' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'movedown_goal',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
+        'classname'   => 'mod_learninggoalwidget\external\get_taxonomy',
+        'description' => 'Retrieves the taxonomy.',
+        'type'        => 'read',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
     ],
     'mod_learninggoalwidget_get_taxonomy_for_user' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'get_taxonomy_for_user',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'read',
-        'ajax' => true,
+        'classname'   => 'mod_learninggoalwidget\external\get_taxonomy_for_user',
+        'description' => 'Retrieves the taxonomy of a specific user.',
+        'type'        => 'read',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
     ],
     'mod_learninggoalwidget_update_user_progress' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'update_user_progress',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
+        'classname'   => 'mod_learninggoalwidget\external\update_user_progress',
+        'description' => 'Change the progress of a user on a goal',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
     ],
+    // Topic services.
+    'mod_learninggoalwidget_insert_topic' => [
+        'classname'   => 'mod_learninggoalwidget\external\insert_topic',
+        'description' => 'Inserts a topic into the taxonomy.',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_update_topic' => [
+        'classname'   => 'mod_learninggoalwidget\external\update_topic',
+        'description' => 'Update a topic of the taxonomy.',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_delete_topic' => [
+        'classname'   => 'mod_learninggoalwidget\external\delete_topic',
+        'description' => 'Delete a topic from the taxonomy.',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_moveup_topic' => [
+        'classname'   => 'mod_learninggoalwidget\external\moveup_topic',
+        'description' => 'Move a topic before the preceding one (decrease rank)',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_movedown_topic' => [
+        'classname'   => 'mod_learninggoalwidget\external\movedown_topic',
+        'description' => 'Move a topic behind the succeeding one (increase rank)',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    // Goal services.
+    'mod_learninggoalwidget_insert_goal' => [
+        'classname'   => 'mod_learninggoalwidget\external\insert_goal',
+        'description' => 'Inserts a goal into the taxonomy.',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_update_goal' => [
+        'classname'   => 'mod_learninggoalwidget\external\update_goal',
+        'description' => 'Update a goal of the taxonomy.',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_delete_goal' => [
+        'classname'   => 'mod_learninggoalwidget\external\delete_goal',
+        'description' => 'Delete a goal from the taxonomy.',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_moveup_goal' => [
+        'classname'   => 'mod_learninggoalwidget\external\moveup_goal',
+        'description' => 'Move a goal before the preceding one (decrease rank)',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_movedown_goal' => [
+        'classname'   => 'mod_learninggoalwidget\external\movedown_goal',
+        'description' => 'Move a goal behind the succeeding one (increase rank)',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    // Taxonomy Control with JSON files.
+    'mod_learninggoalwidget_add_taxonomy' => [
+        'classname'   => 'mod_learninggoalwidget\external\add_taxonomy',
+        'description' => 'Add a whole taxonomy',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    'mod_learninggoalwidget_delete_taxonomy' => [
+        'classname'   => 'mod_learninggoalwidget\external\delete_taxonomy',
+        'description' => 'Deletes the entire taxonomy',
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
+    ],
+    // Events.
     'mod_learninggoalwidget_log_event' => [
-        'classname' => 'mod_learninggoalwidget_external',
-        'methodname' => 'log_event',
-        'classpath' => 'mod/learninggoalwidget/externallib.php',
+        'classname'   => 'mod_learninggoalwidget\external\log_event',
         'description' => 'Logs user interactions in the learning goals widget',
-        'type' => 'write',
-        'ajax' => true,
+        'type'        => 'write',
+        'ajax'        => true,
+        'services' => [
+            MOODLE_OFFICIAL_MOBILE_SERVICE,
+        ],
     ],
 
 ];
