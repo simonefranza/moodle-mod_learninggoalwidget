@@ -60,13 +60,13 @@ class provider implements
         $items->add_database_table(
             'learninggoalwidget_i_userpro',
             [
-                'lgw_course' => 'privacy:metadata:learninggoalwidget_i_userpro:lgw_course',
-                'lgw_coursemodule' => 'privacy:metadata:learninggoalwidget_i_userpro:lgw_coursemodule',
-                'lgw_instance' => 'privacy:metadata:learninggoalwidget_i_userpro:lgw_instance',
-                'lgw_topic' => 'privacy:metadata:learninggoalwidget_i_userpro:lgw_topic',
-                'lgw_goal' => 'privacy:metadata:learninggoalwidget_i_userpro:lgw_goal',
-                'lgw_user' => 'privacy:metadata:learninggoalwidget_i_userpro:lgw_user',
-                'lgw_progress' => 'privacy:metadata:learninggoalwidget_i_userpro:lgw_progress',
+                'course' => 'privacy:metadata:learninggoalwidget_i_userpro:course',
+                'coursemodule' => 'privacy:metadata:learninggoalwidget_i_userpro:coursemodule',
+                'instance' => 'privacy:metadata:learninggoalwidget_i_userpro:instance',
+                'topic' => 'privacy:metadata:learninggoalwidget_i_userpro:topic',
+                'goal' => 'privacy:metadata:learninggoalwidget_i_userpro:goal',
+                'user' => 'privacy:metadata:learninggoalwidget_i_userpro:user',
+                'progress' => 'privacy:metadata:learninggoalwidget_i_userpro:progress',
             ],
             'privacy:metadata:learninggoalwidget_i_userpro'
         );
@@ -89,8 +89,8 @@ class provider implements
                   JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN {learninggoalwidget} lgw ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.lgw_instance = lgw.id
-                 WHERE lgwup.lgw_user = :userid";
+                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.instance = lgw.id
+                 WHERE lgwup.user = :userid";
         $params = ['contextlevel' => CONTEXT_MODULE, 'modname' => 'learninggoalwidget', 'userid' => $userid];
         $resultset->add_from_sql($sql, $params);
 
@@ -111,11 +111,11 @@ class provider implements
         ];
 
         // Users who attempted the quiz.
-        $sql = "SELECT lgwup.lgw_user as userid
+        $sql = "SELECT lgwup.user as userid
                   FROM {course_modules} cm
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN {learninggoalwidget} lgw ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.lgw_instance = lgw.id
+                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.instance = lgw.id
                  WHERE cm.id = :cmid";
         $userlist->add_from_sql('userid', $sql, $params);
 
@@ -139,25 +139,25 @@ class provider implements
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
         $sql = "SELECT
-                    lgwup.lgw_course AS lgw_course,
-                    lgwup.lgw_instance AS lgw_instance,
-                    lgwup.lgw_user AS lgw_user,
-                    lgwup.lgw_progress AS lgw_progress,
-                    lgwtopic.lgw_title AS lgw_topictitle,
-                    lgwtopic.lgw_shortname AS lgw_topicshortname,
-                    lgwtopic.lgw_url AS lgw_topicurl,
-                    lgwgoal.lgw_title AS lgw_goaltitle,
-                    lgwgoal.lgw_shortname AS lgw_goalshortname,
-                    lgwgoal.lgw_url AS lgw_goalurl,
+                    lgwup.course AS course,
+                    lgwup.instance AS instance,
+                    lgwup.user AS user,
+                    lgwup.progress AS progress,
+                    lgwtopic.title AS topictitle,
+                    lgwtopic.shortname AS topicshortname,
+                    lgwtopic.url AS topicurl,
+                    lgwgoal.title AS goaltitle,
+                    lgwgoal.shortname AS goalshortname,
+                    lgwgoal.url AS goalurl,
                     c.id AS contextid,
                     cm.id AS cmid
                   FROM {context} c
             INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
             INNER JOIN {learninggoalwidget} lgw ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.lgw_instance = lgw.id AND lgwup.lgw_user = :userid
-                  RIGHT JOIN {learninggoalwidget_topic} lgwtopic ON lgwup.lgw_topic = lgwtopic.id
-        RIGHT JOIN {learninggoalwidget_goal} lgwgoal ON lgwup.lgw_goal = lgwgoal.id AND lgwup.lgw_topic = lgwgoal.lgw_topic
+                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.instance = lgw.id AND lgwup.user = :userid
+                  RIGHT JOIN {learninggoalwidget_topic} lgwtopic ON lgwup.topic = lgwtopic.id
+        RIGHT JOIN {learninggoalwidget_goal} lgwgoal ON lgwup.goal = lgwgoal.id AND lgwup.topic = lgwgoal.topic
                  WHERE c.id {$contextsql}";
 
         $params = [
@@ -173,11 +173,11 @@ class provider implements
         foreach ($progressrecords as $progressrecord) {
             $context = $contextlist->current();
             $progress = new stdClass;
-            $progress->course = format_string($progressrecord->lgw_course);
-            $progress->instance = format_string($progressrecord->lgw_instance);
-            $progress->topictitle = format_string($progressrecord->lgw_topictitle);
-            $progress->goaltitle = format_string($progressrecord->lgw_goaltitle);
-            $progress->progress = format_string($progressrecord->lgw_progress);
+            $progress->course = format_string($progressrecord->course);
+            $progress->instance = format_string($progressrecord->instance);
+            $progress->topictitle = format_string($progressrecord->topictitle);
+            $progress->goaltitle = format_string($progressrecord->goaltitle);
+            $progress->progress = format_string($progressrecord->progress);
             \array_push($data->progress, $progress);
 
         }
@@ -205,16 +205,16 @@ class provider implements
         }
 
         $DB->delete_records('learninggoalwidget_i_userpro', [
-            'lgw_coursemodule' => $cm->id,
-            'lgw_instance' => $cm->instance,
+            'coursemodule' => $cm->id,
+            'instance' => $cm->instance,
         ]);
         $DB->delete_records('learninggoalwidget_i_goals', [
-            'lgw_coursemodule' => $cm->id,
-            'lgw_instance' => $cm->instance,
+            'coursemodule' => $cm->id,
+            'instance' => $cm->instance,
         ]);
         $DB->delete_records('learninggoalwidget_i_topics', [
-            'lgw_coursemodule' => $cm->id,
-            'lgw_instance' => $cm->instance,
+            'coursemodule' => $cm->id,
+            'instance' => $cm->instance,
         ]);
     }
 
@@ -241,9 +241,9 @@ class provider implements
             $user = $contextlist->get_user();
 
             $DB->delete_records('learninggoalwidget_i_userpro', [
-                'lgw_coursemodule' => $cm->id,
-                'lgw_instance' => $cm->instance,
-                'lgw_user' => $user->id,
+                'coursemodule' => $cm->id,
+                'instance' => $cm->instance,
+                'user' => $user->id,
             ]);
         }
     }
@@ -273,9 +273,9 @@ class provider implements
 
         foreach ($userids as $userid) {
             $DB->delete_records('learninggoalwidget_i_userpro', [
-                'lgw_coursemodule' => $cm->id,
-                'lgw_instance' => $cm->instance,
-                'lgw_user' => $userid,
+                'coursemodule' => $cm->id,
+                'instance' => $cm->instance,
+                'user' => $userid,
             ]);
         }
     }

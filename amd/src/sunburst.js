@@ -370,7 +370,7 @@ define(
 
             //  Window for the tooltip
             var div = d3
-                .select("body")
+                .select("#" + sunburstId + "-container")
                 .append("div")
                 .attr("id", sunburstId + "-taxonomy-fullgoal")
                 .style("opacity", 0)
@@ -380,9 +380,11 @@ define(
                 .style("width", "12vw")
                 .style("min-height", "4vh")
                 .style("font", "sans-serif")
-                .style("background", "lightgrey")
-                .style("border", "1px solid darkgrey")
-                .style("border-radius", "10%/20%")
+                .style("background", "rgb(106, 115, 123)")
+                .style("border", "1px solid rgb(91, 99, 105)")
+                .style("color", "white")
+                .style("border-radius", "0.2rem")
+                .style("padding-inline", "5px")
                 .style("pointer-events", "none");
 
             // Dimensions
@@ -490,6 +492,7 @@ define(
             }
 
             // Building the chart
+            const container = document.querySelector('#' + sunburstId + '-container');
             g.selectAll("g")
                 .data(root.descendants())
                 .enter()
@@ -521,14 +524,15 @@ define(
                 .attr("d", arc)
                 .on(
                     "mouseover", function(e, d) {
+                        const rect = container.getBoundingClientRect();
                         div
                             .transition()
                             .duration(200)
-                            .style("opacity", 0.8);
+                            .style("opacity", 0.95);
                         div
                             .html(d.data.name)
-                            .style("left", "" + e.pageX + "px")
-                            .style("top", "" + (e.pageY - height / 10) + "px");
+                            .style("left", "" + (e.pageX - rect.x) + "px")
+                            .style("top", "" + (e.pageY - height / 10 - rect.y) + "px");
 
                         // Highlight the topic / goal in the textual represenation of the chart
                         updateItemInTextualHierachy(sunburstId, d, getColor(percentage(d)), true);
@@ -719,7 +723,7 @@ define(
                 .attr("class", "skipLine");
 
             var div = d3
-                .select("body")
+                .select("#" + sunburstId + "-container")
                 .append("div")
                 .attr("id", sunburstId + "-taxonomy-userprogress-chart-fullgoal")
                 .style("opacity", 0)
@@ -729,9 +733,11 @@ define(
                 .style("width", "12vw")
                 .style("min-height", "4vh")
                 .style("font", "sans-serif")
-                .style("background", "lightgrey")
-                .style("border", "1px solid darkgrey")
-                .style("border-radius", "10%/20%")
+                .style("background", "rgb(106, 115, 123)")
+                .style("border", "1px solid rgb(91, 99, 105)")
+                .style("color", "white")
+                .style("border-radius", "0.2rem")
+                .style("padding-inline", "5px")
                 .style("pointer-events", "none");
 
             // Dimensions
@@ -793,6 +799,7 @@ define(
                 );
 
             // Building the chart
+            const container = document.querySelector('#' + sunburstId + '-container');
             g.selectAll("g")
                 .data(root.descendants())
                 .enter()
@@ -839,14 +846,15 @@ define(
                 )
                 .attr("d", arc)
                 .on("mouseover", (e, d) => {
+                        const rect = container.getBoundingClientRect();
                         div
                             .transition()
                             .duration(200)
-                            .style("opacity", 0.8);
+                            .style("opacity", 0.95);
                         div
                             .html(d.data.name)
-                            .style("left", e.pageX + "px")
-                            .style("top", e.pageY - height / 10 + "px");
+                            .style("left", (e.pageX - rect.x) + "px")
+                            .style("top", (e.pageY - height / 10 - rect.y) + "px");
 
                         // Highlight the topic / goal in the textual represenation of the chart
                         updateItemInTextualHierachy(sunburstId, d, getColor(percentage(d)), true);

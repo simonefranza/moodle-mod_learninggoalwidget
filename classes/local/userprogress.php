@@ -47,12 +47,12 @@ class userprogress {
     public static function get_progress($courseid, $coursemoduleid, $instanceid, $userid, $topicid, $goalid) {
         global $DB;
 
-        $sqlstmt = "SELECT lgw_progress FROM {learninggoalwidget_i_userpro}
-            WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_user = ? AND lgw_topic = ? AND lgw_goal = ?";
+        $sqlstmt = "SELECT progress FROM {learninggoalwidget_i_userpro}
+            WHERE course = ? AND coursemodule = ? AND instance = ? AND user = ? AND topic = ? AND goal = ?";
         $params = [$courseid, $coursemoduleid, $instanceid, $userid, $topicid, $goalid];
         $userprogressrecord = $DB->get_record_sql($sqlstmt, $params);
         if ($userprogressrecord) {
-            return $userprogressrecord->lgw_progress;
+            return $userprogressrecord->progress;
         }
         // No record means no progress.
         return 0;

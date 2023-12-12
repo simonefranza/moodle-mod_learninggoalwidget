@@ -105,24 +105,20 @@ define(
         };
         CoreStr.get_string('settings:showgoals', 'mod_learninggoalwidget')
           .then((showGoalStr) => {
-            Templates.render(TEMPLATES.TOPIC, topicContext)
-              .then((html) => {
-                $("#notopics").addClass("d-none");
-                $("#goalsfortopic").removeClass("d-none");
-                $("#goalsfortopicstatusmessage").html(showGoalStr);
-                $("#topics-list").append(html);
-                var topicId = topicContext.topicid;
-                $("#topic-item-" + topicId).click(clickedTopicName);
-                $("#" + topicId + "-action-edit").click(clickedEditTopic);
-                $("#" + topicId + "-action-delete").click(clickedDeleteTopic);
-                $("#" + topicId + "-action-moveup").click(clickedMoveupTopic);
-                $("#" + topicId + "-action-movedown").click(clickedMovedownTopic);
-                return html;
-              })
-              .catch(() => {
-                // Do nothing
-              });
-            return 0;
+            return Promise.all([showGoalStr, Templates.render(TEMPLATES.TOPIC, topicContext)]);
+          })
+          .then(([showGoalStr, html]) => {
+            $("#notopics").addClass("d-none");
+            $("#goalsfortopic").removeClass("d-none");
+            $("#goalsfortopicstatusmessage").html(showGoalStr);
+            $("#topics-list").append(html);
+            var topicId = topicContext.topicid;
+            $("#topic-item-" + topicId).click(clickedTopicName);
+            $("#" + topicId + "-action-edit").click(clickedEditTopic);
+            $("#" + topicId + "-action-delete").click(clickedDeleteTopic);
+            $("#" + topicId + "-action-moveup").click(clickedMoveupTopic);
+            $("#" + topicId + "-action-movedown").click(clickedMovedownTopic);
+            return html;
           })
           .catch(() => {
             // Do nothing
@@ -215,32 +211,34 @@ define(
             weburl: results[3],
           };
 
-          showModal(
-            context,
-            results[2],
-            TEMPLATES.TOPIC_MODAL_VIEW,
-            "Speichern",
-            (modal, topicName, topicShortname, topicUrl) => {
-              // Make insert topic call
-              Controller.insertTopic({
-                course: course,
-                coursemodule: coursemodule,
-                instance: instance,
-                topicname: topicName,
-                topicshortname: topicShortname,
-                topicurl: topicUrl,
-              })
-                .then((jsonTaxonomy) => {
-                  modal.hide();
-                  $("#topics-list").children().remove();
-                  taxonomy = JSON.parse(jsonTaxonomy);
-                  loadTopics(taxonomy);
-                  return;
-                })
-                .catch(() => {
-                  // Do nothing
-                });
-            });
+          return new Promise((resolve) => {
+            showModal(
+              context,
+              results[2],
+              TEMPLATES.TOPIC_MODAL_VIEW,
+              "Speichern",
+              (modal, topicName, topicShortname, topicUrl) => {
+                resolve([modal, topicName, topicShortname, topicUrl]);
+              }
+            );
+          });
+        })
+        .then(([modal, topicName, topicShortname, topicUrl]) => {
+          // Make insert topic call
+          return Promise.all([modal, Controller.insertTopic({
+            course: course,
+            coursemodule: coursemodule,
+            instance: instance,
+            topicname: topicName,
+            topicshortname: topicShortname,
+            topicurl: topicUrl,
+          })]);
+        })
+        .then(([modal, jsonTaxonomy]) => {
+          modal.hide();
+          $("#topics-list").children().remove();
+          taxonomy = JSON.parse(jsonTaxonomy);
+          loadTopics(taxonomy);
           return 0;
         })
         .catch(() => {
@@ -286,34 +284,35 @@ define(
             topicurl: topicUrl,
           };
 
-          showModal(
-            context,
-            results[2],
-            TEMPLATES.TOPIC_MODAL_VIEW,
-            results[4],
-            (modal, topicName, topicShortname, topicUrl) => {
-              // Make update topic call
-              Controller.updateTopic({
-                course: course,
-                coursemodule: coursemodule,
-                instance: instance,
-                topicid: topicId,
-                topicname: topicName,
-                topicshortname: topicShortname,
-                topicurl: topicUrl,
-              })
-                .then((jsonTaxonomy) => {
-                  modal.hide();
-                  $("#topics-list").children().remove();
-                  taxonomy = JSON.parse(jsonTaxonomy);
-                  loadTopics(taxonomy);
-                  return;
-                })
-                .catch(() => {
-                  // Do nothing
-                });
-            }
-          );
+          return new Promise((resolve) => {
+            showModal(
+              context,
+              results[2],
+              TEMPLATES.TOPIC_MODAL_VIEW,
+              results[4],
+              (modal, topicName, topicShortname, topicUrl) => {
+                resolve([modal, topicName, topicShortname, topicUrl]);
+              }
+            );
+          });
+        })
+        .then(([modal, topicName, topicShortname, topicUrl]) => {
+          // Make update topic call
+          return Promise.all([modal, Controller.updateTopic({
+            course: course,
+            coursemodule: coursemodule,
+            instance: instance,
+            topicid: topicId,
+            topicname: topicName,
+            topicshortname: topicShortname,
+            topicurl: topicUrl,
+          })]);
+        })
+        .then(([modal, jsonTaxonomy]) => {
+          modal.hide();
+          $("#topics-list").children().remove();
+          taxonomy = JSON.parse(jsonTaxonomy);
+          loadTopics(taxonomy);
           return 0;
         })
         .catch(() => {
@@ -336,30 +335,30 @@ define(
       ];
       CoreStr.get_strings(strings)
         .then((results) => {
-          showMessage(
-            results[0],
-            results[1],
-            results[2],
-            (modal) => {
-              // Make delete topic call
-              Controller.deleteTopic({
-                course: course,
-                coursemodule: coursemodule,
-                instance: instance,
-                topicid: topicId
-              })
-                .then((jsonTaxonomy) => {
-                  modal.hide();
-                  $("#topics-list").children().remove();
-                  $("#learninggoals-list").children().remove();
-                  taxonomy = JSON.parse(jsonTaxonomy);
-                  loadTopics(taxonomy);
-                  return;
-                })
-                .catch(() => {
-                  // Do nothing
-                });
-            });
+          return new Promise((resolve) => {
+            showMessage(
+              results[0],
+              results[1],
+              results[2],
+              (modal) => resolve(modal)
+            );
+          });
+        })
+        .then((modal) => {
+          // Make delete topic call
+          return Promise.all([modal, Controller.deleteTopic({
+            course: course,
+            coursemodule: coursemodule,
+            instance: instance,
+            topicid: topicId
+          })]);
+        })
+        .then(([modal, jsonTaxonomy]) => {
+          modal.hide();
+          $("#topics-list").children().remove();
+          $("#learninggoals-list").children().remove();
+          taxonomy = JSON.parse(jsonTaxonomy);
+          loadTopics(taxonomy);
           return 0;
         })
         .catch(() => {
@@ -454,38 +453,40 @@ define(
             topictitle: topicTitle,
           };
 
-          showModal(
-            context,
-            results[4],
-            TEMPLATES.GOAL_MODAL_VIEW,
-            results[5],
-            (modal, goalName, goalShortname, goalUrl) => {
-              // Make insert goal call
-              Controller.insertGoal({
-                course: course,
-                coursemodule: coursemodule,
-                instance: instance,
-                topicid: selectedTopic,
-                goalname: goalName,
-                goalshortname: goalShortname,
-                goalurl: goalUrl,
-              })
-                .then((jsonTaxonomy) => {
-                  modal.hide();
+          return new Promise((resolve) => {
+            showModal(
+              context,
+              results[4],
+              TEMPLATES.GOAL_MODAL_VIEW,
+              results[5],
+              (modal, goalName, goalShortname, goalUrl) => {
+                resolve([modal, goalName, goalShortname, goalUrl]);
+              }
+            );
+          });
+        })
+        .then(([modal, goalName, goalShortname, goalUrl]) => {
+          // Make insert goal call
+          return Promise.all([modal, Controller.insertGoal({
+            course: course,
+            coursemodule: coursemodule,
+            instance: instance,
+            topicid: selectedTopic,
+            goalname: goalName,
+            goalshortname: goalShortname,
+            goalurl: goalUrl,
+          })]);
+        })
+        .then(([modal, jsonTaxonomy]) => {
+          modal.hide();
 
-                  taxonomy = JSON.parse(jsonTaxonomy);
-                  $('#learninggoals-list').children().remove();
-                  taxonomy.children.forEach((topic) => {
-                    if (topic[1] === selectedTopic) {
-                      loadGoals(selectedTopic, topic[5]);
-                    }
-                  });
-                  return;
-                })
-                .catch(() => {
-                  // Do nothing
-                });
-            });
+          taxonomy = JSON.parse(jsonTaxonomy);
+          $('#learninggoals-list').children().remove();
+          taxonomy.children.forEach((topic) => {
+            if (topic[1] === selectedTopic) {
+              loadGoals(selectedTopic, topic[5]);
+            }
+          });
           return 0;
         })
         .catch(() => {
@@ -543,38 +544,40 @@ define(
             goalurl: goalUrl,
           };
 
-          showModal(
-            context,
-            results[4],
-            TEMPLATES.GOAL_MODAL_VIEW,
-            results[5],
-            (modal, goalName, goalShortname, goalUrl) => {
-              // Make insert goal call
-              Controller.updateGoal({
-                course: course,
-                coursemodule: coursemodule,
-                instance: instance,
-                topicid: topicId,
-                goalid: goalId,
-                goalname: goalName,
-                goalshortname: goalShortname,
-                goalurl: goalUrl,
-              })
-                .then((jsonTaxonomy) => {
-                  modal.hide();
-                  taxonomy = JSON.parse(jsonTaxonomy);
-                  $('#learninggoals-list').children().remove();
-                  taxonomy.children.forEach((topic) => {
-                    if (topic[1] === topicId) {
-                      loadGoals(topicId, topic[5]);
-                    }
-                  });
-                  return;
-                })
-                .catch(() => {
-                  // Do nothing
-                });
-            });
+          return new Promise((resolve) => {
+            showModal(
+              context,
+              results[4],
+              TEMPLATES.GOAL_MODAL_VIEW,
+              results[5],
+              (modal, goalName, goalShortname, goalUrl) => {
+                resolve([modal, goalName, goalShortname, goalUrl]);
+              }
+            );
+          });
+        })
+        .then(([modal, goalName, goalShortname, goalUrl]) => {
+          // Make insert goal call
+          return Promise.all([modal, Controller.updateGoal({
+            course: course,
+            coursemodule: coursemodule,
+            instance: instance,
+            topicid: topicId,
+            goalid: goalId,
+            goalname: goalName,
+            goalshortname: goalShortname,
+            goalurl: goalUrl,
+          })]);
+        })
+        .then(([modal, jsonTaxonomy]) => {
+          modal.hide();
+          taxonomy = JSON.parse(jsonTaxonomy);
+          $('#learninggoals-list').children().remove();
+          taxonomy.children.forEach((topic) => {
+            if (topic[1] === topicId) {
+              loadGoals(topicId, topic[5]);
+            }
+          });
           return 0;
         })
         .catch(() => {
@@ -599,34 +602,34 @@ define(
       ];
       CoreStr.get_strings(strings)
         .then((results) => {
-          showMessage(
-            results[0],
-            results[1],
-            results[2],
-            (modal) => {
-              // Make delete topic call
-              Controller.deleteGoal({
-                course: course,
-                coursemodule: coursemodule,
-                instance: instance,
-                topicid: topicId,
-                goalid: goalId
-              })
-                .then((jsonTaxonomy) => {
-                  modal.hide();
-                  taxonomy = JSON.parse(jsonTaxonomy);
-                  $('#learninggoals-list').children().remove();
-                  taxonomy.children.forEach((topic) => {
-                    if (topic[1] === topicId) {
-                      loadGoals(topicId, topic[5]);
-                    }
-                  });
-                  return;
-                })
-                .catch(() => {
-                  // Do nothing
-                });
-            });
+          return new Promise((resolve) => {
+            showMessage(
+              results[0],
+              results[1],
+              results[2],
+              (modal) => resolve(modal)
+            );
+          });
+        })
+        .then((modal) => {
+          // Make delete topic call
+          return Promise.all([modal, Controller.deleteGoal({
+            course: course,
+            coursemodule: coursemodule,
+            instance: instance,
+            topicid: topicId,
+            goalid: goalId
+          })]);
+        })
+        .then(([modal, jsonTaxonomy]) => {
+          modal.hide();
+          taxonomy = JSON.parse(jsonTaxonomy);
+          $('#learninggoals-list').children().remove();
+          taxonomy.children.forEach((topic) => {
+            if (topic[1] === topicId) {
+              loadGoals(topicId, topic[5]);
+            }
+          });
           return 0;
         })
         .catch(() => {

@@ -29,6 +29,8 @@ use mod_learninggoalwidget\local\taxonomy;
  * @package   mod_learninggoalwidget
  * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @runTestsInSeparateProcesses
  */
 class taxonomy_test extends \advanced_testcase {
     use mod_learninggoalwidget\utils;
@@ -554,7 +556,7 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_logevent() {
-        global $DB, $COURSE;
+        global $DB;
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
         $this->preventResetByRollback();
@@ -591,7 +593,7 @@ class taxonomy_test extends \advanced_testcase {
         $eventparams[3] = ["name" => "instanceid", "value" => $widgetinstance->id];
         $eventparams[4] = ["name" => "userid", "value" => $user1->id];
         $eventparams[5] = ["name" => "timestamp", "value" => $timestamp];
-        $eventparams[6] = ["name" => "goalname", "value" => $goalrecord->lgw_title];
+        $eventparams[6] = ["name" => "goalname", "value" => $goalrecord->title];
         $eventparams[7] = ["name" => "goalprogress", "value" => $progress];
 
         // Update learning goal 2 progess to 50.
@@ -616,7 +618,7 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertTrue($output->instanceid == $widgetinstance->id);
         $this->assertTrue($output->userid == $user1->id);
         $this->assertTrue($output->timestamp == $timestamp);
-        $this->assertTrue($output->goalname == $goalrecord->lgw_title);
+        $this->assertTrue($output->goalname == $goalrecord->title);
         $this->assertTrue($output->goalprogress == $progress);
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -658,7 +660,7 @@ class taxonomy_test extends \advanced_testcase {
         $expectedjson->name = "Learning Goal's Taxonomy";
         $expectedjson->children = [
             [
-                $resultcourse[5]->lgw_rank,
+                $resultcourse[5]->rank,
                 $resultcourse[3]->id,
                 "Artificial Intelligence Basics Part 1",
                 "AIBasics 1",
@@ -666,7 +668,7 @@ class taxonomy_test extends \advanced_testcase {
                 [],
             ],
             [
-                $resultcourse[6]->lgw_rank,
+                $resultcourse[6]->rank,
                 $resultcourse[4]->id,
                 "Artificial Intelligence Basics Part 2",
                 "AIBasics 2",
@@ -964,18 +966,18 @@ class taxonomy_test extends \advanced_testcase {
 
         // Create topic in course.
         $topicrecord = new stdClass;
-        $topicrecord->lgw_title = $topictitle;
-        $topicrecord->lgw_shortname = $topicshortname;
-        $topicrecord->lgw_url = $topicurl;
+        $topicrecord->title = $topictitle;
+        $topicrecord->shortname = $topicshortname;
+        $topicrecord->url = $topicurl;
         $topicrecord->id = $DB->insert_record('learninggoalwidget_topic', $topicrecord);
 
         // Link topic with widget instance.
         $topicinstancerecord = new stdClass;
-        $topicinstancerecord->lgw_course = $course1->id;
-        $topicinstancerecord->lgw_coursemodule = $coursemodule->id;
-        $topicinstancerecord->lgw_instance = $widgetinstance->id;
-        $topicinstancerecord->lgw_topic = $topicrecord->id;
-        $topicinstancerecord->lgw_rank = 1;
+        $topicinstancerecord->course = $course1->id;
+        $topicinstancerecord->coursemodule = $coursemodule->id;
+        $topicinstancerecord->instance = $widgetinstance->id;
+        $topicinstancerecord->topic = $topicrecord->id;
+        $topicinstancerecord->rank = 1;
         $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
 
         return [$course1, $coursemodule, $widgetinstance, $topicrecord, $topicinstancerecord];
@@ -1139,38 +1141,38 @@ class taxonomy_test extends \advanced_testcase {
         // Insert goal 1 under topic 1.
         // Insert in goal 1 table.
         $goalrecord1 = new stdClass;
-        $goalrecord1->lgw_title = "Goal 1 under Topic 1";
-        $goalrecord1->lgw_shortname = "Goal 1 shortname";
-        $goalrecord1->lgw_url = "http://goal1.at";
-        $goalrecord1->lgw_topic = $resultcourse[3]->id;
+        $goalrecord1->title = "Goal 1 under Topic 1";
+        $goalrecord1->shortname = "Goal 1 shortname";
+        $goalrecord1->url = "http://goal1.at";
+        $goalrecord1->topic = $resultcourse[3]->id;
         $goalrecord1->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord1);
 
         // Link goal 1 with learning goal activity in a course.
         $goalinstancerecord1 = new stdClass;
-        $goalinstancerecord1->lgw_course = $resultcourse[0]->id;
-        $goalinstancerecord1->lgw_coursemodule = $resultcourse[1]->id;
-        $goalinstancerecord1->lgw_instance = $resultcourse[2]->id;
-        $goalinstancerecord1->lgw_topic = $resultcourse[3]->id;
-        $goalinstancerecord1->lgw_goal = $goalrecord1->id;
-        $goalinstancerecord1->lgw_rank = 1;
+        $goalinstancerecord1->course = $resultcourse[0]->id;
+        $goalinstancerecord1->coursemodule = $resultcourse[1]->id;
+        $goalinstancerecord1->instance = $resultcourse[2]->id;
+        $goalinstancerecord1->topic = $resultcourse[3]->id;
+        $goalinstancerecord1->goal = $goalrecord1->id;
+        $goalinstancerecord1->rank = 1;
         $goalinstancerecord1->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord1);
 
         // Insert in goal 2.
         $goalrecord2 = new stdClass;
-        $goalrecord2->lgw_title = "Goal 2 under Topic 1";
-        $goalrecord2->lgw_shortname = "Goal 2 shortname";
-        $goalrecord2->lgw_url = "http://goal2.at";
-        $goalrecord2->lgw_topic = $resultcourse[3]->id;
+        $goalrecord2->title = "Goal 2 under Topic 1";
+        $goalrecord2->shortname = "Goal 2 shortname";
+        $goalrecord2->url = "http://goal2.at";
+        $goalrecord2->topic = $resultcourse[3]->id;
         $goalrecord2->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord2);
 
         // Link goal 2 with learning goal activity in a course.
         $goalinstancerecord2 = new stdClass;
-        $goalinstancerecord2->lgw_course = $resultcourse[0]->id;
-        $goalinstancerecord2->lgw_coursemodule = $resultcourse[1]->id;
-        $goalinstancerecord2->lgw_instance = $resultcourse[2]->id;
-        $goalinstancerecord2->lgw_topic = $resultcourse[3]->id;
-        $goalinstancerecord2->lgw_goal = $goalrecord2->id;
-        $goalinstancerecord2->lgw_rank = 2;
+        $goalinstancerecord2->course = $resultcourse[0]->id;
+        $goalinstancerecord2->coursemodule = $resultcourse[1]->id;
+        $goalinstancerecord2->instance = $resultcourse[2]->id;
+        $goalinstancerecord2->topic = $resultcourse[3]->id;
+        $goalinstancerecord2->goal = $goalrecord2->id;
+        $goalinstancerecord2->rank = 2;
         $goalinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord2);
 
         return [$resultcourse, $goalrecord1, $goalinstancerecord1, $goalrecord2, $goalinstancerecord2];

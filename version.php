@@ -24,10 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2023110603; // The current module version (Date: YYYYMMDDXX).
-$plugin->requires = 2020060900; // Requires this Moodle version.
+$plugin->version = 2023111400; // The current module version (Date: YYYYMMDDXX).
+$plugin->requires = 2021051700; // Moodle 4.1
 $plugin->component = 'mod_learninggoalwidget'; // Full name of the plugin (used for diagnostics).
 $plugin->cron = 0;
-$plugin->release = '1.0.12';
-$plugin->supported = [35, 311];
+$plugin->release = 'v1.1.0';
+$plugin->supported = [401, 401];
 $plugin->maturity = MATURITY_STABLE;

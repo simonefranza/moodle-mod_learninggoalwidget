@@ -77,29 +77,29 @@
 
     <div class="d-flex flex-row-reverse bd-highlight">
         <div class="d-flex flex-column justify-center">
-            <img id="{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-treemap-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{treemap_thumbnail}}}" alt="" />
+            <img id="{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-treemap-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{treemap_thumbnail}}}" alt="">
             {{! <div class="p-2 bd-highlight">Treemap</div> }}
         </div>
         <div class="d-flex flex-column justify-center pr-3">
-            <img id="{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-sunburst-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{sunburst_thumbnail}}}" alt="" />
+            <img id="{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-sunburst-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{sunburst_thumbnail}}}" alt="">
             {{! <div class="p-2 bd-highlight">Sunburst</div> }}
         </div>
     </div>
 
     {{! Sunburst Visualisation }}
-    <div id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-container">
+    <div id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-container" style="position: relative">
         <div class="newrow">
             <div class="tab">
                 <span class="section-modchooser" id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-ClickedOverview">
-                    <span class="section-modchooser-link tc-button-primary">
-                        <a>
+                    <span class="section-modchooser-link">
+                        <a class="btn btn-outline-secondary btn-sm text-nowrap">
                             <span class="section-modchooser-text">{{{contentview}}}</span>
                         </a>
                     </span>
                 </span>
                 <span class="section-modchooser" id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-ClickedPreparation">
-                    <span class="section-modchooser-link tc-button-primary">
-                        <a>
+                    <span class="section-modchooser-link">
+                        <a class="btn btn-outline-secondary btn-sm text-nowrap">
                             <span class="section-modchooser-text">{{{examview}}}</span>
                         </a>
                     </span>
@@ -115,7 +115,7 @@
     </div>
 
     {{! Treemap Visualisation }}
-    <div id="learninggoals-treemap-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-container">
+    <div id="learninggoals-treemap-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-container" style="position: relative">
         <div class="newrow">
             {{> mod_learninggoalwidget/widget/treemap-view }}
         </div>

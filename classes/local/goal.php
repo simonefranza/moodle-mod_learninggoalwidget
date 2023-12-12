@@ -105,6 +105,6 @@ class goal {
      * @return goal
      */
     public static function from_record($goalrecord): goal {
-        return new goal($goalrecord->lgw_title, $goalrecord->lgw_shortname, $goalrecord->lgw_url);
+        return new goal($goalrecord->title, $goalrecord->shortname, $goalrecord->url);
     }
 }

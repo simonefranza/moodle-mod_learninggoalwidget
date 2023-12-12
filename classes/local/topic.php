@@ -116,17 +116,17 @@ class topic {
      */
     public static function from_record($topicrecord): topic {
         global $DB;
-        $sqlstmt = "SELECT a.id, a.lgw_title, a.lgw_shortname, a.lgw_url, b.lgw_rank
+        $sqlstmt = "SELECT a.id, a.title, a.shortname, a.url, b.rank
             FROM {learninggoalwidget_goal} a, {learninggoalwidget_i_goals} b
-            WHERE b.lgw_course = ? AND b.lgw_coursemodule = ? AND b.lgw_instance = ? AND b.lgw_topic = ? AND b.lgw_goal = a.id
-            ORDER BY b.lgw_rank";
-        $params = [$topicrecord->lgw_course, $topicrecord->lgw_coursemodule, $topicrecord->lgw_instance, $topicrecord->id];
+            WHERE b.course = ? AND b.coursemodule = ? AND b.instance = ? AND b.topic = ? AND b.goal = a.id
+            ORDER BY b.rank";
+        $params = [$topicrecord->course, $topicrecord->coursemodule, $topicrecord->instance, $topicrecord->id];
         $goals = [];
         $goalrecords = $DB->get_records_sql($sqlstmt, $params);
         foreach ($goalrecords as $goalrecord) {
             $goal = goal::from_record($goalrecord);
-            $goals[] = [$goalrecord->lgw_rank, $goalrecord->id, $goal->get_title(), $goal->get_shortname(), $goal->get_url()];
+            $goals[] = [$goalrecord->rank, $goalrecord->id, $goal->get_title(), $goal->get_shortname(), $goal->get_url()];
         }
-        return new Topic($topicrecord->lgw_title, $topicrecord->lgw_shortname, $topicrecord->lgw_url, $goals);
+        return new Topic($topicrecord->title, $topicrecord->shortname, $topicrecord->url, $goals);
     }
 }

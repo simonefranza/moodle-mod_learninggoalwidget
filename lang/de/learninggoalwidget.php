@@ -84,6 +84,7 @@ $string['validation:jsongoal2'] = '"name" Eigenschaft bei einem Lernziel von dem
 $string['validation:jsongoal3'] = '"link" Eigenschaft bei dem Lernziel "{$a}" ist kein String.';
 $string['validation:jsongoal4'] = '"link" Eigenschaft bei dem Lernziel "{$a}" ist ungültig.';
 $string['validation:jsongoal5'] = '"keyword" Eigenschaft bei dem Lernziel "{$a}" ist kein String.';
+$string['validation:missinggoal'] = 'Die Themenbereiche [{$a}] haben keine Lernziele. Bitte fügen Sie mindestens eins pro Themenbereich.';
 
 $string['guestaccess'] = 'Dafür müssen sie angemeldet sein';
 $string['noaccess'] = 'Dafür müssen sie angemeldet sein';

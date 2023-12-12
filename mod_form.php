@@ -83,6 +83,7 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
             'mod_learninggoalwidget/editor/form_settings',
             $templatecontext
         );
+        $mform->addElement('static', 'errorfield', '', '');
         $mform->addElement('html', $learninggoalsettings);
 
         $this->standard_coursemodule_elements();
@@ -104,6 +105,29 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
+        $taxonomy = new taxonomy(($this->_cm) ? $this->_cm->id : null,
+            ($this->_course != null) ? $this->_course->id : null,
+            $this->_section,
+            $this->_instance,
+        );
+        $jsontaxonomy = json_decode($taxonomy->get_taxonomy_as_json());
+
+        if (count($jsontaxonomy->children) == 0) {
+            return $errors;
+        }
+        $topicsnochild = '';
+        foreach ($jsontaxonomy->children as $topic) {
+            if (count($topic[5]) == 0) {
+                if ($topicsnochild === '') {
+                    $topicsnochild .= "'" . $topic[2] . "'";
+                } else {
+                    $topicsnochild .= ", '" . $topic[2] . "'";
+                }
+            }
+        }
+        if ($topicsnochild !== '') {
+            $errors["errorfield"] = get_string('validation:missinggoal', 'mod_learninggoalwidget', $topicsnochild);
+        }
         return $errors;
     }
 }

@@ -56,34 +56,34 @@ trait utils {
 
         // Create topic 1 in course.
         $topicrecord1 = new stdClass;
-        $topicrecord1->lgw_title = $topic1title;
-        $topicrecord1->lgw_shortname = $topic1shortname;
-        $topicrecord1->lgw_url = $topic1url;
+        $topicrecord1->title = $topic1title;
+        $topicrecord1->shortname = $topic1shortname;
+        $topicrecord1->url = $topic1url;
         $topicrecord1->id = $DB->insert_record('learninggoalwidget_topic', $topicrecord1);
 
         // Link topic 1 with widget instance.
         $topicinstancerecord1 = new stdClass;
-        $topicinstancerecord1->lgw_course = $course1->id;
-        $topicinstancerecord1->lgw_coursemodule = $coursemodule->id;
-        $topicinstancerecord1->lgw_instance = $widgetinstance->id;
-        $topicinstancerecord1->lgw_topic = $topicrecord1->id;
-        $topicinstancerecord1->lgw_rank = 1;
+        $topicinstancerecord1->course = $course1->id;
+        $topicinstancerecord1->coursemodule = $coursemodule->id;
+        $topicinstancerecord1->instance = $widgetinstance->id;
+        $topicinstancerecord1->topic = $topicrecord1->id;
+        $topicinstancerecord1->rank = 1;
         $topicinstancerecord1->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord1);
 
         // Create topic 2 in course.
         $topicrecord2 = new stdClass;
-        $topicrecord2->lgw_title = $topic2title;
-        $topicrecord2->lgw_shortname = $topic2shortname;
-        $topicrecord2->lgw_url = $topic2url;
+        $topicrecord2->title = $topic2title;
+        $topicrecord2->shortname = $topic2shortname;
+        $topicrecord2->url = $topic2url;
         $topicrecord2->id = $DB->insert_record('learninggoalwidget_topic', $topicrecord2);
 
         // Link topic 2 with widget instance.
         $topicinstancerecord2 = new stdClass;
-        $topicinstancerecord2->lgw_course = $course1->id;
-        $topicinstancerecord2->lgw_coursemodule = $coursemodule->id;
-        $topicinstancerecord2->lgw_instance = $widgetinstance->id;
-        $topicinstancerecord2->lgw_topic = $topicrecord2->id;
-        $topicinstancerecord2->lgw_rank = 2;
+        $topicinstancerecord2->course = $course1->id;
+        $topicinstancerecord2->coursemodule = $coursemodule->id;
+        $topicinstancerecord2->instance = $widgetinstance->id;
+        $topicinstancerecord2->topic = $topicrecord2->id;
+        $topicinstancerecord2->rank = 2;
         $topicinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord2);
 
         return [$course1, $coursemodule, $widgetinstance, $topicrecord1,
@@ -110,20 +110,20 @@ trait utils {
         // Insert goal under topic 1.
         // Insert in goal table.
         $goalrecord = new stdClass;
-        $goalrecord->lgw_title = "Goal under Topic 1 to be updated";
-        $goalrecord->lgw_shortname = "Goal 1 shortname to be updated";
-        $goalrecord->lgw_url = "http://goal1.updateme.at";
-        $goalrecord->lgw_topic = $resultcourse[3]->id;
+        $goalrecord->title = "Goal under Topic 1 to be updated";
+        $goalrecord->shortname = "Goal 1 shortname to be updated";
+        $goalrecord->url = "http://goal1.updateme.at";
+        $goalrecord->topic = $resultcourse[3]->id;
         $goalrecord->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord);
 
         // Link goal with learning goal activity in a course.
         $goalinstancerecord = new stdClass;
-        $goalinstancerecord->lgw_course = $resultcourse[0]->id;
-        $goalinstancerecord->lgw_coursemodule = $resultcourse[1]->id;
-        $goalinstancerecord->lgw_instance = $resultcourse[2]->id;
-        $goalinstancerecord->lgw_topic = $resultcourse[3]->id;
-        $goalinstancerecord->lgw_goal = $goalrecord->id;
-        $goalinstancerecord->lgw_rank = 1;
+        $goalinstancerecord->course = $resultcourse[0]->id;
+        $goalinstancerecord->coursemodule = $resultcourse[1]->id;
+        $goalinstancerecord->instance = $resultcourse[2]->id;
+        $goalinstancerecord->topic = $resultcourse[3]->id;
+        $goalinstancerecord->goal = $goalrecord->id;
+        $goalinstancerecord->rank = 1;
         $goalinstancerecord->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord);
 
         return [$resultcourse, $goalrecord, $goalinstancerecord];

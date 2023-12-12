@@ -84,6 +84,7 @@ $string['validation:jsongoal2'] = 'The "name" property of a Learning Goal of the
 $string['validation:jsongoal3'] = 'The "link" property of the Learning Goal "{$a}" is not a string.';
 $string['validation:jsongoal4'] = 'The "link" property of the Learning Goal "{$a}" is invalid.';
 $string['validation:jsongoal5'] = 'The "keyword" property of the Learning Goal "{$a}" is not a string.';
+$string['validation:missinggoal'] = 'The topics [{$a}] have no learning goals. Please add at least one to each of them.';
 
 $string['guestaccess'] = 'You need to login first';
 $string['noaccess'] = 'You need to login first';

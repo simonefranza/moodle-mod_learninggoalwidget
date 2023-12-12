@@ -37,35 +37,35 @@ function learninggoalwidget_add_instance(stdClass $data): int {
     $data->timecreated = time();
     $data->timemodified = $data->timecreated;
     $data->name = $data->name;
-    $data->lgw_course = $data->course;
+    $data->course = $data->course;
     $data->id = $DB->insert_record('learninggoalwidget', $data);
     $sql = "SELECT 1
               FROM {learninggoalwidget_i_topics}
-             WHERE lgw_course = ?
-               AND lgw_coursemodule = -1
-               AND lgw_instance = -1";
+             WHERE course = ?
+               AND coursemodule = -1
+               AND instance = -1";
 
     if ($DB->record_exists_sql($sql, [$COURSE->id])) {
         $sql = "UPDATE {learninggoalwidget_i_topics}
-                   SET lgw_coursemodule=?, lgw_instance=?
-                 WHERE lgw_course=?
-                 AND lgw_coursemodule = -1
-                 AND lgw_instance = -1";
+                   SET coursemodule=?, instance=?
+                 WHERE course=?
+                 AND coursemodule = -1
+                 AND instance = -1";
         $DB->execute($sql, [$data->coursemodule, $data->id, $COURSE->id]);
     }
 
     $sql = "SELECT 1
               FROM {learninggoalwidget_i_goals}
-             WHERE lgw_course = ?
-               AND lgw_coursemodule = -1
-               AND lgw_instance = -1";
+             WHERE course = ?
+               AND coursemodule = -1
+               AND instance = -1";
 
     if ($DB->record_exists_sql($sql, [$COURSE->id])) {
         $sql = "UPDATE {learninggoalwidget_i_goals}
-               SET lgw_coursemodule=?, lgw_instance=?
-             WHERE lgw_course=?
-             AND lgw_coursemodule = -1
-             AND lgw_instance = -1";
+               SET coursemodule=?, instance=?
+             WHERE course=?
+             AND coursemodule = -1
+             AND instance = -1";
         $DB->execute($sql, [$data->coursemodule, $data->id, $COURSE->id]);
     }
     return $data->id;

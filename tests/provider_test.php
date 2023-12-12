@@ -34,6 +34,7 @@ use mod_learninggoalwidget\privacy\provider;
  * @package   mod_learninggoalwidget
  * @copyright 2023 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class provider_test extends provider_testcase {
     use mod_learninggoalwidget\utils;
@@ -54,13 +55,13 @@ class provider_test extends provider_testcase {
 
         $privacyfields = $item->get_privacy_fields();
         $this->assertCount(7, $privacyfields);
-        $this->assertArrayHasKey('lgw_course', $privacyfields);
-        $this->assertArrayHasKey('lgw_coursemodule', $privacyfields);
-        $this->assertArrayHasKey('lgw_instance', $privacyfields);
-        $this->assertArrayHasKey('lgw_topic', $privacyfields);
-        $this->assertArrayHasKey('lgw_goal', $privacyfields);
-        $this->assertArrayHasKey('lgw_user', $privacyfields);
-        $this->assertArrayHasKey('lgw_progress', $privacyfields);
+        $this->assertArrayHasKey('course', $privacyfields);
+        $this->assertArrayHasKey('coursemodule', $privacyfields);
+        $this->assertArrayHasKey('instance', $privacyfields);
+        $this->assertArrayHasKey('topic', $privacyfields);
+        $this->assertArrayHasKey('goal', $privacyfields);
+        $this->assertArrayHasKey('user', $privacyfields);
+        $this->assertArrayHasKey('progress', $privacyfields);
 
         $this->assertEquals('privacy:metadata:learninggoalwidget_i_userpro', $item->get_summary());
     }
@@ -282,7 +283,7 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_user($approvedlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['lgw_user' => $user->id]);
+        $records = $DB->get_records('learninggoalwidget_i_userpro', ['user' => $user->id]);
         $this->assertEmpty($records);
 
         $widgetinstance1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
@@ -349,11 +350,11 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_users($userlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['lgw_user' => $user2->id]);
+        $records = $DB->get_records('learninggoalwidget_i_userpro', ['user' => $user2->id]);
         $this->assertEmpty($records);
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['lgw_user' => $user3->id]);
+        $records = $DB->get_records('learninggoalwidget_i_userpro', ['user' => $user3->id]);
         $this->assertEmpty($records);
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['lgw_user' => $user1->id]);
+        $records = $DB->get_records('learninggoalwidget_i_userpro', ['user' => $user1->id]);
         $this->assertNotEmpty($records);
 
         $widgetinstance2 = $this->getDataGenerator()->create_module('quiz', ['course' => $course1->id]);

@@ -657,6 +657,7 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
     let confirmationDialogShown = false;
     let blurDiv = d3.select('#' + treemapId).append('div')
       .style('max-width', `${width}px`)
+      .style('z-index', -1)
       .classed('blur-div', true)
       .classed('mainDiv', true);
     const accessibilitySvg = blurDiv.append('svg')
@@ -711,7 +712,8 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
       accessibilityFontLineHeight * (accessibilityDialogText._groups[0][0].children.length);
 
     blurDiv
-      .attr('height', accessibilityDialogSVGHeight + 2 * colorPaletteBgRadius);
+      .attr('height', accessibilityDialogSVGHeight + 2 * colorPaletteBgRadius)
+      .style('top', `${-accessibilityDialogSVGHeight - 2 * colorPaletteBgRadius}%`);
     accessibilitySvg
       .attr('height', accessibilityDialogSVGHeight + 2 * colorPaletteBgRadius + 10)
       .attr("viewBox", `0 0 ${width} ${accessibilityDialogSVGHeight + 2 * colorPaletteBgRadius + 10}`);
@@ -2494,13 +2496,11 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
       e.preventDefault();
       currentTextZoom += zoomDelta;
       if (!isSmallScreen) {
-        zoomRightHalf.transition().duration(100).attr('fill', '#fefefe')
-          .end().then(() => zoomRightHalf.transition().duration(100).attr('fill', `url(#gradient-${treemapId})`)
-            .end().then(() => updateTextFormatting())
-            .catch(() => {
-              //
-            })
-          )
+        zoomRightHalf.transition().duration(100).attr('fill', '#fefefe').end()
+          .then(() => {
+            return zoomRightHalf.transition().duration(100).attr('fill', `url(#gradient-${treemapId})`).end();
+          })
+          .then(updateTextFormatting)
           .catch(() => {
             //
           });

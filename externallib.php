@@ -28,6 +28,7 @@ use mod_learninggoalwidget\local\userTaxonomy;
  * @package   mod_learninggoalwidget
  * @copyright University of Technology Graz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @runTestsInSeparateProcesses
  */
 class mod_learninggoalwidget_external extends external_api {
     /**
@@ -207,23 +208,23 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $sqlstmt = "SELECT id FROM {learninggoalwidget_i_userpro}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_user = ? AND lgw_topic = ? AND lgw_goal = ?";
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND user = ? AND topic = ? AND goal = ?";
         $params = [$courseid, $coursemoduleid, $instanceid, $userid, $topicid, $goalid];
         $userprogressrecord = $DB->get_record_sql($sqlstmt, $params);
         if ($userprogressrecord) {
             $userprogress = new stdClass;
             $userprogress->id = $userprogressrecord->id;
-            $userprogress->lgw_progress = $progress;
+            $userprogress->progress = $progress;
             $DB->update_record('learninggoalwidget_i_userpro', $userprogress);
         } else {
             $userprogress = new stdClass;
-            $userprogress->lgw_course = $courseid;
-            $userprogress->lgw_coursemodule = $coursemoduleid;
-            $userprogress->lgw_instance = $instanceid;
-            $userprogress->lgw_topic = $topicid;
-            $userprogress->lgw_goal = $goalid;
-            $userprogress->lgw_user = $userid;
-            $userprogress->lgw_progress = $progress;
+            $userprogress->course = $courseid;
+            $userprogress->coursemodule = $coursemoduleid;
+            $userprogress->instance = $instanceid;
+            $userprogress->topic = $topicid;
+            $userprogress->goal = $goalid;
+            $userprogress->user = $userid;
+            $userprogress->progress = $progress;
             $DB->insert_record('learninggoalwidget_i_userpro', $userprogress);
         }
 
@@ -361,24 +362,24 @@ class mod_learninggoalwidget_external extends external_api {
         global $DB;
         // Insert in topic table.
         $topicrecord = new stdClass;
-        $topicrecord->lgw_title = $topicname;
-        $topicrecord->lgw_shortname = $topicshortname;
-        $topicrecord->lgw_url = $topicurl;
+        $topicrecord->title = $topicname;
+        $topicrecord->shortname = $topicshortname;
+        $topicrecord->url = $topicurl;
         $topicrecord->id = $DB->insert_record('learninggoalwidget_topic', $topicrecord);
 
         // Link topic with learning goal activity in a course.
         $topicinstancerecord = new stdClass;
-        $topicinstancerecord->lgw_course = $course;
-        $topicinstancerecord->lgw_coursemodule = $coursemodule;
-        $topicinstancerecord->lgw_instance = $instance;
-        $topicinstancerecord->lgw_topic = $topicrecord->id;
-        $topicinstancerecord->lgw_rank = 1;
-        $sqlstmt = "SELECT MAX(lgw_rank) as lgw_maxrank FROM {learninggoalwidget_i_topics}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ?";
+        $topicinstancerecord->course = $course;
+        $topicinstancerecord->coursemodule = $coursemodule;
+        $topicinstancerecord->instance = $instance;
+        $topicinstancerecord->topic = $topicrecord->id;
+        $topicinstancerecord->rank = 1;
+        $sqlstmt = "SELECT MAX(rank) as maxrank FROM {learninggoalwidget_i_topics}
+        WHERE course = ? AND coursemodule = ? AND instance = ?";
         $params = [$course, $coursemodule, $instance];
         $topiccountrecord = $DB->get_record_sql($sqlstmt, $params);
         if ($topiccountrecord) {
-            $topicinstancerecord->lgw_rank = $topiccountrecord->lgw_maxrank + 1;
+            $topicinstancerecord->rank = $topiccountrecord->maxrank + 1;
         }
         $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
         return $topicrecord->id;
@@ -495,9 +496,9 @@ class mod_learninggoalwidget_external extends external_api {
         // Update in topic table.
         $topicrecord = new stdClass;
         $topicrecord->id = $topicid;
-        $topicrecord->lgw_title = $topicname;
-        $topicrecord->lgw_shortname = $topicshortname;
-        $topicrecord->lgw_url = $topicurl;
+        $topicrecord->title = $topicname;
+        $topicrecord->shortname = $topicshortname;
+        $topicrecord->url = $topicurl;
         $DB->update_record('learninggoalwidget_topic', $topicrecord);
 
         return self::get_taxonomy($course, $coursemodule, $instance);
@@ -559,15 +560,15 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $params = [
-            'lgw_course' => $course,
-            'lgw_coursemodule' => $coursemodule,
-            'lgw_instance' => $instance,
-            'lgw_topic' => $topicid,
+            'course' => $course,
+            'coursemodule' => $coursemodule,
+            'instance' => $instance,
+            'topic' => $topicid,
         ];
         $DB->delete_records('learninggoalwidget_i_userpro', $params);
         $DB->delete_records('learninggoalwidget_i_goals', $params);
         $DB->delete_records('learninggoalwidget_i_topics', $params);
-        $DB->delete_records('learninggoalwidget_goal', ['lgw_topic' => $topicid]);
+        $DB->delete_records('learninggoalwidget_goal', ['topic' => $topicid]);
 
         $DB->delete_records('learninggoalwidget_topic', ['id' => $topicid]);
 
@@ -630,32 +631,32 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $topicmoveup = new stdClass;
-        $topicmoveup->lgw_course = $course;
-        $topicmoveup->lgw_coursemodule = $coursemodule;
-        $topicmoveup->lgw_instance = $instance;
-        $topicmoveup->lgw_topic = $topicid;
-        $sqlstmt = "SELECT id, lgw_rank FROM {learninggoalwidget_i_topics}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ?";
+        $topicmoveup->course = $course;
+        $topicmoveup->coursemodule = $coursemodule;
+        $topicmoveup->instance = $instance;
+        $topicmoveup->topic = $topicid;
+        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_topics}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ?";
         $params = [$course, $coursemodule, $instance, $topicid];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
         $topicmoveup->id = $topicrecord->id;
-        $topicmoveup->lgw_rank = $topicrecord->lgw_rank;
-        $sqlstmt = "SELECT MAX(lgw_rank) as lgw_rank FROM {learninggoalwidget_i_topics}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_rank < ?";
-        $params = [$course, $coursemodule, $instance, $topicrecord->lgw_rank];
+        $topicmoveup->rank = $topicrecord->rank;
+        $sqlstmt = "SELECT MAX(rank) as rank FROM {learninggoalwidget_i_topics}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND rank < ?";
+        $params = [$course, $coursemodule, $instance, $topicrecord->rank];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
-        $sqlstmt = "SELECT id, lgw_rank FROM {learninggoalwidget_i_topics}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_rank = ?";
-        $params = [$course, $coursemodule, $instance, $topicrecord->lgw_rank];
+        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_topics}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND rank = ?";
+        $params = [$course, $coursemodule, $instance, $topicrecord->rank];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params);
 
         $topicmovedown = new stdClass;
         $topicmovedown->id = $topicrecord->id;
-        $topicmovedown->lgw_rank = $topicmoveup->lgw_rank;
+        $topicmovedown->rank = $topicmoveup->rank;
 
-        $topicmoveup->lgw_rank = $topicrecord->lgw_rank;
+        $topicmoveup->rank = $topicrecord->rank;
 
         $DB->update_record('learninggoalwidget_i_topics', $topicmoveup);
         $DB->update_record('learninggoalwidget_i_topics', $topicmovedown);
@@ -719,33 +720,33 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $topicmovedown = new stdClass;
-        $topicmovedown->lgw_course = $course;
-        $topicmovedown->lgw_coursemodule = $coursemodule;
-        $topicmovedown->lgw_instance = $instance;
-        $topicmovedown->lgw_topic = $topicid;
-        $sqlstmt = "SELECT id, lgw_rank FROM {learninggoalwidget_i_topics}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ?";
+        $topicmovedown->course = $course;
+        $topicmovedown->coursemodule = $coursemodule;
+        $topicmovedown->instance = $instance;
+        $topicmovedown->topic = $topicid;
+        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_topics}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ?";
         $params = [$course, $coursemodule, $instance, $topicid];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
         $topicmovedown->id = $topicrecord->id;
-        $topicmovedown->lgw_rank = $topicrecord->lgw_rank;
+        $topicmovedown->rank = $topicrecord->rank;
 
-        $sqlstmt = "SELECT MIN(lgw_rank) as lgw_rank FROM {learninggoalwidget_i_topics}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_rank > ?";
-        $params = [$course, $coursemodule, $instance, $topicrecord->lgw_rank];
+        $sqlstmt = "SELECT MIN(rank) as rank FROM {learninggoalwidget_i_topics}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND rank > ?";
+        $params = [$course, $coursemodule, $instance, $topicrecord->rank];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
-        $sqlstmt = "SELECT id, lgw_rank FROM {learninggoalwidget_i_topics}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_rank = ?";
-        $params = [$course, $coursemodule, $instance, $topicrecord->lgw_rank];
+        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_topics}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND rank = ?";
+        $params = [$course, $coursemodule, $instance, $topicrecord->rank];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params);
 
         $topicmoveup = new stdClass;
         $topicmoveup->id = $topicrecord->id;
-        $topicmoveup->lgw_rank = $topicmovedown->lgw_rank;
+        $topicmoveup->rank = $topicmovedown->rank;
 
-        $topicmovedown->lgw_rank = $topicrecord->lgw_rank;
+        $topicmovedown->rank = $topicrecord->rank;
 
         $DB->update_record('learninggoalwidget_i_topics', $topicmoveup);
         $DB->update_record('learninggoalwidget_i_topics', $topicmovedown);
@@ -805,26 +806,26 @@ class mod_learninggoalwidget_external extends external_api {
         global $DB;
         // Insert in goal table.
         $goalrecord = new stdClass;
-        $goalrecord->lgw_title = $goalname;
-        $goalrecord->lgw_shortname = $goalshortname;
-        $goalrecord->lgw_url = $goalurl;
-        $goalrecord->lgw_topic = $topicid;
+        $goalrecord->title = $goalname;
+        $goalrecord->shortname = $goalshortname;
+        $goalrecord->url = $goalurl;
+        $goalrecord->topic = $topicid;
         $goalrecord->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord);
 
         // Link goal with learning goal activity in a course.
         $goalinstancerecord = new stdClass;
-        $goalinstancerecord->lgw_course = $course;
-        $goalinstancerecord->lgw_coursemodule = $coursemodule;
-        $goalinstancerecord->lgw_instance = $instance;
-        $goalinstancerecord->lgw_topic = $topicid;
-        $goalinstancerecord->lgw_goal = $goalrecord->id;
-        $goalinstancerecord->lgw_rank = 1;
-        $sqlstmt = "SELECT MAX(lgw_rank) as lgw_maxrank FROM {learninggoalwidget_i_goals}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ?";
+        $goalinstancerecord->course = $course;
+        $goalinstancerecord->coursemodule = $coursemodule;
+        $goalinstancerecord->instance = $instance;
+        $goalinstancerecord->topic = $topicid;
+        $goalinstancerecord->goal = $goalrecord->id;
+        $goalinstancerecord->rank = 1;
+        $sqlstmt = "SELECT MAX(rank) as maxrank FROM {learninggoalwidget_i_goals}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ?";
         $params = [$course, $coursemodule, $instance, $topicid];
         $goalcountrecord = $DB->get_record_sql($sqlstmt, $params);
         if ($goalcountrecord) {
-            $goalinstancerecord->lgw_rank = $goalcountrecord->lgw_maxrank + 1;
+            $goalinstancerecord->rank = $goalcountrecord->maxrank + 1;
         }
         $goalinstancerecord->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord);
     }
@@ -949,9 +950,9 @@ class mod_learninggoalwidget_external extends external_api {
         // Update in goal table.
         $goalrecord = new stdClass;
         $goalrecord->id = $goalid;
-        $goalrecord->lgw_title = $goalname;
-        $goalrecord->lgw_shortname = $goalshortname;
-        $goalrecord->lgw_url = $goalurl;
+        $goalrecord->title = $goalname;
+        $goalrecord->shortname = $goalshortname;
+        $goalrecord->url = $goalurl;
         $DB->update_record('learninggoalwidget_goal', $goalrecord);
 
         return self::get_taxonomy($course, $coursemodule, $instance);
@@ -1017,11 +1018,11 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $params = [
-            'lgw_course' => $course,
-            'lgw_coursemodule' => $coursemodule,
-            'lgw_instance' => $instance,
-            'lgw_topic' => $topicid,
-            'lgw_goal' => $goalid,
+            'course' => $course,
+            'coursemodule' => $coursemodule,
+            'instance' => $instance,
+            'topic' => $topicid,
+            'goal' => $goalid,
         ];
         $DB->delete_records('learninggoalwidget_i_userpro', $params);
         $DB->delete_records('learninggoalwidget_i_goals', $params);
@@ -1082,17 +1083,17 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $params = [
-            'lgw_course' => $course,
-            'lgw_coursemodule' => $coursemodule,
-            'lgw_instance' => $instance,
+            'course' => $course,
+            'coursemodule' => $coursemodule,
+            'instance' => $instance,
         ];
 
-        $sqlstmt = "SELECT lgw_topic FROM {learninggoalwidget_i_topics}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ?";
+        $sqlstmt = "SELECT topic FROM {learninggoalwidget_i_topics}
+        WHERE course = ? AND coursemodule = ? AND instance = ?";
         $params1 = [$course, $coursemodule, $instance];
         $topicrecords = $DB->get_records_sql($sqlstmt, $params1);
-        $sqlstmt = "SELECT lgw_goal FROM {learninggoalwidget_i_goals}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ?";
+        $sqlstmt = "SELECT goal FROM {learninggoalwidget_i_goals}
+        WHERE course = ? AND coursemodule = ? AND instance = ?";
         $params2 = [$course, $coursemodule, $instance];
         $goalrecords = $DB->get_records_sql($sqlstmt, $params2);
 
@@ -1100,10 +1101,10 @@ class mod_learninggoalwidget_external extends external_api {
         $DB->delete_records('learninggoalwidget_i_goals', $params);
         $DB->delete_records('learninggoalwidget_i_topics', $params);
         foreach ($topicrecords as $topicrecord) {
-            $DB->delete_records('learninggoalwidget_topic', ['id' => $topicrecord->lgw_topic]);
+            $DB->delete_records('learninggoalwidget_topic', ['id' => $topicrecord->topic]);
         }
         foreach ($goalrecords as $goalrecord) {
-            $DB->delete_records('learninggoalwidget_goal', ['id' => $goalrecord->lgw_goal]);
+            $DB->delete_records('learninggoalwidget_goal', ['id' => $goalrecord->goal]);
         }
 
         return self::get_taxonomy($course, $coursemodule, $instance);
@@ -1238,33 +1239,33 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $goalmoveup = new stdClass;
-        $goalmoveup->lgw_course = $course;
-        $goalmoveup->lgw_coursemodule = $coursemodule;
-        $goalmoveup->lgw_instance = $instance;
-        $goalmoveup->lgw_topic = $topicid;
-        $goalmoveup->lgw_goal = $goalid;
-        $sqlstmt = "SELECT id, lgw_rank FROM {learninggoalwidget_i_goals}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ? AND lgw_goal = ?";
+        $goalmoveup->course = $course;
+        $goalmoveup->coursemodule = $coursemodule;
+        $goalmoveup->instance = $instance;
+        $goalmoveup->topic = $topicid;
+        $goalmoveup->goal = $goalid;
+        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_goals}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ? AND goal = ?";
         $params = [$course, $coursemodule, $instance, $topicid, $goalid];
         $goalrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
         $goalmoveup->id = $goalrecord->id;
-        $goalmoveup->lgw_rank = $goalrecord->lgw_rank;
-        $sqlstmt = "SELECT MAX(lgw_rank) as lgw_rank FROM {learninggoalwidget_i_goals}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ? AND lgw_rank < ?";
-        $params = [$course, $coursemodule, $instance, $topicid, $goalrecord->lgw_rank];
+        $goalmoveup->rank = $goalrecord->rank;
+        $sqlstmt = "SELECT MAX(rank) as rank FROM {learninggoalwidget_i_goals}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ? AND rank < ?";
+        $params = [$course, $coursemodule, $instance, $topicid, $goalrecord->rank];
         $goalrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
-        $sqlstmt = "SELECT id, lgw_rank FROM {learninggoalwidget_i_goals}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ? AND lgw_rank = ?";
-        $params = [$course, $coursemodule, $instance, $topicid, $goalrecord->lgw_rank];
+        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_goals}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ? AND rank = ?";
+        $params = [$course, $coursemodule, $instance, $topicid, $goalrecord->rank];
         $goalrecord = $DB->get_record_sql($sqlstmt, $params);
 
         $goalmovedown = new stdClass;
         $goalmovedown->id = $goalrecord->id;
-        $goalmovedown->lgw_rank = $goalmoveup->lgw_rank;
+        $goalmovedown->rank = $goalmoveup->rank;
 
-        $goalmoveup->lgw_rank = $goalrecord->lgw_rank;
+        $goalmoveup->rank = $goalrecord->rank;
 
         $DB->update_record('learninggoalwidget_i_goals', $goalmoveup);
         $DB->update_record('learninggoalwidget_i_goals', $goalmovedown);
@@ -1332,33 +1333,33 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $goalmovedown = new stdClass;
-        $goalmovedown->lgw_course = $course;
-        $goalmovedown->lgw_coursemodule = $coursemodule;
-        $goalmovedown->lgw_instance = $instance;
-        $goalmovedown->lgw_topic = $topicid;
-        $sqlstmt = "SELECT id, lgw_rank FROM {learninggoalwidget_i_goals}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ? AND lgw_goal = ?";
+        $goalmovedown->course = $course;
+        $goalmovedown->coursemodule = $coursemodule;
+        $goalmovedown->instance = $instance;
+        $goalmovedown->topic = $topicid;
+        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_goals}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ? AND goal = ?";
         $params = [$course, $coursemodule, $instance, $topicid, $goalid];
         $goalrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
         $goalmovedown->id = $goalrecord->id;
-        $goalmovedown->lgw_rank = $goalrecord->lgw_rank;
+        $goalmovedown->rank = $goalrecord->rank;
 
-        $sqlstmt = "SELECT MIN(lgw_rank) as lgw_rank FROM {learninggoalwidget_i_goals}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ? AND lgw_rank > ?";
-        $params = [$course, $coursemodule, $instance, $topicid, $goalrecord->lgw_rank];
+        $sqlstmt = "SELECT MIN(rank) as rank FROM {learninggoalwidget_i_goals}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ? AND rank > ?";
+        $params = [$course, $coursemodule, $instance, $topicid, $goalrecord->rank];
         $goalrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
-        $sqlstmt = "SELECT id, lgw_rank FROM {learninggoalwidget_i_goals}
-        WHERE lgw_course = ? AND lgw_coursemodule = ? AND lgw_instance = ? AND lgw_topic = ? AND lgw_rank = ?";
-        $params = [$course, $coursemodule, $instance, $topicid, $goalrecord->lgw_rank];
+        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_goals}
+        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ? AND rank = ?";
+        $params = [$course, $coursemodule, $instance, $topicid, $goalrecord->rank];
         $goalrecord = $DB->get_record_sql($sqlstmt, $params);
 
         $topicmoveup = new stdClass;
         $topicmoveup->id = $goalrecord->id;
-        $topicmoveup->lgw_rank = $goalmovedown->lgw_rank;
+        $topicmoveup->rank = $goalmovedown->rank;
 
-        $goalmovedown->lgw_rank = $goalrecord->lgw_rank;
+        $goalmovedown->rank = $goalrecord->rank;
 
         $DB->update_record('learninggoalwidget_i_goals', $topicmoveup);
         $DB->update_record('learninggoalwidget_i_goals', $goalmovedown);
