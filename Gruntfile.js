@@ -361,6 +361,8 @@ module.exports = function (grunt) {
         }
     );
 
+    grunt.option('force', true);
+
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -373,7 +375,7 @@ module.exports = function (grunt) {
     grunt.registerTask('gherkinlint', 'Run gherkinlint against the current directory', tasks.gherkinlint);
     grunt.registerTask('ignorefiles', 'Generate ignore files for linters', tasks.ignorefiles);
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
-    grunt.registerTask('amd', ['eslint:amd --force', 'uglify']);
+    grunt.registerTask('amd', ['eslint:amd', 'uglify']);
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
