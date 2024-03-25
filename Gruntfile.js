@@ -373,7 +373,7 @@ module.exports = function (grunt) {
     grunt.registerTask('gherkinlint', 'Run gherkinlint against the current directory', tasks.gherkinlint);
     grunt.registerTask('ignorefiles', 'Generate ignore files for linters', tasks.ignorefiles);
     grunt.registerTask('yui', ['eslint:yui', 'shifter']);
-    grunt.registerTask('amd', ['force:on', 'eslint:amd', 'uglify']);
+    grunt.registerTask('amd', ['eslint:amd --force', 'uglify']);
     grunt.registerTask('js', ['amd', 'yui']);
 
     // Register CSS taks.
