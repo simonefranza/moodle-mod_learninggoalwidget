@@ -63,7 +63,7 @@ jobs:
         env:
           DB: ${{ matrix.database }}          
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
-          INGNORE_PATHS: '*/node_modules/*'
+          IGNORE_PATHS: 'node_modules'
           # Uncomment this to run Behat tests using the Moodle App.
           # MOODLE_APP: 'true'
 
