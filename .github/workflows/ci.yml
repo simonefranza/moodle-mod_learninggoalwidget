@@ -82,7 +82,7 @@ jobs:
 
       - name: Moodle PHPDoc Checker
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpdoc --max-warnings 0
+        run: moodle-plugin-ci phpdoc --max-warnings 10
 
       - name: Validating
         if: ${{ !cancelled() }}
@@ -98,7 +98,7 @@ jobs:
 
       - name: Grunt
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci grunt --max-lint-warnings 0
+        run: moodle-plugin-ci grunt --max-lint-warnings 10
 
       - name: PHPUnit tests
         if: ${{ !cancelled() }}

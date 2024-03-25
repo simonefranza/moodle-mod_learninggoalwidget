@@ -28,7 +28,6 @@ use mod_learninggoalwidget\local\userTaxonomy;
  * @package   mod_learninggoalwidget
  * @copyright University of Technology Graz
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @runTestsInSeparateProcesses
  */
 class mod_learninggoalwidget_external extends external_api {
     /**
