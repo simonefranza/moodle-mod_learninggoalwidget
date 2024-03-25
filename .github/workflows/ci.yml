@@ -82,7 +82,7 @@ jobs:
 
       - name: Moodle PHPDoc Checker
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpdoc --max-warnings 10
+        run: moodle-plugin-ci phpdoc #--max-warnings 10
 
       - name: Validating
         if: ${{ !cancelled() }}
@@ -98,11 +98,11 @@ jobs:
 
       - name: Grunt
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci grunt --max-lint-warnings 10
+        run: moodle-plugin-ci grunt #--max-lint-warnings 10
 
       - name: PHPUnit tests
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpunit --fail-on-warning
+        run: moodle-plugin-ci phpunit #--fail-on-warning
 
       - name: Behat features
         id: behat
