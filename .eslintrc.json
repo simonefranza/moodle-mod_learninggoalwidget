@@ -6,7 +6,8 @@
   "env": {
     "browser": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "amd": true
   },
   "parserOptions": {
     "ecmaVersion": 2020
