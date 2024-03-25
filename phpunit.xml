@@ -31,5 +31,8 @@
             <file>externallib.php</file>
             <file>mod_form.php</file>
         </include>
+        <exclude>
+          <directory suffix=".php">moodle-mod_learninggoalwidget/moodle/mod/learninggoalwidget/node_modules/</directory>
+        </exclude>
     </coverage>
 </phpunit>
