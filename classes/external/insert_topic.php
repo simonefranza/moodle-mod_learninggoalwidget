@@ -99,9 +99,16 @@ class insert_topic extends \core_external\external_api {
         $topicinstancerecord->instance = $instance;
         $topicinstancerecord->topic = $topicrecord->id;
         $topicinstancerecord->rank = 1;
-        $sqlstmt = "SELECT MAX(rank) as maxrank FROM {learninggoalwidget_i_topics}
-        WHERE course = ? AND coursemodule = ? AND instance = ?";
-        $params = [$course, $coursemodule, $instance];
+        $sqlstmt = "SELECT MAX(rank) as maxrank
+                      FROM {learninggoalwidget_i_topics}
+                     WHERE course = :course
+                       AND coursemodule = :coursemodule
+                       AND instance = :instance";
+        $params = [
+            'course' => $course,
+            'coursemodule' => $coursemodule,
+            'instance' => $instance,
+        ];
         $topiccountrecord = $DB->get_record_sql($sqlstmt, $params);
         if ($topiccountrecord) {
             $topicinstancerecord->rank = $topiccountrecord->maxrank + 1;

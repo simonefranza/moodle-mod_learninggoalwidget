@@ -83,22 +83,49 @@ class movedown_topic extends \core_external\external_api {
         $topicmovedown->coursemodule = $coursemodule;
         $topicmovedown->instance = $instance;
         $topicmovedown->topic = $topicid;
-        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_topics}
-        WHERE course = ? AND coursemodule = ? AND instance = ? AND topic = ?";
-        $params = [$course, $coursemodule, $instance, $topicid];
+        $sqlstmt = "SELECT id, rank
+                      FROM {learninggoalwidget_i_topics}
+                     WHERE course = :course
+                       AND coursemodule = :coursemodule
+                       AND instance = :instance
+                       AND topic = :topicid";
+        $params = [
+            'course' => $course,
+            'coursemodule' => $coursemodule,
+            'instance' => $instance,
+            'topicid' => $topicid,
+        ];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
         $topicmovedown->id = $topicrecord->id;
         $topicmovedown->rank = $topicrecord->rank;
 
-        $sqlstmt = "SELECT MIN(rank) as rank FROM {learninggoalwidget_i_topics}
-        WHERE course = ? AND coursemodule = ? AND instance = ? AND rank > ?";
-        $params = [$course, $coursemodule, $instance, $topicrecord->rank];
+        $sqlstmt = "SELECT MIN(rank) as rank
+                      FROM {learninggoalwidget_i_topics}
+                     WHERE course = :course
+                       AND coursemodule = :coursemodule
+                       AND instance = :instance
+                       AND rank > :topicrank";
+        $params = [
+            'course' => $course,
+            'coursemodule' => $coursemodule,
+            'instance' => $instance,
+            'topicrank' => $topicrecord->rank,
+        ];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
-        $sqlstmt = "SELECT id, rank FROM {learninggoalwidget_i_topics}
-        WHERE course = ? AND coursemodule = ? AND instance = ? AND rank = ?";
-        $params = [$course, $coursemodule, $instance, $topicrecord->rank];
+        $sqlstmt = "SELECT id, rank
+                      FROM {learninggoalwidget_i_topics}
+                     WHERE course = :course
+                       AND coursemodule = :coursemodule
+                       AND instance = :instance
+                       AND rank = :topicrank";
+        $params = [
+            'course' => $course,
+            'coursemodule' => $coursemodule,
+            'instance' => $instance,
+            'topicrank' => $topicrecord->rank,
+        ];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params);
 
         $topicmoveup = new \stdClass;

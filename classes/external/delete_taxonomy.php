@@ -80,14 +80,18 @@ class delete_taxonomy extends \core_external\external_api {
             'instance' => $instance,
         ];
 
-        $sqlstmt = "SELECT topic FROM {learninggoalwidget_i_topics}
-        WHERE course = ? AND coursemodule = ? AND instance = ?";
-        $params1 = [$course, $coursemodule, $instance];
-        $topicrecords = $DB->get_records_sql($sqlstmt, $params1);
-        $sqlstmt = "SELECT goal FROM {learninggoalwidget_i_goals}
-        WHERE course = ? AND coursemodule = ? AND instance = ?";
-        $params2 = [$course, $coursemodule, $instance];
-        $goalrecords = $DB->get_records_sql($sqlstmt, $params2);
+        $sqlstmt = "SELECT topic
+                      FROM {learninggoalwidget_i_topics}
+                     WHERE course = :course
+                       AND coursemodule = :coursemodule
+                       AND instance = :instance";
+        $topicrecords = $DB->get_records_sql($sqlstmt, $params);
+        $sqlstmt = "SELECT goal
+                      FROM {learninggoalwidget_i_goals}
+                     WHERE course = :course
+                       AND coursemodule = :coursemodule
+                       AND instance = :instance";
+        $goalrecords = $DB->get_records_sql($sqlstmt, $params);
 
         $DB->delete_records('learninggoalwidget_i_userpro', $params);
         $DB->delete_records('learninggoalwidget_i_goals', $params);

@@ -95,10 +95,18 @@ class taxonomy {
         if ($this->coursemoduleid !== null) {
             global $DB;
             $sqlstmt = "SELECT b.id, b.title, b.shortname, b.url, a.course,
-             a.coursemodule, a.instance, a.rank
-             FROM {learninggoalwidget_i_topics} a, {learninggoalwidget_topic} b
-             WHERE a.course = ? AND a.coursemodule = ? AND a.instance = ? AND a.topic = b.id ORDER BY a.rank";
-            $params = [$this->courseid, $this->coursemoduleid, $this->instanceid];
+                               a.coursemodule, a.instance, a.rank
+                          FROM {learninggoalwidget_i_topics} a, {learninggoalwidget_topic} b
+                         WHERE a.course = :courseid
+                           AND a.coursemodule = :coursemoduleid
+                           AND a.instance = :instanceid
+                           AND a.topic = b.id
+                      ORDER BY a.rank";
+            $params = [
+                'courseid' => $this->courseid,
+                'coursemoduleid' => $this->coursemoduleid,
+                'instanceid' => $this->instanceid,
+            ];
             $topicrecords = $DB->get_records_sql($sqlstmt, $params);
             foreach ($topicrecords as $topicrecord) {
                 $topic = Topic::from_record($topicrecord);
