@@ -351,7 +351,7 @@ trait utils {
 
         $this->assertNotNull($topic->name);
         $this->assertNotEmpty($topic->name);
-        $this->assertEquals("Learning Goal's Taxonomy", $topic->name);
+        $this->assertEquals("Learning Goal's taxonomy", $topic->name);
 
         $this->assertNotNull($topic->children);
         $this->assertIsArray($topic->children);
@@ -397,7 +397,7 @@ trait utils {
 
         $this->assertNotNull($parsed->name);
         $this->assertNotEmpty($parsed->name);
-        $this->assertEquals("Learning Goal's Taxonomy", $parsed->name);
+        $this->assertEquals("Learning Goal's taxonomy", $parsed->name);
 
         $this->assertNotNull($parsed->children);
         $this->assertIsArray($parsed->children);
@@ -473,7 +473,7 @@ trait utils {
 
         $this->assertNotNull($parsed->name);
         $this->assertNotEmpty($parsed->name);
-        $this->assertEquals("Learning Goal's Taxonomy", $parsed->name);
+        $this->assertEquals("Learning Goal's taxonomy", $parsed->name);
 
         $this->assertNotNull($parsed->children);
         $this->assertIsArray($parsed->children);

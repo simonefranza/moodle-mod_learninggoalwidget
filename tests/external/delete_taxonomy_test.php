@@ -57,7 +57,7 @@ class delete_taxonomy_test extends externallib_advanced_testcase {
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id, $course->id);
 
         $taxonomy = (object) [
-            "name" => "Learning Goal's Taxonomy",
+            "name" => "Learning Goal's taxonomy",
             "children" => [
                 (object) [
                     "name" => "topic",

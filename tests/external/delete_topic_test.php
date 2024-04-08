@@ -75,7 +75,7 @@ class delete_topic_test extends externallib_advanced_testcase {
 
         $this->assertNotNull($parsed->name);
         $this->assertNotEmpty($parsed->name);
-        $this->assertEquals("Learning Goal's Taxonomy", $parsed->name);
+        $this->assertEquals("Learning Goal's taxonomy", $parsed->name);
 
         $this->assertNotNull($parsed->children);
         $this->assertIsArray($parsed->children);

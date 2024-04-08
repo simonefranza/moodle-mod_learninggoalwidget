@@ -93,7 +93,7 @@ Here is a starting template for the JSON taxonomy:
 
 ```javascript
 {
-  "name": "Learning Goal's Taxonomy",
+  "name": "Learning Goal's taxonomy",
   "children": [
     {
       "name": "First Topic",

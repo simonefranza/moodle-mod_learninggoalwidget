@@ -72,7 +72,7 @@ class get_taxonomy_test extends externallib_advanced_testcase {
         $parsed = json_decode($result);
 
         $expectedjson = new \stdClass();
-        $expectedjson->name = "Learning Goal's Taxonomy";
+        $expectedjson->name = "Learning Goal's taxonomy";
         $expectedjson->children = [
             [
                 $resultcourse[5]->rank,
