@@ -90,13 +90,13 @@ $string['guestaccess'] = 'Dafür müssen sie angemeldet sein';
 $string['noaccess'] = 'Dafür müssen sie angemeldet sein';
 $string['contentview'] = 'Lernziele';
 $string['examview'] = 'Mein Lernfortschritt';
-$string['progressLabel0'] = 'Gering (0%)';
-$string['progressLabel50'] = 'Durchschnittlich (50%)';
-$string['progressLabel100'] = 'Hoch (100%)';
-$string['progressDialogTitle'] = 'Lernzielfortschritt aktualisieren';
-$string['progressLegendLabel'] = 'Lernfortschritt';
-$string['textualBulletpointListTitle'] = 'Überblick über die Themenbereiche und Lernziele';
-$string['treemapAccessibilityText'] = 'Dieses Tool hilft Ihnen, über die gelernten Themen zu reflektieren und hält Ihren Fortschritt fest.<br/><br/>
+$string['progresslabel0'] = 'Gering (0%)';
+$string['progresslabel50'] = 'Durchschnittlich (50%)';
+$string['progresslabel100'] = 'Hoch (100%)';
+$string['progressdialogtitle'] = 'Lernzielfortschritt aktualisieren';
+$string['progresslegendlabel'] = 'Lernfortschritt';
+$string['textualbulletpointlisttitle'] = 'Überblick über die Themenbereiche und Lernziele';
+$string['treemapaccessibilitytext'] = 'Dieses Tool hilft Ihnen, über die gelernten Themen zu reflektieren und hält Ihren Fortschritt fest.<br/><br/>
 Auf der linken Seite befinden sich die Themen und auf der rechten Seite
 die Lernziele. Jedes dieser Ziele zeigt den Fortschritt als Prozentzahl an.
   Sie können diesen Wert ändern, indem Sie auf das Thema oder auf das Lernziel klicken

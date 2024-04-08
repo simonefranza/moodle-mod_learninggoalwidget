@@ -27,77 +27,77 @@
     * none
 
     Context variables required for this template:
-    * courseId
-    * courseModuleId
-    * instanceId
+    * courseid
+    * coursemoduleid
+    * instanceid
     * contentview
     * examview
-    * progressLabel0
-    * progressLabel50
-    * progressLabel100
-    * progressDialogTitle
-    * progressLegendLabel
-    * treemap_thumbnail
-    * sunburst_thumbnail
-    * textualBulletpointListTitle
+    * progresslabel0
+    * progresslabel50
+    * progresslabel100
+    * progressdialogtitle
+    * progresslegendlabel
+    * treemapthumbnail
+    * sunburstthumbnail
+    * textualbulletpointlisttitle
 
     Example context (json):
     {
-        "courseId": "1",
-        "courseModuleId": "2",
-        "instanceId": "3",
+        "courseid": "1",
+        "coursemoduleid": "2",
+        "instanceid": "3",
         "contentview": "Lernziele Ansicht",
         "examview": "Lernzielfortschritt Ansicht",
-        "progressLabel0": "Gering (0%)",
-        "progressLabel50": "Durchschnittlich (50%)",
-        "progressLabel100": "Hoch (100%)",
-        "progressDialogTitle": "Lernzielfortschritt aktualisieren",
-        "progressLegendLabel": "Lernfortschritt",
-        "treemap_thumbnail": "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7",
-        "sunburst_thumbnail": "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7",
-        "textualBulletpointListTitle": "Überblick über die Themenbereiche und Lernziele"
+        "progresslabel0": "Gering (0%)",
+        "progresslabel50": "Durchschnittlich (50%)",
+        "progresslabel100": "Hoch (100%)",
+        "progressdialogtitle": "Lernzielfortschritt aktualisieren",
+        "progresslegendlabel": "Lernfortschritt",
+        "treemapthumbnail": "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7",
+        "sunburstthumbnail": "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7",
+        "textualbulletpointlisttitle": "Überblick über die Themenbereiche und Lernziele"
     }
 }}
 
 <div
-    id="learninggoals-widget-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}"
+    id="learninggoals-widget-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}"
     class="telm-learninggoals-widget"
-    data-course-id="{{courseId}}"
-    data-coursemodule-id="{{{courseModuleId}}}"
-    data-instance-id="{{{instanceId}}}"
-    data-user-id="{{userId}}"
-    data-progressLabel0="{{progressLabel0}}"
-    data-progressLabel50="{{progressLabel50}}"
-    data-progressLabel100="{{progressLabel100}}"
-    data-progressDialogTitle="{{progressDialogTitle}}"
-    data-progressLegendLabel="{{progressLegendLabel}}"
-    data-sunburst-id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}"
-    data-treemap-id="learninggoals-treemap-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}"
-    data-treemapAccessibilityText="{{treemapAccessibilityText}}">
+    data-course-id="{{courseid}}"
+    data-coursemodule-id="{{{coursemoduleid}}}"
+    data-instance-id="{{{instanceid}}}"
+    data-user-id="{{userid}}"
+    data-progresslabel0="{{progresslabel0}}"
+    data-progresslabel50="{{progresslabel50}}"
+    data-progresslabel100="{{progresslabel100}}"
+    data-progressdialogtitle="{{progressdialogtitle}}"
+    data-progresslegendlabel="{{progresslegendlabel}}"
+    data-sunburst-id="learninggoals-sunburst-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}"
+    data-treemap-id="learninggoals-treemap-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}"
+    data-treemapaccessibilitytext="{{treemapaccessibilitytext}}">
 
     <div class="d-flex flex-row-reverse bd-highlight">
         <div class="d-flex flex-column justify-center">
-            <img id="{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-treemap-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{treemap_thumbnail}}}" alt="">
+            <img id="{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-treemap-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{treemapthumbnail}}}" alt="">
             {{! <div class="p-2 bd-highlight">Treemap</div> }}
         </div>
         <div class="d-flex flex-column justify-center pr-3">
-            <img id="{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-sunburst-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{sunburst_thumbnail}}}" alt="">
+            <img id="{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-sunburst-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{sunburstthumbnail}}}" alt="">
             {{! <div class="p-2 bd-highlight">Sunburst</div> }}
         </div>
     </div>
 
     {{! Sunburst Visualisation }}
-    <div id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-container" style="position: relative">
+    <div id="learninggoals-sunburst-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-container" style="position: relative">
         <div class="newrow">
             <div class="tab">
-                <span class="section-modchooser" id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-ClickedOverview">
+                <span class="section-modchooser" id="learninggoals-sunburst-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-ClickedOverview">
                     <span class="section-modchooser-link">
                         <a class="btn btn-outline-secondary btn-sm text-nowrap">
                             <span class="section-modchooser-text">{{{contentview}}}</span>
                         </a>
                     </span>
                 </span>
-                <span class="section-modchooser" id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-ClickedPreparation">
+                <span class="section-modchooser" id="learninggoals-sunburst-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-ClickedPreparation">
                     <span class="section-modchooser-link">
                         <a class="btn btn-outline-secondary btn-sm text-nowrap">
                             <span class="section-modchooser-text">{{{examview}}}</span>
@@ -108,14 +108,14 @@
         </div>
         <div class="newrow">
             {{> mod_learninggoalwidget/widget/sunburst-view }}
-            <span id="learninggoals-sunburst-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-text-path-storage"></span>
+            <span id="learninggoals-sunburst-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-text-path-storage"></span>
             {{> mod_learninggoalwidget/widget/sunburst-progress-view }}
             {{> mod_learninggoalwidget/widget/sunburst-textual-bullet-point-view }}
         </div>
     </div>
 
     {{! Treemap Visualisation }}
-    <div id="learninggoals-treemap-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}-container" style="position: relative">
+    <div id="learninggoals-treemap-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-container" style="position: relative">
         <div class="newrow">
             {{> mod_learninggoalwidget/widget/treemap-view }}
         </div>
@@ -133,7 +133,7 @@ function(
     $,
     Main
 ) {
-    var root = $('#learninggoals-widget-{{{courseId}}}-{{{courseModuleId}}}-{{{instanceId}}}');
+    var root = $('#learninggoals-widget-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}');
     Main.init(root);
 });
 {{/js}}
