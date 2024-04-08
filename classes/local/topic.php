@@ -125,10 +125,10 @@ class topic {
                        AND b.goal = a.id
                   ORDER BY b.rank";
         $params = [
-            'course' => $topicrecord->course, 
-            'coursemodule' => $topicrecord->coursemodule, 
-            'instance' => $topicrecord->instance, 
-            'topicid' => $topicrecord->id
+            'course' => $topicrecord->course,
+            'coursemodule' => $topicrecord->coursemodule,
+            'instance' => $topicrecord->instance,
+            'topicid' => $topicrecord->id,
         ];
         $goals = [];
         $goalrecords = $DB->get_records_sql($sqlstmt, $params);

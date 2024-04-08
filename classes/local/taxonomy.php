@@ -100,12 +100,12 @@ class taxonomy {
                          WHERE a.course = :courseid
                            AND a.coursemodule = :coursemoduleid
                            AND a.instance = :instanceid
-                           AND a.topic = b.id 
+                           AND a.topic = b.id
                       ORDER BY a.rank";
             $params = [
-                'courseid' => $this->courseid, 
-                'coursemoduleid' => $this->coursemoduleid, 
-                'instanceid' => $this->instanceid
+                'courseid' => $this->courseid,
+                'coursemoduleid' => $this->coursemoduleid,
+                'instanceid' => $this->instanceid,
             ];
             $topicrecords = $DB->get_records_sql($sqlstmt, $params);
             foreach ($topicrecords as $topicrecord) {

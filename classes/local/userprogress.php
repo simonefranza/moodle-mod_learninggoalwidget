@@ -47,7 +47,7 @@ class userprogress {
     public static function get_progress($courseid, $coursemoduleid, $instanceid, $userid, $topicid, $goalid) {
         global $DB;
 
-        $sqlstmt = "SELECT progress 
+        $sqlstmt = "SELECT progress
                       FROM {learninggoalwidget_i_userpro}
                      WHERE course = :courseid
                        AND coursemodule = :coursemoduleid
@@ -56,12 +56,12 @@ class userprogress {
                        AND topic = :topicid
                        AND goal = :goalid";
         $params = [
-            'courseid' => $courseid, 
-            'coursemoduleid' => $coursemoduleid, 
-            'instanceid' => $instanceid, 
-            'userid' => $userid, 
-            'topicid' => $topicid, 
-            'goalid' => $goalid
+            'courseid' => $courseid,
+            'coursemoduleid' => $coursemoduleid,
+            'instanceid' => $instanceid,
+            'userid' => $userid,
+            'topicid' => $topicid,
+            'goalid' => $goalid,
         ];
         $userprogressrecord = $DB->get_record_sql($sqlstmt, $params);
         if ($userprogressrecord) {

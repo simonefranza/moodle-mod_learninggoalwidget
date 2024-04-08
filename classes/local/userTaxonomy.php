@@ -113,20 +113,20 @@ class userTaxonomy {
             global $DB;
             $sqlstmt = "SELECT b.id, b.title, b.shortname, b.url, a.course,
                                a.coursemodule, a.instance, a.rank
-                          FROM {learninggoalwidget_i_topics} a, {learninggoalwidget_topic} b 
+                          FROM {learninggoalwidget_i_topics} a, {learninggoalwidget_topic} b
                          WHERE a.course = :courseid
                            AND a.coursemodule = :coursemoduleid
                            AND a.instance = :instanceid
-                           AND a.topic = b.id 
+                           AND a.topic = b.id
                            AND b.title != :initials
-                           AND b.title != :goals 
+                           AND b.title != :goals
                       ORDER BY a.rank";
             $params = [
-                'courseid' => $this->courseid, 
-                'coursemoduleid' => $this->coursemoduleid, 
-                'instanceid' => $this->instanceid, 
-                'initials' => "QUESTIONS_INITIAL", 
-                'goals' => "QUESTIONS_GOALS"
+                'courseid' => $this->courseid,
+                'coursemoduleid' => $this->coursemoduleid,
+                'instanceid' => $this->instanceid,
+                'initials' => "QUESTIONS_INITIAL",
+                'goals' => "QUESTIONS_GOALS",
             ];
             $topicrecords = $DB->get_records_sql($sqlstmt, $params);
             foreach ($topicrecords as $topicrecord) {
