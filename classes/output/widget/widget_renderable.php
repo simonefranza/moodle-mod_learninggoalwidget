@@ -81,21 +81,21 @@ class widget_renderable implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
 
         $contextvariables = [
-            "courseId" => $this->courseid,
-            "userId" => $this->userid,
-            "courseModuleId" => $this->coursemoduleid,
-            "instanceId" => $this->instanceid,
+            "courseid" => $this->courseid,
+            "userid" => $this->userid,
+            "coursemoduleid" => $this->coursemoduleid,
+            "instanceid" => $this->instanceid,
             "contentview" => get_string('contentview', 'learninggoalwidget'),
             "examview" => get_string('examview', 'learninggoalwidget'),
-            "progressLabel0" => get_string('progressLabel0', 'learninggoalwidget'),
-            "progressLabel50" => get_string('progressLabel50', 'learninggoalwidget'),
-            "progressLabel100" => get_string('progressLabel100', 'learninggoalwidget'),
-            "progressDialogTitle" => get_string('progressDialogTitle', 'learninggoalwidget'),
-            "progressLegendLabel" => get_string('progressLegendLabel', 'learninggoalwidget'),
-            "sunburst_thumbnail" => $output->image_url('icon', 'learninggoalwidget'),
-            "treemap_thumbnail" => $output->image_url('treemap_thumbnail', 'learninggoalwidget'),
-            "textualBulletpointListTitle" => get_string('textualBulletpointListTitle', 'learninggoalwidget'),
-            "treemapAccessibilityText" => get_string("treemapAccessibilityText", 'learninggoalwidget'),
+            "progresslabel0" => get_string('progresslabel0', 'learninggoalwidget'),
+            "progresslabel50" => get_string('progresslabel50', 'learninggoalwidget'),
+            "progresslabel100" => get_string('progresslabel100', 'learninggoalwidget'),
+            "progressdialogtitle" => get_string('progressdialogtitle', 'learninggoalwidget'),
+            "progresslegendlabel" => get_string('progresslegendlabel', 'learninggoalwidget'),
+            "sunburstthumbnail" => $output->image_url('icon', 'learninggoalwidget'),
+            "treemapthumbnail" => $output->image_url('treemapthumbnail', 'learninggoalwidget'),
+            "textualbulletpointlisttitle" => get_string('textualbulletpointlisttitle', 'learninggoalwidget'),
+            "treemapaccessibilitytext" => get_string("treemapaccessibilitytext", 'learninggoalwidget'),
         ];
         return $contextvariables;
     }

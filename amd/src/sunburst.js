@@ -60,13 +60,13 @@ define(
     /**
      * Intialise the sunburst widget.
      * @param {*} sunburstId The sunburst widget instance ID
-     * @param {*} userId The user ID
-     * @param {*} courseId The course ID
-     * @param {*} courseModuleId The course module ID
-     * @param {*} instanceId The course module instance ID
-     * @param {*} progressLegendLabel The legend string
+     * @param {*} userid The user ID
+     * @param {*} courseid The course ID
+     * @param {*} coursemoduleid The course module ID
+     * @param {*} instanceid The course module instance ID
+     * @param {*} progresslegendlabel The legend string
      */
-    var renderSunburst = function(sunburstId, userId, courseId, courseModuleId, instanceId, progressLegendLabel) {
+    var renderSunburst = function(sunburstId, userid, courseid, coursemoduleid, instanceid, progresslegendlabel) {
         require.config({
             paths: {
                 d3v7: Configuration.wwwroot + "/mod/learninggoalwidget/js/d3.v7.min"
@@ -74,13 +74,13 @@ define(
         });
 
         // Request learning goals taxonomy
-        Controller.getLearningGoals({courseid: courseId, userid: userId, coursemoduleid: courseModuleId, instanceid: instanceId})
+        Controller.getLearningGoals({courseid: courseid, userid: userid, coursemoduleid: coursemoduleid, instanceid: instanceid})
             .then((jsonLearningGoals) => {
 
                     var loadedTaxonomy = JSON.parse(jsonLearningGoals);
                     if (loadedTaxonomy.children.length > 0) {
                         renderSunburstView(loadedTaxonomy, sunburstId);
-                        renderSunburstWithProgressView(loadedTaxonomy, sunburstId, progressLegendLabel);
+                        renderSunburstWithProgressView(loadedTaxonomy, sunburstId, progresslegendlabel);
                         renderTextualBulletPointList(loadedTaxonomy, sunburstId);
                     }
                     return 0;
@@ -94,31 +94,31 @@ define(
         document.getElementById(sunburstId + "-ClickedOverview").onclick = function() {
 
             var sunburstId = getSunburstId(this);
-            var courseId = getCourseId(this);
-            var courseModuleId = getCourseModuleId(this);
-            var instanceId = getInstanceId(this);
-            var userId = getUserId(this);
+            var courseid = getCourseId(this);
+            var coursemoduleid = getCourseModuleId(this);
+            var instanceid = getInstanceId(this);
+            var userid = getUserId(this);
 
             changeView("Overview", sunburstId);
 
             // Log overview click event
-            var learningGoalEvent = createLearningGoalEvent("clickedOverview", courseId, courseModuleId, instanceId, userId);
-            logLearningGoalEvent(courseId, courseModuleId, instanceId, userId, learningGoalEvent);
+            var learningGoalEvent = createLearningGoalEvent("clickedOverview", courseid, coursemoduleid, instanceid, userid);
+            logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
         };
 
         document.getElementById(sunburstId + "-ClickedPreparation").onclick = function() {
 
             var sunburstId = getSunburstId(this);
-            var courseId = getCourseId(this);
-            var courseModuleId = getCourseModuleId(this);
-            var instanceId = getInstanceId(this);
-            var userId = getUserId(this);
+            var courseid = getCourseId(this);
+            var coursemoduleid = getCourseModuleId(this);
+            var instanceid = getInstanceId(this);
+            var userid = getUserId(this);
 
             changeView("Preparation", sunburstId);
 
             // Log preparation click event
-            var learningGoalEvent = createLearningGoalEvent("clickedPreparation", courseId, courseModuleId, instanceId, userId);
-            logLearningGoalEvent(courseId, courseModuleId, instanceId, userId, learningGoalEvent);
+            var learningGoalEvent = createLearningGoalEvent("clickedPreparation", courseid, coursemoduleid, instanceid, userid);
+            logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
         };
 
         // Setting the visualisation container to fit nicely ;)
@@ -556,18 +556,18 @@ define(
                             if (d.data.link) {
                                 window.open(d.data.link);
                                 // Log url click event
-                                var courseId = getCourseId(this);
-                                var courseModuleId = getCourseModuleId(this);
-                                var instanceId = getInstanceId(this);
-                                var userId = getUserId(this);
+                                var courseid = getCourseId(this);
+                                var coursemoduleid = getCourseModuleId(this);
+                                var instanceid = getInstanceId(this);
+                                var userid = getUserId(this);
 
                                 var learningGoalEvent = createLearningGoalEvent("overviewOpenLink",
-                                    courseId, courseModuleId, instanceId, userId);
+                                    courseid, coursemoduleid, instanceid, userid);
                                 var eventLinkParam = new Object();
                                 eventLinkParam.name = "url";
                                 eventLinkParam.value = d.data.link;
                                 learningGoalEvent.push(eventLinkParam);
-                                logLearningGoalEvent(courseId, courseModuleId, instanceId, userId, learningGoalEvent);
+                                logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
                             }
 
                             const sunburstClickEvent = new CustomEvent('sunburstclick', {
@@ -714,9 +714,9 @@ define(
      * Render the sunburst view coloring the arcs with the users progress
      * @param {*} courseTaxonomy The learning goal taxonomy
      * @param {*} sunburstId The sunburst instance ID
-     * @param {*} progressLegendLabel The legend string
+     * @param {*} progresslegendlabel The legend string
      */
-    var renderSunburstWithProgressView = function(courseTaxonomy, sunburstId, progressLegendLabel) {
+    var renderSunburstWithProgressView = function(courseTaxonomy, sunburstId, progresslegendlabel) {
         require(["d3v7"], function(d3) {
             // Reading the header name of the json data and pasting it before chart container
             d3.select("#" + sunburstId + "-taxonomy-userprogress-chart")
@@ -874,11 +874,11 @@ define(
                 .on(
                     "click", function(e, d) {
                         if (!d.children) {
-                            var courseId = getCourseId(this);
-                            var courseModuleId = getCourseModuleId(this);
-                            var instanceId = getInstanceId(this);
+                            var courseid = getCourseId(this);
+                            var coursemoduleid = getCourseModuleId(this);
+                            var instanceid = getInstanceId(this);
                             var sunburstId = getSunburstId(this);
-                            var userId = getUserId(this);
+                            var userid = getUserId(this);
                             var goalName = d.data.name;
                             var goalId = d.data.goalid;
                             var goalProgressValue = 0;
@@ -907,8 +907,8 @@ define(
                                             ModalEvents.save, function(e) {
                                                 e.preventDefault();
                                                 goalProgressValue = document.getElementById("progressvalue-" + modalId).value;
-                                                saveProgress(sunburstId, courseId, courseModuleId, instanceId,
-                                                    userId, topicId, goalId, goalName, goalProgressValue);
+                                                saveProgress(sunburstId, courseid, coursemoduleid, instanceid,
+                                                    userid, topicId, goalId, goalName, goalProgressValue);
                                                 modal.hide();
                                             }
                                         );
@@ -1176,7 +1176,7 @@ define(
                 .attr("x", 0)
                 .attr("y", -8)
                 .style("text-anchor", "middle")
-                .text(progressLegendLabel);
+                .text(progresslegendlabel);
 
             // Set scale for x-axis
             var scale = d3
@@ -1295,26 +1295,26 @@ define(
     /**
      * Update the users progress.
      * @param {*} sunburstId The sunburst instance ID
-     * @param {*} courseId The course ID
-     * @param {*} courseModuleId The course module ID
-     * @param {*} instanceId The course module instance ID
-     * @param {*} userId The user ID
+     * @param {*} courseid The course ID
+     * @param {*} coursemoduleid The course module ID
+     * @param {*} instanceid The course module instance ID
+     * @param {*} userid The user ID
      * @param {*} topicId The topic ID
      * @param {*} goalId The goal ID
      * @param {*} goalName The name of the goal
      * @param {*} goalProgressValue The user progress
      */
     var saveProgress = function(sunburstId,
-        courseId, courseModuleId, instanceId, userId, topicId,
+        courseid, coursemoduleid, instanceid, userid, topicId,
         goalId,
         goalName, goalProgressValue) {
         // Learninggoals webservice: save the learning goal progress for a learning goal
         Controller.updateUserProgress(
             {
-                courseid: courseId,
-                coursemoduleid: courseModuleId,
-                instanceid: instanceId,
-                userid: userId,
+                courseid: courseid,
+                coursemoduleid: coursemoduleid,
+                instanceid: instanceid,
+                userid: userid,
                 topicid: topicId,
                 goalid: goalId,
                 progress: goalProgressValue
@@ -1344,7 +1344,7 @@ define(
             .catch(Notification.exception);
 
         // Log save progress event
-        var learningGoalEvent = createLearningGoalEvent("preparationSaveProgress", courseId, courseModuleId, instanceId, userId);
+        var learningGoalEvent = createLearningGoalEvent("preparationSaveProgress", courseid, coursemoduleid, instanceid, userid);
         var eventGoalParam = new Object();
         eventGoalParam.name = "goalname";
         eventGoalParam.value = goalName;
@@ -1353,24 +1353,24 @@ define(
         eventGoalProgressParam.value = goalProgressValue;
         learningGoalEvent.push(eventGoalParam);
         learningGoalEvent.push(eventGoalProgressParam);
-        logLearningGoalEvent(courseId, courseModuleId, instanceId, userId, learningGoalEvent);
+        logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
     };
 
     /**
      * Logs learning goal events into moodles standard log store
-     * @param {*} courseId The course ID
-     * @param {*} courseModuleId The course module ID
-     * @param {*} instanceId The course module instance ID
-     * @param {*} userId The user ID
+     * @param {*} courseid The course ID
+     * @param {*} coursemoduleid The course module ID
+     * @param {*} instanceid The course module instance ID
+     * @param {*} userid The user ID
      * @param {*} eventParams The learning goal event parameters
      */
-    var logLearningGoalEvent = function(courseId, courseModuleId, instanceId, userId, eventParams) {
+    var logLearningGoalEvent = function(courseid, coursemoduleid, instanceid, userid, eventParams) {
         Controller.logEvent(
             {
-                courseid: courseId,
-                coursemoduleid: courseModuleId,
-                instanceid: instanceId,
-                userid: userId,
+                courseid: courseid,
+                coursemoduleid: coursemoduleid,
+                instanceid: instanceid,
+                userid: userid,
                 eventparams: eventParams
             }
         )
@@ -1382,28 +1382,28 @@ define(
 
     /**
      * Create learning goal event parameters
-     * @param {*} courseId The course ID
-     * @param {*} courseModuleId The course module ID
-     * @param {*} instanceId The course module instance ID
-     * @param {*} userId The user ID
+     * @param {*} courseid The course ID
+     * @param {*} coursemoduleid The course module ID
+     * @param {*} instanceid The course module instance ID
+     * @param {*} userid The user ID
      * @returns {array} The array of learning goal event parameters
      */
-    var createLearningGoalEvent = function(courseId, courseModuleId, instanceId, userId) {
+    var createLearningGoalEvent = function(courseid, coursemoduleid, instanceid, userid) {
         var eventCourseParam = new Object();
         eventCourseParam.name = "courseid";
-        eventCourseParam.value = courseId;
+        eventCourseParam.value = courseid;
 
         var eventCourseModuleParam = new Object();
         eventCourseModuleParam.name = "coursemoduleid";
-        eventCourseModuleParam.value = courseModuleId;
+        eventCourseModuleParam.value = coursemoduleid;
 
         var eventInstanceParam = new Object();
         eventInstanceParam.name = "instanceid";
-        eventInstanceParam.value = instanceId;
+        eventInstanceParam.value = instanceid;
 
         var eventUserParam = new Object();
         eventUserParam.name = "userid";
-        eventUserParam.value = userId;
+        eventUserParam.value = userid;
 
         var timestampParam = new Object();
         timestampParam.name = "timestamp";

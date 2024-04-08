@@ -61,7 +61,7 @@ define(
       root.data("course-id"),
       root.data("coursemodule-id"),
       root.data("instance-id"),
-      root.attr("data-treemapAccessibilityText"));
+      root.attr("data-treemapaccessibilitytext"));
 
     document.getElementById(root.data("course-id") + "-"
       + root.data("coursemodule-id") + "-"
@@ -74,7 +74,7 @@ define(
           root.data("course-id"),
           root.data("coursemodule-id"),
           root.data("instance-id"),
-          root.attr("data-treemapAccessibilityText"));
+          root.attr("data-treemapaccessibilitytext"));
         $("#" + root.data("sunburst-id") + "-container").addClass("d-none");
       };
 
@@ -95,7 +95,7 @@ define(
         Treemap.renderTreemapView(
           updateLearningGoalProgressEvent.detail.taxonomy,
           root.data("treemap-id"),
-          root.attr("data-treemapAccessibilityText"));
+          root.attr("data-treemapaccessibilitytext"));
       }
       if (updateLearningGoalProgressEvent.detail.sender === "treemap") {
         $("div#" + root.data("sunburst-id") + "-taxonomy-userprogress-chart-fullgoal").remove();

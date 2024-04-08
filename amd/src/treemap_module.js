@@ -16,7 +16,7 @@ define(function(require, exports) {
   let widgetTitle = '';
   let data = null;
   let treemapId = null;
-  let treemapAccessibilityText = null;
+  let treemapaccessibilitytext = null;
   let taxonomy = null;
   let updateProgressCallback = null;
   let highlightedGoals = null;
@@ -687,7 +687,7 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
       .on('click', toggleAccessibilityDialog);
 
     let accessibilityData = [{
-      data: treemapAccessibilityText
+      data: treemapaccessibilitytext
     }];
 
     let accessibilityFontSizeMin = 14;
@@ -3116,7 +3116,7 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
     data = taxonomyObj;
     taxonomy = taxonomyObj;
     treemapId = id;
-    treemapAccessibilityText = accessibilityText;
+    treemapaccessibilitytext = accessibilityText;
     confirmationBoxesActive = showConfirmation;
     updateProgressCallback = callback;
     window.onresize = setupSvg;

@@ -90,13 +90,13 @@ $string['guestaccess'] = 'You need to login first';
 $string['noaccess'] = 'You need to login first';
 $string['contentview'] = 'Learning Goals View';
 $string['examview'] = 'Progress View';
-$string['progressLabel0'] = 'Low (0%)';
-$string['progressLabel50'] = 'Medium (50%)';
-$string['progressLabel100'] = 'High (100%)';
-$string['progressDialogTitle'] = 'Update Learning Goal Progress';
-$string['progressLegendLabel'] = 'Learning progress';
-$string['textualBulletpointListTitle'] = 'Overview of Topics and Learning Goals';
-$string['treemapAccessibilityText'] = 'Welcome to the Learning Goals Widget <br/> <br/>
+$string['progresslabel0'] = 'Low (0%)';
+$string['progresslabel50'] = 'Medium (50%)';
+$string['progresslabel100'] = 'High (100%)';
+$string['progressdialogtitle'] = 'Update Learning Goal Progress';
+$string['progresslegendlabel'] = 'Learning progress';
+$string['textualbulletpointlisttitle'] = 'Overview of Topics and Learning Goals';
+$string['treemapaccessibilitytext'] = 'Welcome to the Learning Goals Widget <br/> <br/>
 This tool helps you reflect on the topics you learned
 and keeps track of your progress.
 On the left side there are the topics and on right side
