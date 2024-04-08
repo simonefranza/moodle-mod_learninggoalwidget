@@ -31,7 +31,7 @@ $string['modulename_help'] = '';
 $string['modulename_link'] = 'mod/learninggoalwidget/view';
 $string['modulenameplural'] = 'Lernziele Widgets';
 $string['privacy:metadata'] = '';
-$string['pluginadministration'] = 'Lernziele Widget administration';
+$string['pluginadministration'] = 'Lernziele Widget Administration';
 $string['pluginname'] = 'Lernziele Widget';
 $string['search:activity'] = 'learninggoalwidget';
 
