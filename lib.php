@@ -41,32 +41,38 @@ function learninggoalwidget_add_instance(stdClass $data): int {
     $data->id = $DB->insert_record('learninggoalwidget', $data);
     $sql = "SELECT 1
               FROM {learninggoalwidget_i_topics}
-             WHERE course = ?
+             WHERE course = :courseid
                AND coursemodule = -1
                AND instance = -1";
+    $updateparams = [
+        'coursemodule' => $data->coursemodule, 
+        'instance' => $data->id, 
+        'course'=> $COURSE->id
+    ];
+    $courseparams = ['courseid' => $COURSE->id];
 
-    if ($DB->record_exists_sql($sql, [$COURSE->id])) {
+    if ($DB->record_exists_sql($sql, $courseparams)) {
         $sql = "UPDATE {learninggoalwidget_i_topics}
-                   SET coursemodule=?, instance=?
-                 WHERE course=?
-                 AND coursemodule = -1
-                 AND instance = -1";
-        $DB->execute($sql, [$data->coursemodule, $data->id, $COURSE->id]);
+                   SET coursemodule = :coursemodule, instance = :instance
+                 WHERE course = :course
+                   AND coursemodule = -1
+                   AND instance = -1";
+        $DB->execute($sql, $updateparams);
     }
 
     $sql = "SELECT 1
               FROM {learninggoalwidget_i_goals}
-             WHERE course = ?
+             WHERE course = :courseid
                AND coursemodule = -1
                AND instance = -1";
 
-    if ($DB->record_exists_sql($sql, [$COURSE->id])) {
+    if ($DB->record_exists_sql($sql, $courseparams)) {
         $sql = "UPDATE {learninggoalwidget_i_goals}
-               SET coursemodule=?, instance=?
-             WHERE course=?
-             AND coursemodule = -1
-             AND instance = -1";
-        $DB->execute($sql, [$data->coursemodule, $data->id, $COURSE->id]);
+                   SET coursemodule = :coursemodule, instance = :instance
+                 WHERE course = :course
+                   AND coursemodule = -1
+                   AND instance = -1";
+        $DB->execute($sql, $updateparams);
     }
     return $data->id;
 }

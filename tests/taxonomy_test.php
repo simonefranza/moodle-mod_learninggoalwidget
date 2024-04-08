@@ -605,8 +605,15 @@ class taxonomy_test extends \advanced_testcase {
             $eventparams
         );
 
-        $sqlstmt = 'SELECT id, eventname, other, userid FROM {logstore_standard_log} WHERE eventname = ? AND userid = ?';
-        $res = $DB->get_record_sql($sqlstmt, [$eventname, $user1->id]);
+        $sqlstmt = 'SELECT id, eventname, other, userid 
+                      FROM {logstore_standard_log} 
+                     WHERE eventname = :eventname
+                       AND userid = :userid';
+        $params = [
+            'eventname' => $eventname,
+            'userid' => $user1->id
+        ];
+        $res = $DB->get_record_sql($sqlstmt, $params);
         $this->assertTrue($res !== false);
         $otherdata = json_decode($res->other);
         $output = new stdClass;

@@ -86,12 +86,20 @@ class provider implements
         // Users who used the widget and set progress values.
         $sql = "SELECT c.id
                   FROM {context} c
-                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-                  JOIN {learninggoalwidget} lgw ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.instance = lgw.id
+                  JOIN {course_modules} cm 
+                    ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m 
+                    ON m.id = cm.module AND m.name = :modname
+                  JOIN {learninggoalwidget} lgw 
+                    ON lgw.id = cm.instance
+                  JOIN {learninggoalwidget_i_userpro} lgwup 
+                    ON lgwup.instance = lgw.id
                  WHERE lgwup.user = :userid";
-        $params = ['contextlevel' => CONTEXT_MODULE, 'modname' => 'learninggoalwidget', 'userid' => $userid];
+        $params = [
+            'contextlevel' => CONTEXT_MODULE, 
+            'modname' => 'learninggoalwidget', 
+            'userid' => $userid
+        ];
         $resultset->add_from_sql($sql, $params);
 
         return $resultset;
@@ -113,9 +121,12 @@ class provider implements
         // Users who attempted the quiz.
         $sql = "SELECT lgwup.user as userid
                   FROM {course_modules} cm
-                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-                  JOIN {learninggoalwidget} lgw ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.instance = lgw.id
+                  JOIN {modules} m 
+                    ON m.id = cm.module AND m.name = :modname
+                  JOIN {learninggoalwidget} lgw 
+                    ON lgw.id = cm.instance
+                  JOIN {learninggoalwidget_i_userpro} lgwup 
+                    ON lgwup.instance = lgw.id
                  WHERE cm.id = :cmid";
         $userlist->add_from_sql('userid', $sql, $params);
 
@@ -138,26 +149,31 @@ class provider implements
         $userid = $user->id;
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
-        $sql = "SELECT
-                    lgwup.course AS course,
-                    lgwup.instance AS instance,
-                    lgwup.user AS user,
-                    lgwup.progress AS progress,
-                    lgwtopic.title AS topictitle,
-                    lgwtopic.shortname AS topicshortname,
-                    lgwtopic.url AS topicurl,
-                    lgwgoal.title AS goaltitle,
-                    lgwgoal.shortname AS goalshortname,
-                    lgwgoal.url AS goalurl,
-                    c.id AS contextid,
-                    cm.id AS cmid
+        $sql = "SELECT lgwup.course AS course,
+                       lgwup.instance AS instance,
+                       lgwup.user AS user,
+                       lgwup.progress AS progress,
+                       lgwtopic.title AS topictitle,
+                       lgwtopic.shortname AS topicshortname,
+                       lgwtopic.url AS topicurl,
+                       lgwgoal.title AS goaltitle,
+                       lgwgoal.shortname AS goalshortname,
+                       lgwgoal.url AS goalurl,
+                       c.id AS contextid,
+                       cm.id AS cmid
                   FROM {context} c
-            INNER JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-            INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {learninggoalwidget} lgw ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup ON lgwup.instance = lgw.id AND lgwup.user = :userid
-                  RIGHT JOIN {learninggoalwidget_topic} lgwtopic ON lgwup.topic = lgwtopic.id
-        RIGHT JOIN {learninggoalwidget_goal} lgwgoal ON lgwup.goal = lgwgoal.id AND lgwup.topic = lgwgoal.topic
+            INNER JOIN {course_modules} cm 
+                    ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+            INNER JOIN {modules} m 
+                    ON m.id = cm.module AND m.name = :modname
+            INNER JOIN {learninggoalwidget} lgw 
+                    ON lgw.id = cm.instance
+                  JOIN {learninggoalwidget_i_userpro} lgwup 
+                    ON lgwup.instance = lgw.id AND lgwup.user = :userid
+            RIGHT JOIN {learninggoalwidget_topic} lgwtopic 
+                    ON lgwup.topic = lgwtopic.id
+            RIGHT JOIN {learninggoalwidget_goal} lgwgoal 
+                    ON lgwup.goal = lgwgoal.id AND lgwup.topic = lgwgoal.topic
                  WHERE c.id {$contextsql}";
 
         $params = [

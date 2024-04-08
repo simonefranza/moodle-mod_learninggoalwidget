@@ -117,10 +117,19 @@ class topic {
     public static function from_record($topicrecord): topic {
         global $DB;
         $sqlstmt = "SELECT a.id, a.title, a.shortname, a.url, b.rank
-            FROM {learninggoalwidget_goal} a, {learninggoalwidget_i_goals} b
-            WHERE b.course = ? AND b.coursemodule = ? AND b.instance = ? AND b.topic = ? AND b.goal = a.id
-            ORDER BY b.rank";
-        $params = [$topicrecord->course, $topicrecord->coursemodule, $topicrecord->instance, $topicrecord->id];
+                      FROM {learninggoalwidget_goal} a, {learninggoalwidget_i_goals} b
+                     WHERE b.course = :course
+                       AND b.coursemodule = :coursemodule
+                       AND b.instance = :instance
+                       AND b.topic = :topicid
+                       AND b.goal = a.id
+                  ORDER BY b.rank";
+        $params = [
+            'course' => $topicrecord->course, 
+            'coursemodule' => $topicrecord->coursemodule, 
+            'instance' => $topicrecord->instance, 
+            'topicid' => $topicrecord->id
+        ];
         $goals = [];
         $goalrecords = $DB->get_records_sql($sqlstmt, $params);
         foreach ($goalrecords as $goalrecord) {
