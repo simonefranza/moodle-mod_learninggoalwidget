@@ -52,7 +52,7 @@ class taxonomy_test extends \advanced_testcase {
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course1->id);
 
         $emptytaxonomy = new \stdClass;
-        $emptytaxonomy->name = "Learning Goal's Taxonomy";
+        $emptytaxonomy->name = "Learning Goal's taxonomy";
         $emptytaxonomy->children = [];
         $jsonemptytaxonomy = json_encode($emptytaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
@@ -169,7 +169,7 @@ class taxonomy_test extends \advanced_testcase {
 
         $this->assertNotNull($parsed->name);
         $this->assertNotEmpty($parsed->name);
-        $this->assertEquals("Learning Goal's Taxonomy", $parsed->name);
+        $this->assertEquals("Learning Goal's taxonomy", $parsed->name);
 
         $this->assertNotNull($parsed->children);
         $this->assertIsArray($parsed->children);
@@ -664,7 +664,7 @@ class taxonomy_test extends \advanced_testcase {
         $parsed = json_decode($result);
 
         $expectedjson = new stdClass();
-        $expectedjson->name = "Learning Goal's Taxonomy";
+        $expectedjson->name = "Learning Goal's taxonomy";
         $expectedjson->children = [
             [
                 $resultcourse[5]->rank,
@@ -703,7 +703,7 @@ class taxonomy_test extends \advanced_testcase {
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id, $course->id);
 
         $taxonomy = (object) [
-            "name" => "Learning Goal's Taxonomy",
+            "name" => "Learning Goal's taxonomy",
             "children" => [
                 (object) [
                     "name" => "topic1",
@@ -797,7 +797,7 @@ class taxonomy_test extends \advanced_testcase {
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id, $course->id);
 
         $taxonomy = (object) [
-            "name" => "Learning Goal's Taxonomy",
+            "name" => "Learning Goal's taxonomy",
             "children" => [
                 (object) [
                     "name" => "topic",
@@ -1008,7 +1008,7 @@ class taxonomy_test extends \advanced_testcase {
 
         $this->assertNotNull($parsed->name);
         $this->assertNotEmpty($parsed->name);
-        $this->assertEquals("Learning Goal's Taxonomy", $parsed->name);
+        $this->assertEquals("Learning Goal's taxonomy", $parsed->name);
 
         $this->assertNotNull($parsed->children);
         $this->assertIsArray($parsed->children);
@@ -1084,7 +1084,7 @@ class taxonomy_test extends \advanced_testcase {
 
         $this->assertNotNull($parsed->name);
         $this->assertNotEmpty($parsed->name);
-        $this->assertEquals("Learning Goal's Taxonomy", $parsed->name);
+        $this->assertEquals("Learning Goal's taxonomy", $parsed->name);
 
         $this->assertNotNull($parsed->children);
         $this->assertIsArray($parsed->children);
@@ -1236,7 +1236,7 @@ class taxonomy_test extends \advanced_testcase {
 
         $this->assertNotNull($topic->name);
         $this->assertNotEmpty($topic->name);
-        $this->assertEquals("Learning Goal's Taxonomy", $topic->name);
+        $this->assertEquals("Learning Goal's taxonomy", $topic->name);
 
         $this->assertNotNull($topic->children);
         $this->assertIsArray($topic->children);
