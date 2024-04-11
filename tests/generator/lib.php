@@ -23,6 +23,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * learninggoalwidget module data generator class
+ *
+ * @package mod_learninggoalwidget
+ * @copyright 2021 Know Center GmbH
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_learninggoalwidget_generator extends testing_module_generator {
 
     /**

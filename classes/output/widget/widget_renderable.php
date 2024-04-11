@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_learninggoalwidget\output\widget;
-
 /**
  * Learning Goal Widget Renderable
  *
@@ -23,6 +21,9 @@ namespace mod_learninggoalwidget\output\widget;
  * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace mod_learninggoalwidget\output\widget;
+
 use renderable;
 use renderer_base;
 use templatable;
