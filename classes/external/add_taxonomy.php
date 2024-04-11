@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Class for the external service add_taxonomy.
+ *
+ * @package    mod_learninggoalwidget
+ * @category   external
+ * @copyright  2023 Know Center GmbH
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_learninggoalwidget\external;
 
 use core_external\external_function_parameters;

@@ -14,6 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * The learning goal event class.
+ *
+ * Triggered when user interacts with the widget
+ * (e.g. setting progress or clicks on a goal which
+ * has a weblink embedded)
+ *
+ * @package   mod_learninggoalwidget
+ * @category  event
+ * @copyright 2021 Know Center GmbH
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_learninggoalwidget\event;
 
 /**

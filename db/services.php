@@ -18,7 +18,7 @@
  * Web Service Definition for the learninggoals service.
  *
  * @package   mod_learninggoalwidget
- * @copyright University of Technology Graz
+ * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

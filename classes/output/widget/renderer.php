@@ -18,7 +18,7 @@
  * Learning Goals Widget Renderer
  *
  * @package   mod_learninggoalwidget
- * @copyright University of Technology Graz
+ * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ use plugin_renderer_base;
  * Learning Goals Widget renderer
  *
  * @package   mod_learninggoalwidget
- * @copyright University of Technology Graz
+ * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class renderer extends plugin_renderer_base {
