@@ -197,7 +197,7 @@ define(
    * @returns {number} The treemap instance ID
    */
   const getTreemapId = (element) => {
-    const learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+    const learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
     return $(learningGoalWidgetElement).data("treemap-id");
   };
 
@@ -207,7 +207,7 @@ define(
    * @returns {number} The course ID
    */
   const getCourseId = (element) => {
-    const learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+    const learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
     return $(learningGoalWidgetElement).data("course-id");
   };
 
@@ -217,7 +217,7 @@ define(
    * @returns {number} The course module ID
    */
   const getCourseModuleId = (element) => {
-    const learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+    const learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
     return $(learningGoalWidgetElement).data("coursemodule-id");
   };
 
@@ -227,7 +227,7 @@ define(
    * @returns {number} The course module instance ID
    */
   const getInstanceId = (element) => {
-    const learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+    const learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
     return $(learningGoalWidgetElement).data("instance-id");
   };
 
@@ -237,7 +237,7 @@ define(
    * @returns {number} The user ID
    */
   const getUserId = (element) => {
-    let learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+    let learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
     return $(learningGoalWidgetElement).data("user-id");
   };
 
