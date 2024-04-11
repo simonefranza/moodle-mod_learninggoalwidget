@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Learning Goal Taxonomy object
+ * Learning Goal object
  *
  * @package   mod_learninggoalwidget
  * @copyright 2021 Know Center GmbH

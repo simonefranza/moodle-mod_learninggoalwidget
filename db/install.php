@@ -18,7 +18,7 @@
  * Create Learning Goal Competency Framework upon installation
  *
  * @package   mod_learninggoalwidget
- * @copyright 2021 KnowCenter GmbH {@link http://www.know-center.at}
+ * @copyright 2021 KnowCenter GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

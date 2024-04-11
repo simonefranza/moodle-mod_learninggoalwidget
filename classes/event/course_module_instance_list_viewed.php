@@ -18,7 +18,7 @@
  * The mod_learninggoalwidget instance list viewed event.
  *
  * @package    mod_learninggoalwidget
- * @copyright  2014 Mark Nelson <markn@moodle.com>
+ * @copyright  2021 Know Center GmbH
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

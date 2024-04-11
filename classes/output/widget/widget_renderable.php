@@ -16,6 +16,13 @@
 
 namespace mod_learninggoalwidget\output\widget;
 
+/**
+ * Learning Goal Widget Renderable
+ *
+ * @package   mod_learninggoalwidget
+ * @copyright 2021 Know Center GmbH
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 use renderable;
 use renderer_base;
 use templatable;
@@ -24,7 +31,7 @@ use templatable;
  * Learning Goal Widget Renderable
  *
  * @package   mod_learninggoalwidget
- * @copyright University of Technology Graz
+ * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class widget_renderable implements renderable, templatable {

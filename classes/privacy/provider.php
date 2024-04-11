@@ -18,7 +18,8 @@
  * Privacy Subsystem implementation for Learning Goals Widget Activity.
  *
  * @package   mod_learninggoalwidget
- * @copyright University of Technology Graz
+ * @category  privacy
+ * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -35,7 +36,8 @@ use stdClass;
 /**
  * Privacy Subsystem for Learning Goals Widget Activity
  *
- * @copyright University of Technology Graz
+ * @package   mod_learninggoalwidget
+ * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements

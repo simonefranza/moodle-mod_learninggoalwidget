@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Web Service API
+ *
+ * @package   mod_learninggoalwidget
+ * @category  external
+ * @copyright 2021 Know Cener GmbH
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/externallib.php');
@@ -26,7 +35,7 @@ use mod_learninggoalwidget\local\userTaxonomy;
  * Web Service API
  *
  * @package   mod_learninggoalwidget
- * @copyright University of Technology Graz
+ * @copyright 2021 Know Cener GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_learninggoalwidget_external extends external_api {
