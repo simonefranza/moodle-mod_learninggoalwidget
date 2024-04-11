@@ -1430,7 +1430,7 @@ define(
      * @returns {number} The sunburst instance ID
      */
     var getSunburstId = function(element) {
-        var learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+        var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
         return $(learningGoalWidgetElement).data("sunburst-id");
     };
 
@@ -1440,7 +1440,7 @@ define(
      * @returns {number} The course ID
      */
     var getCourseId = function(element) {
-        var learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+        var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
         return $(learningGoalWidgetElement).data("course-id");
     };
 
@@ -1450,7 +1450,7 @@ define(
      * @returns {number} The course module ID
      */
     var getCourseModuleId = function(element) {
-        var learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+        var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
         return $(learningGoalWidgetElement).data("coursemodule-id");
     };
 
@@ -1460,7 +1460,7 @@ define(
      * @returns {number} The course module instance ID
      */
     var getInstanceId = function(element) {
-        var learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+        var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
         return $(learningGoalWidgetElement).data("instance-id");
     };
 
@@ -1470,7 +1470,7 @@ define(
      * @returns {number} The user id
      */
     var getUserId = function(element) {
-        var learningGoalWidgetElement = $(element).closest('div.telm-learninggoals-widget');
+        var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
         return $(learningGoalWidgetElement).data("user-id");
     };
 
