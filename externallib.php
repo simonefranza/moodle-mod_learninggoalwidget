@@ -244,7 +244,7 @@ class mod_learninggoalwidget_external extends external_api {
             $userprogress->instance = $instanceid;
             $userprogress->topic = $topicid;
             $userprogress->goal = $goalid;
-            $userprogress['"user"'] = $userid;
+            $userprogress->{'"user"'} = $userid;
             $userprogress->progress = $progress;
             $DB->insert_record('learninggoalwidget_i_userpro', $userprogress);
         }
