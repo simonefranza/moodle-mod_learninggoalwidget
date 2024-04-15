@@ -52,7 +52,7 @@ class userprogress {
                      WHERE course = :courseid
                        AND coursemodule = :coursemoduleid
                        AND instance = :instanceid
-                       AND user = :userid
+                       AND \"user\" = :userid
                        AND topic = :topicid
                        AND goal = :goalid";
         $params = [

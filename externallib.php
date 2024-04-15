@@ -220,7 +220,7 @@ class mod_learninggoalwidget_external extends external_api {
                      WHERE course = :courseid
                        AND coursemodule = :coursemoduleid
                        AND instance = :instanceid
-                       AND user = :userid
+                       AND \"user\" = :userid
                        AND topic = :topicid
                        AND goal = :goalid";
         $params = [
@@ -244,7 +244,7 @@ class mod_learninggoalwidget_external extends external_api {
             $userprogress->instance = $instanceid;
             $userprogress->topic = $topicid;
             $userprogress->goal = $goalid;
-            $userprogress->user = $userid;
+            $userprogress['"user"'] = $userid;
             $userprogress->progress = $progress;
             $DB->insert_record('learninggoalwidget_i_userpro', $userprogress);
         }
