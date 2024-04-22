@@ -65,7 +65,7 @@ class insert_topic extends \core_external\external_api {
 
     /**
      * Insert a new topic in the topic table and reference it with course and
-     * rank from topic instance table
+     * ranking from topic instance table
      *
      * @param  int $course
      * @param  int $coursemodule
@@ -107,8 +107,8 @@ class insert_topic extends \core_external\external_api {
         $topicinstancerecord->coursemodule = $coursemodule;
         $topicinstancerecord->instance = $instance;
         $topicinstancerecord->topic = $topicrecord->id;
-        $topicinstancerecord->rank = 1;
-        $sqlstmt = "SELECT MAX(rank) as maxrank
+        $topicinstancerecord->ranking = 1;
+        $sqlstmt = "SELECT MAX(ranking) as maxranking
                       FROM {learninggoalwidget_i_topics}
                      WHERE course = :course
                        AND coursemodule = :coursemodule
@@ -120,7 +120,7 @@ class insert_topic extends \core_external\external_api {
         ];
         $topiccountrecord = $DB->get_record_sql($sqlstmt, $params);
         if ($topiccountrecord) {
-            $topicinstancerecord->rank = $topiccountrecord->maxrank + 1;
+            $topicinstancerecord->ranking = $topiccountrecord->maxranking + 1;
         }
         $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
         return $topicrecord->id;

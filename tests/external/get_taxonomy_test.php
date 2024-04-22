@@ -83,7 +83,7 @@ class get_taxonomy_test extends externallib_advanced_testcase {
         $expectedjson->name = "Learning Goal's taxonomy";
         $expectedjson->children = [
             [
-                $resultcourse[5]->rank,
+                $resultcourse[5]->ranking,
                 $resultcourse[3]->id,
                 "Artificial Intelligence Basics Part 1",
                 "AIBasics 1",
@@ -91,7 +91,7 @@ class get_taxonomy_test extends externallib_advanced_testcase {
                 [],
             ],
             [
-                $resultcourse[6]->rank,
+                $resultcourse[6]->ranking,
                 $resultcourse[4]->id,
                 "Artificial Intelligence Basics Part 2",
                 "AIBasics 2",

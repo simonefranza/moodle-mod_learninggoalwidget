@@ -88,7 +88,7 @@ trait utils {
         $topicinstancerecord1->coursemodule = $coursemodule->id;
         $topicinstancerecord1->instance = $widgetinstance->id;
         $topicinstancerecord1->topic = $topicrecord1->id;
-        $topicinstancerecord1->rank = 1;
+        $topicinstancerecord1->ranking = 1;
         $topicinstancerecord1->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord1);
 
         // Create topic 2 in course.
@@ -104,7 +104,7 @@ trait utils {
         $topicinstancerecord2->coursemodule = $coursemodule->id;
         $topicinstancerecord2->instance = $widgetinstance->id;
         $topicinstancerecord2->topic = $topicrecord2->id;
-        $topicinstancerecord2->rank = 2;
+        $topicinstancerecord2->ranking = 2;
         $topicinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord2);
 
         return [$course1, $coursemodule, $widgetinstance, $topicrecord1,
@@ -144,7 +144,7 @@ trait utils {
         $goalinstancerecord->instance = $resultcourse[2]->id;
         $goalinstancerecord->topic = $resultcourse[3]->id;
         $goalinstancerecord->goal = $goalrecord->id;
-        $goalinstancerecord->rank = 1;
+        $goalinstancerecord->ranking = 1;
         $goalinstancerecord->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord);
 
         return [$resultcourse, $goalrecord, $goalinstancerecord];
@@ -171,13 +171,13 @@ trait utils {
         $this->assertEquals(count($json->children), count($expectedjson->children));
 
         foreach ($expectedjson->children as $topicidx => $expectedtopic) {
-            $expectedrank = $expectedtopic[0];
+            $expectedranking = $expectedtopic[0];
             $expectedtopicid = $expectedtopic[1];
             $expectedtopicname = $expectedtopic[2];
             $expectedshortname = $expectedtopic[3];
             $expectedurl = $expectedtopic[4];
             $expectedgoals = $expectedtopic[5];
-            $this->assertEquals($expectedrank, $json->children[$topicidx][0]);
+            $this->assertEquals($expectedranking, $json->children[$topicidx][0]);
             $this->assertEquals($expectedtopicid, $json->children[$topicidx][1]);
             $this->assertEquals($expectedtopicname, $json->children[$topicidx][2]);
             $this->assertEquals($expectedshortname, $json->children[$topicidx][3]);
@@ -191,12 +191,12 @@ trait utils {
             $this->assertIsArray($testedgoals);
 
             foreach ($expectedgoals as $goalidx => $expectedgoal) {
-                $expectedgoalrank = $expectedgoal[0];
+                $expectedgoalranking = $expectedgoal[0];
                 $expectedgoaltopicid = $expectedgoal[1];
                 $expectedgoaltopicname = $expectedgoal[2];
                 $expectedgoalshortname = $expectedgoal[3];
                 $expectedgoalurl = $expectedgoal[4];
-                $this->assertEquals($expectedgoalrank, $testedgoals[$goalidx][0]);
+                $this->assertEquals($expectedgoalranking, $testedgoals[$goalidx][0]);
                 $this->assertEquals($expectedgoaltopicid, $testedgoals[$goalidx][1]);
                 $this->assertEquals($expectedgoaltopicname, $testedgoals[$goalidx][2]);
                 $this->assertEquals($expectedgoalshortname, $testedgoals[$goalidx][3]);
@@ -285,7 +285,7 @@ trait utils {
         $topicinstancerecord->coursemodule = $coursemodule->id;
         $topicinstancerecord->instance = $widgetinstance->id;
         $topicinstancerecord->topic = $topicrecord->id;
-        $topicinstancerecord->rank = 1;
+        $topicinstancerecord->ranking = 1;
         $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
 
         return [$course1, $coursemodule, $widgetinstance, $topicrecord, $topicinstancerecord];
@@ -324,7 +324,7 @@ trait utils {
         $goalinstancerecord1->instance = $resultcourse[2]->id;
         $goalinstancerecord1->topic = $resultcourse[3]->id;
         $goalinstancerecord1->goal = $goalrecord1->id;
-        $goalinstancerecord1->rank = 1;
+        $goalinstancerecord1->ranking = 1;
         $goalinstancerecord1->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord1);
 
         // Insert in goal 2.
@@ -342,7 +342,7 @@ trait utils {
         $goalinstancerecord2->instance = $resultcourse[2]->id;
         $goalinstancerecord2->topic = $resultcourse[3]->id;
         $goalinstancerecord2->goal = $goalrecord2->id;
-        $goalinstancerecord2->rank = 2;
+        $goalinstancerecord2->ranking = 2;
         $goalinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord2);
 
         return [$resultcourse, $goalrecord1, $goalinstancerecord1, $goalrecord2, $goalinstancerecord2];
@@ -369,14 +369,14 @@ trait utils {
         $this->assertIsArray($topic);
         $this->assertEquals(6, count($topic));
 
-        $rank = $topic[0];
+        $ranking = $topic[0];
         $topicid = $topic[1];
         $title = $topic[2];
         $shortname = $topic[3];
         $url = $topic[4];
         $goals = $topic[5];
 
-        $this->assertEquals(1, $rank);
+        $this->assertEquals(1, $ranking);
         $this->assertIsNumeric($topicid);
         $this->assertTrue($topicid > 0);
 
@@ -488,21 +488,21 @@ trait utils {
         $this->assertEquals(2, count($parsed->children));
 
         foreach ($parsed->children as $topic) {
-            $rank = $topic[0];
+            $ranking = $topic[0];
             $topicid = $topic[1];
             $topicname = $topic[2];
             $shortname = $topic[3];
             $url = $topic[4];
             $goals = $topic[5];
             if ($topicname === "Artificial Intelligence Basics Part 1") {
-                $this->assertEquals(2, $rank);
+                $this->assertEquals(2, $ranking);
                 $this->assertEquals($topicrecord1->id, $topicid);
                 $this->assertEquals("AIBasics 1", $shortname);
                 $this->assertEquals("http://aibasics1.at", $url);
                 $this->assertEquals([], $goals);
             }
             if ($topicname === "Artificial Intelligence Basics Part 2") {
-                $this->assertEquals(1, $rank);
+                $this->assertEquals(1, $ranking);
                 $this->assertEquals($topicrecord2->id, $topicid);
                 $this->assertEquals("AIBasics 2", $shortname);
                 $this->assertEquals("http://aibasics2.at", $url);
@@ -530,20 +530,20 @@ trait utils {
         $this->assertEquals(2, count($resulttopic[0]));
 
         foreach ($resulttopic[0] as $goal) {
-            $rank = $goal[0];
+            $ranking = $goal[0];
             $goalid = $goal[1];
             $goalname = $goal[2];
             $goalshortname = $goal[3];
             $goalurl = $goal[4];
 
             if ($goalname === "Goal 1 under Topic 1") {
-                $this->assertEquals(2, $rank);
+                $this->assertEquals(2, $ranking);
                 $this->assertEquals($goalrecord1->id, $goalid);
                 $this->assertEquals("Goal 1 shortname", $goalshortname);
                 $this->assertEquals("http://goal1.at", $goalurl);
             }
             if ($goalname === "Goal 2 under Topic 1") {
-                $this->assertEquals(1, $rank);
+                $this->assertEquals(1, $ranking);
                 $this->assertEquals($goalrecord2->id, $goalid);
                 $this->assertEquals("Goal 2 shortname", $goalshortname);
                 $this->assertEquals("http://goal2.at", $goalurl);

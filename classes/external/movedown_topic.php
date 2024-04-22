@@ -63,7 +63,7 @@ class movedown_topic extends \core_external\external_api {
     }
 
     /**
-     * Move a topic behind the succeeding one (increase rank)
+     * Move a topic behind the succeeding one (increase ranking)
      *
      * @param [int] $course
      * @param [int] $coursemodule
@@ -92,7 +92,7 @@ class movedown_topic extends \core_external\external_api {
         $topicmovedown->coursemodule = $coursemodule;
         $topicmovedown->instance = $instance;
         $topicmovedown->topic = $topicid;
-        $sqlstmt = "SELECT id, rank
+        $sqlstmt = "SELECT id, ranking
                       FROM {learninggoalwidget_i_topics}
                      WHERE course = :course
                        AND coursemodule = :coursemodule
@@ -107,41 +107,41 @@ class movedown_topic extends \core_external\external_api {
         $topicrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
         $topicmovedown->id = $topicrecord->id;
-        $topicmovedown->rank = $topicrecord->rank;
+        $topicmovedown->ranking = $topicrecord->ranking;
 
-        $sqlstmt = "SELECT MIN(rank) as rank
+        $sqlstmt = "SELECT MIN(ranking) as ranking
                       FROM {learninggoalwidget_i_topics}
                      WHERE course = :course
                        AND coursemodule = :coursemodule
                        AND instance = :instance
-                       AND rank > :topicrank";
+                       AND ranking > :topicranking";
         $params = [
             'course' => $course,
             'coursemodule' => $coursemodule,
             'instance' => $instance,
-            'topicrank' => $topicrecord->rank,
+            'topicranking' => $topicrecord->ranking,
         ];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
-        $sqlstmt = "SELECT id, rank
+        $sqlstmt = "SELECT id, ranking
                       FROM {learninggoalwidget_i_topics}
                      WHERE course = :course
                        AND coursemodule = :coursemodule
                        AND instance = :instance
-                       AND rank = :topicrank";
+                       AND ranking = :topicranking";
         $params = [
             'course' => $course,
             'coursemodule' => $coursemodule,
             'instance' => $instance,
-            'topicrank' => $topicrecord->rank,
+            'topicranking' => $topicrecord->ranking,
         ];
         $topicrecord = $DB->get_record_sql($sqlstmt, $params);
 
         $topicmoveup = new \stdClass;
         $topicmoveup->id = $topicrecord->id;
-        $topicmoveup->rank = $topicmovedown->rank;
+        $topicmoveup->ranking = $topicmovedown->ranking;
 
-        $topicmovedown->rank = $topicrecord->rank;
+        $topicmovedown->ranking = $topicrecord->ranking;
 
         $DB->update_record('learninggoalwidget_i_topics', $topicmoveup);
         $DB->update_record('learninggoalwidget_i_topics', $topicmovedown);

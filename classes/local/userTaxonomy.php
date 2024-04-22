@@ -105,14 +105,14 @@ class userTaxonomy {
     /**
      * return the topics of the taxonomy
      *
-     * @return array array of topic's, each an array itself [rank, id, title, shortname, url, goals]
+     * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
     private function get_topics() {
         $topics = [];
         if ($this->coursemoduleid !== null) {
             global $DB;
             $sqlstmt = "SELECT b.id, b.title, b.shortname, b.url, a.course,
-                               a.coursemodule, a.instance, a.rank
+                               a.coursemodule, a.instance, a.ranking
                           FROM {learninggoalwidget_i_topics} a, {learninggoalwidget_topic} b
                          WHERE a.course = :courseid
                            AND a.coursemodule = :coursemoduleid
@@ -120,7 +120,7 @@ class userTaxonomy {
                            AND a.topic = b.id
                            AND b.title != :initials
                            AND b.title != :goals
-                      ORDER BY a.rank";
+                      ORDER BY a.ranking";
             $params = [
                 'courseid' => $this->courseid,
                 'coursemoduleid' => $this->coursemoduleid,

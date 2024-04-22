@@ -96,20 +96,20 @@ class taxonomy {
     /**
      * return the topics of the taxonomy
      *
-     * @return array array of topic's, each an array itself [rank, id, title, shortname, url, goals]
+     * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
     private function get_topics() {
         $topics = [];
         if ($this->coursemoduleid !== null) {
             global $DB;
             $sqlstmt = "SELECT b.id, b.title, b.shortname, b.url, a.course,
-                               a.coursemodule, a.instance, a.rank
+                               a.coursemodule, a.instance, a.ranking
                           FROM {learninggoalwidget_i_topics} a, {learninggoalwidget_topic} b
                          WHERE a.course = :courseid
                            AND a.coursemodule = :coursemoduleid
                            AND a.instance = :instanceid
                            AND a.topic = b.id
-                      ORDER BY a.rank";
+                      ORDER BY a.ranking";
             $params = [
                 'courseid' => $this->courseid,
                 'coursemoduleid' => $this->coursemoduleid,
@@ -118,7 +118,7 @@ class taxonomy {
             $topicrecords = $DB->get_records_sql($sqlstmt, $params);
             foreach ($topicrecords as $topicrecord) {
                 $topic = Topic::from_record($topicrecord);
-                $topics[] = [$topicrecord->rank, $topicrecord->id, $topic->get_title(), $topic->get_shortname(),
+                $topics[] = [$topicrecord->ranking, $topicrecord->id, $topic->get_title(), $topic->get_shortname(),
                 $topic->get_url(), $topic->get_goals(), ];
             }
         }

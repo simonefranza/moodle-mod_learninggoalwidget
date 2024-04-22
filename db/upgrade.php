@@ -63,6 +63,52 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
+    global $CFG, $DB;
+
+    $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
+
+    if ($oldversion < 2024042202) {
+        // Change learninggoalwidget_i_userpro.user to userid .
+        $table = new xmldb_table('learninggoalwidget_i_userpro');
+        $field = new xmldb_field('user', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'user');
+        if ($dbman->field_exists($table, $field)) {
+
+            // Remove index user .
+            $index = new xmldb_index('user', XMLDB_INDEX_NOTUNIQUE, ['user']);
+            if ($dbman->index_exists($table, $index)) {
+              $dbman->drop_index($table, $index);
+            }
+
+            // Remove fk_user .
+            $key = new xmldb_key('fk_user', XMLDB_KEY_FOREIGN, ['user'], 'user', ['id']);
+            $dbman->drop_key($table, $key);
+
+            // Rename user -> userid .
+            $field = new xmldb_field('user', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'user');
+            $dbman->rename_field($table, $field, 'userid');
+
+            // Add fk_userid .
+            $key = new xmldb_key('fk_userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+            $dbman->add_key($table, $key);
+        }
+
+
+        // Change learninggoalwidget_i_topics.rank to ranking .
+        $table = new xmldb_table('learninggoalwidget_i_topics');
+        $field = new xmldb_field('rank', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'rank');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'ranking');
+        }
+
+        // Change learninggoalwidget_i_topics.rank to ranking .
+        $table = new xmldb_table('learninggoalwidget_i_goals');
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'ranking');
+        }
+
+        // Learninggoalwidget savepoint reached.
+        upgrade_mod_savepoint(true, 2024042202, 'learninggoalwidget');
+    }
 
     return true;
 }

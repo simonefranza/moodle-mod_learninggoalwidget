@@ -84,7 +84,7 @@ $functions = [
     ],
     'mod_learninggoalwidget_moveup_topic' => [
         'classname'   => 'mod_learninggoalwidget\external\moveup_topic',
-        'description' => 'Move a topic before the preceding one (decrease rank)',
+        'description' => 'Move a topic before the preceding one (decrease ranking)',
         'type'        => 'write',
         'ajax'        => true,
         'services' => [
@@ -93,7 +93,7 @@ $functions = [
     ],
     'mod_learninggoalwidget_movedown_topic' => [
         'classname'   => 'mod_learninggoalwidget\external\movedown_topic',
-        'description' => 'Move a topic behind the succeeding one (increase rank)',
+        'description' => 'Move a topic behind the succeeding one (increase ranking)',
         'type'        => 'write',
         'ajax'        => true,
         'services' => [
@@ -130,7 +130,7 @@ $functions = [
     ],
     'mod_learninggoalwidget_moveup_goal' => [
         'classname'   => 'mod_learninggoalwidget\external\moveup_goal',
-        'description' => 'Move a goal before the preceding one (decrease rank)',
+        'description' => 'Move a goal before the preceding one (decrease ranking)',
         'type'        => 'write',
         'ajax'        => true,
         'services' => [
@@ -139,7 +139,7 @@ $functions = [
     ],
     'mod_learninggoalwidget_movedown_goal' => [
         'classname'   => 'mod_learninggoalwidget\external\movedown_goal',
-        'description' => 'Move a goal behind the succeeding one (increase rank)',
+        'description' => 'Move a goal behind the succeeding one (increase ranking)',
         'type'        => 'write',
         'ajax'        => true,
         'services' => [

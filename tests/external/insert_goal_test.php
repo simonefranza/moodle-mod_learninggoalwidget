@@ -100,13 +100,13 @@ class insert_goal_test extends externallib_advanced_testcase {
         $this->assertEquals(1, count($goals));
         $this->assertEquals(5, count($goals[0]));
 
-        $goalrank = $goals[0][0];
+        $goalranking = $goals[0][0];
         $goalid = $goals[0][1];
         $goalname = $goals[0][2];
         $goalshortname = $goals[0][3];
         $goalurl = $goals[0][4];
 
-        $this->assertEquals(1, $goalrank);
+        $this->assertEquals(1, $goalranking);
         $this->assertIsNumeric($goalid);
         $this->assertTrue($goalid > 0);
         $this->assertEquals("Knowing theoretical foundations of AI", $goalname);

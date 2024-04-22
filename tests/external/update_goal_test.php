@@ -83,13 +83,13 @@ class update_goal_test extends externallib_advanced_testcase {
         $this->assertEquals(1, count($resulttopic[0]));
         $this->assertEquals(5, count($resulttopic[0][0]));
 
-        $goalrank = $resulttopic[0][0][0];
+        $goalranking = $resulttopic[0][0][0];
         $goalid = $resulttopic[0][0][1];
         $goalname = $resulttopic[0][0][2];
         $goalshortname = $resulttopic[0][0][3];
         $goalurl = $resulttopic[0][0][4];
 
-        $this->assertEquals(1, $goalrank);
+        $this->assertEquals(1, $goalranking);
         $this->assertIsNumeric($goalid);
         $this->assertEquals($goalrecord->id, $goalid);
         $this->assertEquals("Updated Goalname", $goalname);

@@ -112,8 +112,8 @@ class insert_goal extends \core_external\external_api {
         $goalinstancerecord->instance = $instance;
         $goalinstancerecord->topic = $topicid;
         $goalinstancerecord->goal = $goalrecord->id;
-        $goalinstancerecord->rank = 1;
-        $sqlstmt = "SELECT MAX(rank) as maxrank
+        $goalinstancerecord->ranking = 1;
+        $sqlstmt = "SELECT MAX(ranking) as maxranking
                       FROM {learninggoalwidget_i_goals}
                      WHERE course = :course
                        AND coursemodule = :coursemodule
@@ -127,7 +127,7 @@ class insert_goal extends \core_external\external_api {
         ];
         $goalcountrecord = $DB->get_record_sql($sqlstmt, $params);
         if ($goalcountrecord) {
-            $goalinstancerecord->rank = $goalcountrecord->maxrank + 1;
+            $goalinstancerecord->ranking = $goalcountrecord->maxranking + 1;
         }
         $goalinstancerecord->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord);
 
