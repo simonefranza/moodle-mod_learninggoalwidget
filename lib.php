@@ -63,7 +63,7 @@ function learninggoalwidget_add_instance(stdClass $data): int {
 
     $sql = "SELECT 1
               FROM {learninggoalwidget_i_goals}
-             WHERE course = :course
+             WHERE course = :courseid
                AND coursemodule = -1
                AND instance = -1";
 
