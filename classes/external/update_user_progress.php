@@ -100,7 +100,7 @@ class update_user_progress extends \core_external\external_api {
                      WHERE course = :courseid
                        AND coursemodule = :coursemoduleid
                        AND instance = :instanceid
-                       AND user = :userid
+                       AND userid = :userid
                        AND topic = :topicid
                        AND goal = :goalid";
         $params = [
@@ -124,7 +124,7 @@ class update_user_progress extends \core_external\external_api {
             $userprogress->instance = $instanceid;
             $userprogress->topic = $topicid;
             $userprogress->goal = $goalid;
-            $userprogress->user = $userid;
+            $userprogress->userid = $userid;
             $userprogress->progress = $progress;
             $DB->insert_record('learninggoalwidget_i_userpro', $userprogress);
         }

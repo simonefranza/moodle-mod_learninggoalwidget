@@ -76,7 +76,7 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
             // Remove index user .
             $index = new xmldb_index('user', XMLDB_INDEX_NOTUNIQUE, ['user']);
             if ($dbman->index_exists($table, $index)) {
-              $dbman->drop_index($table, $index);
+                $dbman->drop_index($table, $index);
             }
 
             // Remove fk_user .
@@ -91,7 +91,6 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
             $key = new xmldb_key('fk_userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
             $dbman->add_key($table, $key);
         }
-
 
         // Change learninggoalwidget_i_topics.rank to ranking .
         $table = new xmldb_table('learninggoalwidget_i_topics');

@@ -81,7 +81,7 @@ class provider_test extends provider_testcase {
         $this->assertArrayHasKey('instance', $privacyfields);
         $this->assertArrayHasKey('topic', $privacyfields);
         $this->assertArrayHasKey('goal', $privacyfields);
-        $this->assertArrayHasKey('user', $privacyfields);
+        $this->assertArrayHasKey('userid', $privacyfields);
         $this->assertArrayHasKey('progress', $privacyfields);
 
         $this->assertEquals('privacy:metadata:learninggoalwidget_i_userpro', $item->get_summary());
@@ -304,7 +304,7 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_user($approvedlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['user' => $user->id]);
+        $records = $DB->get_records('learninggoalwidget_i_userpro', ['userid' => $user->id]);
         $this->assertEmpty($records);
 
         $widgetinstance1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
@@ -371,11 +371,11 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_users($userlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['user' => $user2->id]);
+        $records = $DB->get_records('learninggoalwidget_i_userpro', ['userid' => $user2->id]);
         $this->assertEmpty($records);
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['user' => $user3->id]);
+        $records = $DB->get_records('learninggoalwidget_i_userpro', ['userid' => $user3->id]);
         $this->assertEmpty($records);
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['user' => $user1->id]);
+        $records = $DB->get_records('learninggoalwidget_i_userpro', ['userid' => $user1->id]);
         $this->assertNotEmpty($records);
 
         $widgetinstance2 = $this->getDataGenerator()->create_module('quiz', ['course' => $course1->id]);

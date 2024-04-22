@@ -66,7 +66,7 @@ class provider implements
                 'instance' => 'privacy:metadata:learninggoalwidget_i_userpro:instance',
                 'topic' => 'privacy:metadata:learninggoalwidget_i_userpro:topic',
                 'goal' => 'privacy:metadata:learninggoalwidget_i_userpro:goal',
-                'user' => 'privacy:metadata:learninggoalwidget_i_userpro:user',
+                'userid' => 'privacy:metadata:learninggoalwidget_i_userpro:userid',
                 'progress' => 'privacy:metadata:learninggoalwidget_i_userpro:progress',
             ],
             'privacy:metadata:learninggoalwidget_i_userpro'
@@ -95,7 +95,7 @@ class provider implements
                     ON lgw.id = cm.instance
                   JOIN {learninggoalwidget_i_userpro} lgwup
                     ON lgwup.instance = lgw.id
-                 WHERE lgwup.user = :userid";
+                 WHERE lgwup.userid = :userid";
         $params = [
             'contextlevel' => CONTEXT_MODULE,
             'modname' => 'learninggoalwidget',
@@ -120,7 +120,7 @@ class provider implements
         ];
 
         // Users who attempted the quiz.
-        $sql = "SELECT lgwup.user as userid
+        $sql = "SELECT lgwup.userid as userid
                   FROM {course_modules} cm
                   JOIN {modules} m
                     ON m.id = cm.module AND m.name = :modname
@@ -152,7 +152,7 @@ class provider implements
 
         $sql = "SELECT lgwup.course AS course,
                        lgwup.instance AS instance,
-                       lgwup.user AS user,
+                       lgwup.userid AS userid,
                        lgwup.progress AS progress,
                        lgwtopic.title AS topictitle,
                        lgwtopic.shortname AS topicshortname,
@@ -170,7 +170,7 @@ class provider implements
             INNER JOIN {learninggoalwidget} lgw
                     ON lgw.id = cm.instance
                   JOIN {learninggoalwidget_i_userpro} lgwup
-                    ON lgwup.instance = lgw.id AND lgwup.user = :userid
+                    ON lgwup.instance = lgw.id AND lgwup.userid = :userid
             RIGHT JOIN {learninggoalwidget_topic} lgwtopic
                     ON lgwup.topic = lgwtopic.id
             RIGHT JOIN {learninggoalwidget_goal} lgwgoal
@@ -260,7 +260,7 @@ class provider implements
             $DB->delete_records('learninggoalwidget_i_userpro', [
                 'coursemodule' => $cm->id,
                 'instance' => $cm->instance,
-                'user' => $user->id,
+                'userid' => $user->id,
             ]);
         }
     }
@@ -292,7 +292,7 @@ class provider implements
             $DB->delete_records('learninggoalwidget_i_userpro', [
                 'coursemodule' => $cm->id,
                 'instance' => $cm->instance,
-                'user' => $userid,
+                'userid' => $userid,
             ]);
         }
     }
