@@ -92,7 +92,6 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
             $dbman->add_key($table, $key);
         }
 
-
         // Change learninggoalwidget_i_topics.rank to ranking .
         $table = new xmldb_table('learninggoalwidget_i_topics');
         $field = new xmldb_field('rank', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'rank');
