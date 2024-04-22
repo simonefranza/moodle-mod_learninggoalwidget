@@ -121,7 +121,7 @@ class provider implements
         ];
 
         // Users who attempted the quiz.
-        $sql = "SELECT lgwup.user as userid
+        $sql = "SELECT lgwup.userid as userid
                   FROM {course_modules} cm
                   JOIN {modules} m
                     ON m.id = cm.module AND m.name = :modname
