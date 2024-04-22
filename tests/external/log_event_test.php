@@ -54,7 +54,7 @@ class log_event_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\log_event::execute_returns
      * @covers \mod_learninggoalwidget\external\log_event::execute_parameters
      */
-    public function test_log_event() : void {
+    public function test_log_event(): void {
         global $DB;
         $this->setUp();
         $this->preventResetByRollback();

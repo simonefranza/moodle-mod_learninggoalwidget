@@ -54,7 +54,7 @@ class get_taxonomy_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\get_taxonomy::execute_returns
      * @covers \mod_learninggoalwidget\external\get_taxonomy::execute_parameters
      */
-    public function test_get_taxonomy() : void {
+    public function test_get_taxonomy(): void {
         $this->setUp();
         $resultcourse = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",

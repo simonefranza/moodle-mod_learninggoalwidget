@@ -54,7 +54,7 @@ class insert_topic_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\insert_topic::execute_returns
      * @covers \mod_learninggoalwidget\external\insert_topic::execute_parameters
      */
-    public function test_insert_topic() : void {
+    public function test_insert_topic(): void {
         $this->setUp();
 
         $course1 = $this->getDataGenerator()->create_course();

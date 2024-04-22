@@ -48,7 +48,7 @@ function learninggoalwidget_add_instance(stdClass $data): int {
     $updateparams = [
         'coursemodule' => $data->coursemodule,
         'instance' => $data->id,
-        'course'=> $COURSE->id,
+        'course' => $COURSE->id,
     ];
     $courseparams = ['courseid' => $COURSE->id];
 

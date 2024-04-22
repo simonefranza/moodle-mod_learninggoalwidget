@@ -54,7 +54,7 @@ class delete_topic_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\delete_topic::execute_returns
      * @covers \mod_learninggoalwidget\external\delete_topic::execute_parameters
      */
-    public function test_delete_topic() : void {
+    public function test_delete_topic(): void {
         global $DB;
         $this->setUp();
 

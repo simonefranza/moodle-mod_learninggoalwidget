@@ -361,6 +361,8 @@ module.exports = function (grunt) {
         }
     );
 
+    grunt.option('force', true);
+
     // Register NPM tasks.
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');

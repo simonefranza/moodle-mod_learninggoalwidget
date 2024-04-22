@@ -54,7 +54,7 @@ class delete_goal_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\delete_goal::execute_returns
      * @covers \mod_learninggoalwidget\external\delete_goal::execute_parameters
      */
-    public function test_delete_goal() : void {
+    public function test_delete_goal(): void {
         global $DB;
         $this->setUp();
 

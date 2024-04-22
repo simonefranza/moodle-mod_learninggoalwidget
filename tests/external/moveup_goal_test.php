@@ -54,7 +54,7 @@ class moveup_goal_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\moveup_goal::execute_returns
      * @covers \mod_learninggoalwidget\external\moveup_goal::execute_parameters
      */
-    public function test_moveup_goal() : void {
+    public function test_moveup_goal(): void {
         $this->setUp();
 
         [$resultcourse, $goalrecord1, , $goalrecord2, ] =

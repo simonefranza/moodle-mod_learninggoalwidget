@@ -54,7 +54,7 @@ class update_goal_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\update_goal::execute_returns
      * @covers \mod_learninggoalwidget\external\update_goal::execute_parameters
      */
-    public function test_update_goal() : void {
+    public function test_update_goal(): void {
         $this->setUp();
         [$resultcourse, $goalrecord, ] = $this->setup_course_and_insert_goals();
 

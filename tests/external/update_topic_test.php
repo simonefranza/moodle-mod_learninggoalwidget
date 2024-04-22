@@ -54,7 +54,7 @@ class update_topic_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\update_topic::execute_returns
      * @covers \mod_learninggoalwidget\external\update_topic::execute_parameters
      */
-    public function test_update_topic() : void {
+    public function test_update_topic(): void {
         $result1 = $this->setup_topic(
             "Artificial Intelligence Basics",
             "AIBasics",

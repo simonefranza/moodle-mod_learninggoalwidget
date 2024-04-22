@@ -54,7 +54,7 @@ class get_taxonomy_for_user_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\get_taxonomy_for_user::execute_returns
      * @covers \mod_learninggoalwidget\external\get_taxonomy_for_user::execute_parameters
      */
-    public function test_get_taxonomy_for_user() : void {
+    public function test_get_taxonomy_for_user(): void {
         $this->setUp();
 
         [$resultcourse, $goalrecord1, , $goalrecord2, ] =

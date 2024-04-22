@@ -54,7 +54,7 @@ class update_user_progress_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\update_user_progress::execute_returns
      * @covers \mod_learninggoalwidget\external\update_user_progress::execute_parameters
      */
-    public function test_update_user_progress() : void {
+    public function test_update_user_progress(): void {
         $this->setUp();
         [$resultcourse, $goalrecord1, , $goalrecord2, ] = $this->setup_course_and_insert_two_goals();
 

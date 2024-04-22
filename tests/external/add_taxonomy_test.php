@@ -54,7 +54,7 @@ class add_taxonomy_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\add_taxonomy::execute_returns
      * @covers \mod_learninggoalwidget\external\add_taxonomy::execute_parameters
      */
-    public function test_add_taxonomy() : void {
+    public function test_add_taxonomy(): void {
         $this->setUp();
 
         $course = $this->getDataGenerator()->create_course();
