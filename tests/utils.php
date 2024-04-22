@@ -75,7 +75,7 @@ trait utils {
         $topicinstancerecord1->coursemodule = $coursemodule->id;
         $topicinstancerecord1->instance = $widgetinstance->id;
         $topicinstancerecord1->topic = $topicrecord1->id;
-        $topicinstancerecord1->rank = 1;
+        $topicinstancerecord1->ranking = 1;
         $topicinstancerecord1->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord1);
 
         // Create topic 2 in course.
@@ -91,7 +91,7 @@ trait utils {
         $topicinstancerecord2->coursemodule = $coursemodule->id;
         $topicinstancerecord2->instance = $widgetinstance->id;
         $topicinstancerecord2->topic = $topicrecord2->id;
-        $topicinstancerecord2->rank = 2;
+        $topicinstancerecord2->ranking = 2;
         $topicinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord2);
 
         return [$course1, $coursemodule, $widgetinstance, $topicrecord1,
@@ -131,7 +131,7 @@ trait utils {
         $goalinstancerecord->instance = $resultcourse[2]->id;
         $goalinstancerecord->topic = $resultcourse[3]->id;
         $goalinstancerecord->goal = $goalrecord->id;
-        $goalinstancerecord->rank = 1;
+        $goalinstancerecord->ranking = 1;
         $goalinstancerecord->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord);
 
         return [$resultcourse, $goalrecord, $goalinstancerecord];

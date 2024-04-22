@@ -124,14 +124,14 @@ class topic {
      */
     public static function from_record($topicrecord): topic {
         global $DB;
-        $sqlstmt = "SELECT a.id, a.title, a.shortname, a.url, b.rank
+        $sqlstmt = "SELECT a.id, a.title, a.shortname, a.url, b.ranking
                       FROM {learninggoalwidget_goal} a, {learninggoalwidget_i_goals} b
                      WHERE b.course = :course
                        AND b.coursemodule = :coursemodule
                        AND b.instance = :instance
                        AND b.topic = :topicid
                        AND b.goal = a.id
-                  ORDER BY b.rank";
+                  ORDER BY b.ranking";
         $params = [
             'course' => $topicrecord->course,
             'coursemodule' => $topicrecord->coursemodule,
@@ -142,7 +142,7 @@ class topic {
         $goalrecords = $DB->get_records_sql($sqlstmt, $params);
         foreach ($goalrecords as $goalrecord) {
             $goal = goal::from_record($goalrecord);
-            $goals[] = [$goalrecord->rank, $goalrecord->id, $goal->get_title(), $goal->get_shortname(), $goal->get_url()];
+            $goals[] = [$goalrecord->ranking, $goalrecord->id, $goal->get_title(), $goal->get_shortname(), $goal->get_url()];
         }
         return new Topic($topicrecord->title, $topicrecord->shortname, $topicrecord->url, $goals);
     }

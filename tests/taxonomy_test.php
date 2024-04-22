@@ -290,13 +290,13 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertEquals(1, count($goals));
         $this->assertEquals(5, count($goals[0]));
 
-        $goalrank = $goals[0][0];
+        $goalranking = $goals[0][0];
         $goalid = $goals[0][1];
         $goalname = $goals[0][2];
         $goalshortname = $goals[0][3];
         $goalurl = $goals[0][4];
 
-        $this->assertEquals(1, $goalrank);
+        $this->assertEquals(1, $goalranking);
         $this->assertIsNumeric($goalid);
         $this->assertTrue($goalid > 0);
         $this->assertEquals("Knowing theoretical foundations of AI", $goalname);
@@ -337,13 +337,13 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertEquals(1, count($resulttopic[0]));
         $this->assertEquals(5, count($resulttopic[0][0]));
 
-        $goalrank = $resulttopic[0][0][0];
+        $goalranking = $resulttopic[0][0][0];
         $goalid = $resulttopic[0][0][1];
         $goalname = $resulttopic[0][0][2];
         $goalshortname = $resulttopic[0][0][3];
         $goalurl = $resulttopic[0][0][4];
 
-        $this->assertEquals(1, $goalrank);
+        $this->assertEquals(1, $goalranking);
         $this->assertIsNumeric($goalid);
         $this->assertEquals($goalrecord->id, $goalid);
         $this->assertEquals("Updated Goalname", $goalname);
@@ -675,7 +675,7 @@ class taxonomy_test extends \advanced_testcase {
         $expectedjson->name = "Learning Goal's taxonomy";
         $expectedjson->children = [
             [
-                $resultcourse[5]->rank,
+                $resultcourse[5]->ranking,
                 $resultcourse[3]->id,
                 "Artificial Intelligence Basics Part 1",
                 "AIBasics 1",
@@ -683,7 +683,7 @@ class taxonomy_test extends \advanced_testcase {
                 [],
             ],
             [
-                $resultcourse[6]->rank,
+                $resultcourse[6]->ranking,
                 $resultcourse[4]->id,
                 "Artificial Intelligence Basics Part 2",
                 "AIBasics 2",
@@ -877,13 +877,13 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertEquals(count($json->children), count($expectedjson->children));
 
         foreach ($expectedjson->children as $topicidx => $expectedtopic) {
-            $expectedrank = $expectedtopic[0];
+            $expectedranking = $expectedtopic[0];
             $expectedtopicid = $expectedtopic[1];
             $expectedtopicname = $expectedtopic[2];
             $expectedshortname = $expectedtopic[3];
             $expectedurl = $expectedtopic[4];
             $expectedgoals = $expectedtopic[5];
-            $this->assertEquals($expectedrank, $json->children[$topicidx][0]);
+            $this->assertEquals($expectedranking, $json->children[$topicidx][0]);
             $this->assertEquals($expectedtopicid, $json->children[$topicidx][1]);
             $this->assertEquals($expectedtopicname, $json->children[$topicidx][2]);
             $this->assertEquals($expectedshortname, $json->children[$topicidx][3]);
@@ -897,12 +897,12 @@ class taxonomy_test extends \advanced_testcase {
             $this->assertIsArray($testedgoals);
 
             foreach ($expectedgoals as $goalidx => $expectedgoal) {
-                $expectedgoalrank = $expectedgoal[0];
+                $expectedgoalranking = $expectedgoal[0];
                 $expectedgoaltopicid = $expectedgoal[1];
                 $expectedgoaltopicname = $expectedgoal[2];
                 $expectedgoalshortname = $expectedgoal[3];
                 $expectedgoalurl = $expectedgoal[4];
-                $this->assertEquals($expectedgoalrank, $testedgoals[$goalidx][0]);
+                $this->assertEquals($expectedgoalranking, $testedgoals[$goalidx][0]);
                 $this->assertEquals($expectedgoaltopicid, $testedgoals[$goalidx][1]);
                 $this->assertEquals($expectedgoaltopicname, $testedgoals[$goalidx][2]);
                 $this->assertEquals($expectedgoalshortname, $testedgoals[$goalidx][3]);
@@ -992,7 +992,7 @@ class taxonomy_test extends \advanced_testcase {
         $topicinstancerecord->coursemodule = $coursemodule->id;
         $topicinstancerecord->instance = $widgetinstance->id;
         $topicinstancerecord->topic = $topicrecord->id;
-        $topicinstancerecord->rank = 1;
+        $topicinstancerecord->ranking = 1;
         $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
 
         return [$course1, $coursemodule, $widgetinstance, $topicrecord, $topicinstancerecord];
@@ -1023,21 +1023,21 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertEquals(2, count($parsed->children));
 
         foreach ($parsed->children as $topic) {
-            $rank = $topic[0];
+            $ranking = $topic[0];
             $topicid = $topic[1];
             $topicname = $topic[2];
             $shortname = $topic[3];
             $url = $topic[4];
             $goals = $topic[5];
             if ($topicname === "Artificial Intelligence Basics Part 1") {
-                $this->assertEquals(2, $rank);
+                $this->assertEquals(2, $ranking);
                 $this->assertEquals($topicrecord1->id, $topicid);
                 $this->assertEquals("AIBasics 1", $shortname);
                 $this->assertEquals("http://aibasics1.at", $url);
                 $this->assertEquals([], $goals);
             }
             if ($topicname === "Artificial Intelligence Basics Part 2") {
-                $this->assertEquals(1, $rank);
+                $this->assertEquals(1, $ranking);
                 $this->assertEquals($topicrecord2->id, $topicid);
                 $this->assertEquals("AIBasics 2", $shortname);
                 $this->assertEquals("http://aibasics2.at", $url);
@@ -1169,7 +1169,7 @@ class taxonomy_test extends \advanced_testcase {
         $goalinstancerecord1->instance = $resultcourse[2]->id;
         $goalinstancerecord1->topic = $resultcourse[3]->id;
         $goalinstancerecord1->goal = $goalrecord1->id;
-        $goalinstancerecord1->rank = 1;
+        $goalinstancerecord1->ranking = 1;
         $goalinstancerecord1->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord1);
 
         // Insert in goal 2.
@@ -1187,7 +1187,7 @@ class taxonomy_test extends \advanced_testcase {
         $goalinstancerecord2->instance = $resultcourse[2]->id;
         $goalinstancerecord2->topic = $resultcourse[3]->id;
         $goalinstancerecord2->goal = $goalrecord2->id;
-        $goalinstancerecord2->rank = 2;
+        $goalinstancerecord2->ranking = 2;
         $goalinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord2);
 
         return [$resultcourse, $goalrecord1, $goalinstancerecord1, $goalrecord2, $goalinstancerecord2];
@@ -1212,20 +1212,20 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertEquals(2, count($resulttopic[0]));
 
         foreach ($resulttopic[0] as $goal) {
-            $rank = $goal[0];
+            $ranking = $goal[0];
             $goalid = $goal[1];
             $goalname = $goal[2];
             $goalshortname = $goal[3];
             $goalurl = $goal[4];
 
             if ($goalname === "Goal 1 under Topic 1") {
-                $this->assertEquals(2, $rank);
+                $this->assertEquals(2, $ranking);
                 $this->assertEquals($goalrecord1->id, $goalid);
                 $this->assertEquals("Goal 1 shortname", $goalshortname);
                 $this->assertEquals("http://goal1.at", $goalurl);
             }
             if ($goalname === "Goal 2 under Topic 1") {
-                $this->assertEquals(1, $rank);
+                $this->assertEquals(1, $ranking);
                 $this->assertEquals($goalrecord2->id, $goalid);
                 $this->assertEquals("Goal 2 shortname", $goalshortname);
                 $this->assertEquals("http://goal2.at", $goalurl);
@@ -1254,14 +1254,14 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertIsArray($topic);
         $this->assertEquals(6, count($topic));
 
-        $rank = $topic[0];
+        $ranking = $topic[0];
         $topicid = $topic[1];
         $title = $topic[2];
         $shortname = $topic[3];
         $url = $topic[4];
         $goals = $topic[5];
 
-        $this->assertEquals(1, $rank);
+        $this->assertEquals(1, $ranking);
         $this->assertIsNumeric($topicid);
         $this->assertTrue($topicid > 0);
 
