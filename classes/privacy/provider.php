@@ -67,7 +67,7 @@ class provider implements
                 'instance' => 'privacy:metadata:learninggoalwidget_i_userpro:instance',
                 'topic' => 'privacy:metadata:learninggoalwidget_i_userpro:topic',
                 'goal' => 'privacy:metadata:learninggoalwidget_i_userpro:goal',
-                '"user"' => 'privacy:metadata:learninggoalwidget_i_userpro:user',
+                'user' => 'privacy:metadata:learninggoalwidget_i_userpro:user',
                 'progress' => 'privacy:metadata:learninggoalwidget_i_userpro:progress',
             ],
             'privacy:metadata:learninggoalwidget_i_userpro'
