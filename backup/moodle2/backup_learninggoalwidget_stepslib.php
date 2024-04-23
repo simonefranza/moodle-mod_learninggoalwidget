@@ -15,8 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package moodlecore
- * @subpackage backup-moodle2
+ * Structure step of the backup
+ *
+ * @package   mod_learninggoalwidget
+ * @category  backup
  * @copyright 2024 onwards Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,42 +33,45 @@
  */
 class backup_learninggoalwidget_activity_structure_step extends backup_activity_structure_step {
 
+    /**
+     * Define the structure of the backup
+     */
     protected function define_structure() {
 
-        // To know if we are including userinfo
+        // To know if we are including userinfo.
         $userinfo = $this->get_setting_value('userinfo');
 
-        // Define each element separated
-        $learninggoalwidget = new backup_nested_element('learninggoalwidget', array('id'), array(
+        // Define each element separated.
+        $learninggoalwidget = new backup_nested_element('learninggoalwidget', ['id'], [
             'name', 'intro', 'introformat', 'timecreated', 'timemodified'
-        ));
+        ]);
 
         $topics = new backup_nested_element('topics');
 
-        $topic = new backup_nested_element('topic', array('id'), array(
-            'title', 'shortname', 'url'));
+        $topic = new backup_nested_element('topic', ['id'], [
+            'title', 'shortname', 'url']);
 
         $goals = new backup_nested_element('goals');
 
-        $goal = new backup_nested_element('goal', array('id'), array(
-            'title', 'shortname', 'url'));
+        $goal = new backup_nested_element('goal', ['id'], [
+            'title', 'shortname', 'url']);
 
         $itopics = new backup_nested_element('itopics');
 
-        $itopic = new backup_nested_element('itopic', array('id'), array(
-            'coursemodule', 'instance', 'ranking'));
+        $itopic = new backup_nested_element('itopic', ['id'], [
+            'coursemodule', 'instance', 'ranking']);
 
         $igoals = new backup_nested_element('igoals');
 
-        $igoal = new backup_nested_element('igoal', array('id'), array(
-            'coursemodule', 'instance', 'ranking'));
+        $igoal = new backup_nested_element('igoal', ['id'], [
+            'coursemodule', 'instance', 'ranking']);
 
         $userprogresses = new backup_nested_element('userprogresses');
 
-        $userprogress = new backup_nested_element('userprogress', array('id'), array(
-            'coursemodule', 'instance', 'userid', 'progress'));
+        $userprogress = new backup_nested_element('userprogress', ['id'], [
+            'coursemodule', 'instance', 'userid', 'progress']);
 
-        // Build the tree
+        // Build the tree.
         $learninggoalwidget->add_child($topics);
         $topics->add_child($topic);
 
@@ -82,8 +87,8 @@ class backup_learninggoalwidget_activity_structure_step extends backup_activity_
         $goal->add_child($userprogresses);
         $userprogresses->add_child($userprogress);
 
-        // Define sources
-        $learninggoalwidget->set_source_table('learninggoalwidget', array('id' => backup::VAR_ACTIVITYID));
+        // Define sources.
+        $learninggoalwidget->set_source_table('learninggoalwidget', ['id' => backup::VAR_ACTIVITYID]);
 
         $topic->set_source_sql('
             SELECT *
@@ -92,14 +97,14 @@ class backup_learninggoalwidget_activity_structure_step extends backup_activity_
                 ON t.id = it.topic
              WHERE it.course = ? AND it.coursemodule = ?
              ',
-            array(backup::VAR_COURSEID, backup::VAR_MODID));
+            [backup::VAR_COURSEID, backup::VAR_MODID]);
 
         $itopic->set_source_sql('
             SELECT *
               FROM {learninggoalwidget_i_topics} it
              WHERE it.topic = ?
              ',
-            array(backup::VAR_PARENTID));
+            [backup::VAR_PARENTID]);
 
         $goal->set_source_sql('
             SELECT *
@@ -108,29 +113,27 @@ class backup_learninggoalwidget_activity_structure_step extends backup_activity_
                 ON g.id = ig.goal
              WHERE ig.course = ? AND ig.coursemodule = ? AND g.topic = ?
              ',
-            array(backup::VAR_COURSEID, backup::VAR_MODID, backup::VAR_PARENTID));
+            [backup::VAR_COURSEID, backup::VAR_MODID, backup::VAR_PARENTID]);
         $igoal->set_source_sql('
             SELECT *
               FROM {learninggoalwidget_i_goals} ig
              WHERE ig.course = ? AND ig.coursemodule = ? AND ig.topic = ? AND ig.goal = ?
              ',
-            array(backup::VAR_COURSEID, backup::VAR_MODID, '../../../../id', backup::VAR_PARENTID));
-        // All the rest of elements only happen if we are including user info
+            [backup::VAR_COURSEID, backup::VAR_MODID, '../../../../id', backup::VAR_PARENTID]);
+        // All the rest of elements only happen if we are including user info.
         if ($userinfo) {
             $userprogress->set_source_sql('
                 SELECT *
                   FROM {learninggoalwidget_i_userpro} pro
                  WHERE pro.course = ? AND pro.coursemodule = ? AND pro.topic = ? AND pro.goal = ?
                  ',
-                array(backup::VAR_COURSEID, backup::VAR_MODID, '../../../../id', backup::VAR_PARENTID));
+                [backup::VAR_COURSEID, backup::VAR_MODID, '../../../../id', backup::VAR_PARENTID]);
         }
 
-        // Define id annotations
+        // Define id annotations.
         $userprogress->annotate_ids('user', 'userid');
 
-        // Define file annotations
-
-        // Return the root element (learninggoalwidget), wrapped into standard activity structure
+        // Return the root element (learninggoalwidget), wrapped into standard activity structure.
         return $this->prepare_activity_structure($learninggoalwidget);
     }
 }
