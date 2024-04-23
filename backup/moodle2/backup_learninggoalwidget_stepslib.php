@@ -42,9 +42,8 @@ class backup_learninggoalwidget_activity_structure_step extends backup_activity_
         $userinfo = $this->get_setting_value('userinfo');
 
         // Define each element separated.
-        $learninggoalwidget = new backup_nested_element('learninggoalwidget', ['id'], [
-            'name', 'intro', 'introformat', 'timecreated', 'timemodified'
-        ]);
+        $learninggoalwidget = new backup_nested_element('learninggoalwidget', ['id'],
+            ['name', 'intro', 'introformat', 'timecreated', 'timemodified']);
 
         $topics = new backup_nested_element('topics');
 
@@ -68,8 +67,8 @@ class backup_learninggoalwidget_activity_structure_step extends backup_activity_
 
         $userprogresses = new backup_nested_element('userprogresses');
 
-        $userprogress = new backup_nested_element('userprogress', ['id'], [
-            'coursemodule', 'instance', 'userid', 'progress']);
+        $userprogress = new backup_nested_element('userprogress', ['id'],
+            ['coursemodule', 'instance', 'userid', 'progress']);
 
         // Build the tree.
         $learninggoalwidget->add_child($topics);
