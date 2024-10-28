@@ -346,8 +346,8 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
         $goalrecords = $DB->get_records_sql($sqlstmt, $params);
 
         $goalstmt = "SELECT id, learninggoalwidgetid, ranking
-                        FROM {learninggoalwidget_goals}
-                       WHERE id = :goalid";
+                       FROM {learninggoalwidget_goals}
+                      WHERE id = :goalid";
         foreach ($goalrecords as $goalrecord) {
           $params = [
               'goalid' => $goalrecord->goal,
