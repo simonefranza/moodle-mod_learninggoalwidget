@@ -80,6 +80,23 @@ function delete_index($dbman, $tablename, $indexname, $unique, $fields) {
 }
 
 /**
+ * deletes a key from a table
+ *
+ * @param object $dbman
+ * @param string $tablename
+ * @param string $fieldname
+ * @return void
+ */
+function delete_key($dbman, $tablename, $fieldname) {
+    $table = new xmldb_table($tablename);
+    $field = new xmldb_field($fieldname);
+
+    if ($dbman->field_exists($table, $field)) {
+        $dbman->drop_field($table, $field);
+    }
+}
+
+/**
  * add a field to a table
  *
  * @param object $dbman
@@ -228,9 +245,6 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
     }
     if ($oldversion < 2024102800) {
         // Remove all foreign keys.
-        // Remove learninggoalwidget->fk_course .
-        delete_foreign_key($dbman, 'learninggoalwidget', 'fk_course', ['course'], 'course', ['id']);
-
         // Remove learninggoalwidget_goal->fk_topic.
         delete_foreign_key($dbman, 'learninggoalwidget_goal', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
 
@@ -254,6 +268,10 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
         delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_course', ['course'], 'course', ['id']);
         // Remove learninggoalwidget_i_userpro->fk_userid.
         delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_userid', ['userid'], 'user', ['id']);
+
+        // Remove learninggoalwidget->fk_course .
+        delete_foreign_key($dbman, 'learninggoalwidget', 'fk_course', ['course'], 'course', ['id']);
+
 
         // Remove all indexes.
         // Remove index learninggoalwidget_goal->topic.
@@ -376,6 +394,11 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
         // Add index learninggoalwidget_progs->userid.
         add_notunique_index($dbman, 'learninggoalwidget_progs', 'userid', ['userid']);
 
+        // Delete unneeded fields
+        // Delete learninggoalwidget_progs->course.
+        delete_key($dbman, 'learninggoalwidget_progs', 'course');
+        // Delete learninggoalwidget_progs->coursemodule.
+        delete_key($dbman, 'learninggoalwidget_progs', 'coursemodule');
 
         // Delete unneeded tables.
         // Delete learninggoalwidget_i_topics.
