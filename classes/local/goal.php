@@ -95,16 +95,4 @@ class goal {
     public function get_url() {
         return $this->url;
     }
-
-
-    /**
-     * factory method which creates a goal
-     * from a database record
-     *
-     * @param [sqlrecord] $goalrecord
-     * @return goal
-     */
-    public static function from_record($goalrecord): goal {
-        return new goal($goalrecord->title, $goalrecord->shortname, $goalrecord->url);
-    }
 }

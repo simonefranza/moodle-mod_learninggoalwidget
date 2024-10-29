@@ -36,28 +36,22 @@ class userprogress {
     /**
      * get user's progress for a goal
      *
-     * @param [type] $courseid
-     * @param [type] $coursemoduleid
      * @param [type] $instanceid
      * @param [type] $userid
      * @param [type] $topicid
      * @param [type] $goalid
      * @return int progress 0 - 100
      */
-    public static function get_progress($courseid, $coursemoduleid, $instanceid, $userid, $topicid, $goalid) {
+    public static function get_progress($instanceid, $userid, $topicid, $goalid) {
         global $DB;
 
         $sqlstmt = "SELECT progress
-                      FROM {learninggoalwidget_i_userpro}
-                     WHERE course = :courseid
-                       AND coursemodule = :coursemoduleid
-                       AND instance = :instanceid
+                      FROM {learninggoalwidget_progs}
+                     WHERE learninggoalwidgetid = :instanceid
                        AND userid = :userid
-                       AND topic = :topicid
-                       AND goal = :goalid";
+                       AND topicid = :topicid
+                       AND goalid = :goalid";
         $params = [
-            'courseid' => $courseid,
-            'coursemoduleid' => $coursemoduleid,
             'instanceid' => $instanceid,
             'userid' => $userid,
             'topicid' => $topicid,

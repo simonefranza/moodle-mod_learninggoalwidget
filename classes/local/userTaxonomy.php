@@ -37,28 +37,6 @@ use mod_learninggoalwidget\local\topic;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class userTaxonomy {
-
-    /**
-     * the course module id related with the taxonomy
-     *
-     * @var int
-     */
-    private $coursemoduleid;
-
-    /**
-     * the course id related with the taxonomy
-     *
-     * @var int
-     */
-    private $courseid;
-
-    /**
-     * the section id related with the taxonomy
-     *
-     * @var int
-     */
-    private $sectionid;
-
     /**
      * the instance id related with the taxonomy
      *
@@ -76,16 +54,10 @@ class userTaxonomy {
     /**
      * c'tor of taxonomy (for a specific instance in a course)
      *
-     * @param int $coursemoduleid
-     * @param int $courseid
-     * @param int $sectionid
      * @param int $instanceid
      * @param int $userid
      */
-    public function __construct($coursemoduleid, $courseid, $sectionid, $instanceid, $userid) {
-        $this->coursemoduleid = $coursemoduleid;
-        $this->courseid = $courseid;
-        $this->sectionid = $sectionid;
+    public function __construct($instanceid, $userid) {
         $this->instanceid = $instanceid;
         $this->userid = $userid;
     }
@@ -108,54 +80,58 @@ class userTaxonomy {
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
     private function get_topics() {
+        if ($this->instanceid === null) {
+            return [];
+        }
         $topics = [];
-        if ($this->coursemoduleid !== null) {
-            global $DB;
-            $sqlstmt = "SELECT b.id, b.title, b.shortname, b.url, a.course,
-                               a.coursemodule, a.instance, a.ranking
-                          FROM {learninggoalwidget_i_topics} a, {learninggoalwidget_topic} b
-                         WHERE a.course = :courseid
-                           AND a.coursemodule = :coursemoduleid
-                           AND a.instance = :instanceid
-                           AND a.topic = b.id
-                           AND b.title != :initials
-                           AND b.title != :goals
-                      ORDER BY a.ranking";
-            $params = [
-                'courseid' => $this->courseid,
-                'coursemoduleid' => $this->coursemoduleid,
-                'instanceid' => $this->instanceid,
-                'initials' => "QUESTIONS_INITIAL",
-                'goals' => "QUESTIONS_GOALS",
-            ];
-            $topicrecords = $DB->get_records_sql($sqlstmt, $params);
-            foreach ($topicrecords as $topicrecord) {
-                $topic = Topic::from_record($topicrecord);
-                $goals = [];
-                foreach ($topic->get_goals() as $goal) {
-                    $obj = new stdClass;
-                    $obj->name = $goal[2];
-                    $obj->keyword = $goal[3];
-                    $obj->link = $goal[4];
-                    $obj->type = "goal";
-                    $progress = userprogress::get_progress(
-                        $this->courseid,
-                        $this->coursemoduleid,
-                        $this->instanceid,
-                        $this->userid,
-                        $topicrecord->id,
-                        $goal[1]
-                    );
-                    $obj->pro = $progress;
-                    $obj->goalid = $goal[1];
-                    $goals[] = $obj;
-                }
-                $topics[] = [
-                    "topicid" => $topicrecord->id, "name" => $topic->get_title(),
-                    "keyword" => $topic->get_shortname(), "link" => $topic->get_url(), "type" => "topic",
-                    "children" => $goals,
-                ];
-            }
+        global $DB;
+        $sqlstmt = "SELECT t.id tid, t.learninggoalwidgetid,
+                           t.title as ttitle, t.shortname as tshortname,
+                           t.url as turl, t.ranking as tranking,
+                           g.id as gid, g.title as gtitle, g.shortname as gshortname,
+                           g.url as gurl, g.ranking as granking,
+                           p.userid, p.progress
+                      FROM {learninggoalwidget_topics} t
+                 LEFT JOIN {learninggoalwidget_goals} g
+                        ON t.id = g.topicid
+                 LEFT JOIN {learninggoalwidget_progs} p
+                        ON g.id = p.goalid
+                     WHERE t.learninggoalwidgetid = :instanceid
+                       AND p.userid = :userid
+                  ORDER BY tranking, granking";
+        $params = [
+            'instanceid' => $this->instanceid,
+            'userid' => $this->userid,
+        ];
+        $topicrecords = $DB->get_records_sql($sqlstmt, $params);
+        $numrecords = count($topicrecords);
+        if ($numrecords === 0) {
+          return [];
+        }
+        $numtopics = 0;
+        foreach ($topicrecords as $topicrecord) {
+            $topic;
+            if (!$numtopics || $topics[$numtopics - 1]->id !== $topicrecord->tid) {
+                $topic = new stdClass;
+                $topic->topicid = $topicrecord->tid;
+                $topic->name = $topicrecord->ttitle;
+                $topic->keyword = $topicrecord->tshortname;
+                $topic->link = $topicrecord->turl;
+                $topic->type = "topic";
+                $topic->children = [];
+                $topics[] = $topic;
+                $numtopics++;
+          } else {
+            $topic = $topics[$numtopics - 1];
+          }
+          $goal = new stdClass;
+          $goal->goalid = $topicrecord->gid;
+          $goal->name = $topicrecord->gtitle;
+          $goal->keyword = $topicrecord->gshortname;
+          $goal->link = $topicrecord->gurl;
+          $goal->type = "goal";
+          $goal->pro = $topicrecord->progress;
+          $topic->children[] = $goal;
         }
         return $topics;
     }

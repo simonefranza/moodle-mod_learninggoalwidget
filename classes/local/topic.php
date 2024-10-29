@@ -115,35 +115,4 @@ class topic {
     public function get_goals() {
         return $this->goals;
     }
-
-    /**
-     * factory method creating a topic from a database record
-     *
-     * @param [record] $topicrecord
-     * @return topic
-     */
-    public static function from_record($topicrecord): topic {
-        global $DB;
-        $sqlstmt = "SELECT a.id, a.title, a.shortname, a.url, b.ranking
-                      FROM {learninggoalwidget_goal} a, {learninggoalwidget_i_goals} b
-                     WHERE b.course = :course
-                       AND b.coursemodule = :coursemodule
-                       AND b.instance = :instance
-                       AND b.topic = :topicid
-                       AND b.goal = a.id
-                  ORDER BY b.ranking";
-        $params = [
-            'course' => $topicrecord->course,
-            'coursemodule' => $topicrecord->coursemodule,
-            'instance' => $topicrecord->instance,
-            'topicid' => $topicrecord->id,
-        ];
-        $goals = [];
-        $goalrecords = $DB->get_records_sql($sqlstmt, $params);
-        foreach ($goalrecords as $goalrecord) {
-            $goal = goal::from_record($goalrecord);
-            $goals[] = [$goalrecord->ranking, $goalrecord->id, $goal->get_title(), $goal->get_shortname(), $goal->get_url()];
-        }
-        return new Topic($topicrecord->title, $topicrecord->shortname, $topicrecord->url, $goals);
-    }
 }
