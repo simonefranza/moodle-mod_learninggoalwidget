@@ -226,8 +226,6 @@ define(
         .then(([modal, topicName, topicShortname, topicUrl]) => {
           // Make insert topic call
           return Promise.all([modal, Controller.insertTopic({
-            course: course,
-            coursemodule: coursemodule,
             instance: instance,
             topicname: topicName,
             topicshortname: topicShortname,
@@ -1032,8 +1030,6 @@ ${isLast ? '\n\n' : '\n'}`;
     const clickedJSONDownload = async() => {
       const jsonTaxonomy = await new Promise((resolve, reject) => {
         Controller.getTaxonomy({
-          course: course,
-          coursemodule: coursemodule,
           instance: instance,
         })
           .then((jsonTaxonomy) => resolve(JSON.parse(jsonTaxonomy)))

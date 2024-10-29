@@ -51,7 +51,7 @@ define(
     });
 
     // Request learning goals taxonomy
-    Controller.getLearningGoals({courseid: courseid, userid: userid, coursemoduleid: coursemoduleid, instanceid: instanceid})
+    Controller.getLearningGoals({instanceid: instanceid, userid: userid})
       .then((jsonLearningGoals) => {
         const taxonomy = JSON.parse(jsonLearningGoals);
         if (taxonomy.children.length > 0) {
@@ -108,8 +108,6 @@ define(
     // Learninggoals webservice: save the learning goal progress for a learning goal
     Controller.updateUserProgress(
       {
-        courseid: courseid,
-        coursemoduleid: coursemoduleid,
         instanceid: instanceid,
         userid: userid,
         topicid: topicId,
@@ -150,7 +148,7 @@ define(
     let eventGoalProgressParam = {name: "goalprogress", value: goalProgressValue};
     learningGoalEvent.push(eventGoalParam);
     learningGoalEvent.push(eventGoalProgressParam);
-    logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
+    logLearningGoalEvent(instanceid, userid, learningGoalEvent);
   };
 
   /**
@@ -173,17 +171,13 @@ define(
 
   /**
    * Logs learning goal events into moodles standard log store
-   * @param {*} courseid The course ID
-   * @param {*} coursemoduleid The course module ID
    * @param {*} instanceid The course module instance ID
    * @param {*} userid The user ID
    * @param {*} eventParams The learning goal event parameters
    */
-  const logLearningGoalEvent = (courseid, coursemoduleid, instanceid, userid, eventParams) => {
+  const logLearningGoalEvent = (instanceid, userid, eventParams) => {
     Controller.logEvent(
       {
-        courseid: courseid,
-        coursemoduleid: coursemoduleid,
         instanceid: instanceid,
         userid: userid,
         eventparams: eventParams

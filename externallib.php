@@ -56,8 +56,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function get_taxonomy_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, ''),
                 'instance' => new external_value(PARAM_INT, ''),
             ]
         );
@@ -66,26 +64,20 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * get the taxonomy
      *
-     * @param int $course
-     * @param int $coursemodule
      * @param int $instance
      * @return string
      */
     public static function get_taxonomy(
-        $course,
-        $coursemodule,
         $instance
     ) {
         // Parameter validation.
         self::validate_parameters(
             self::get_taxonomy_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
             ]
         );
-        return (new taxonomy($coursemodule, $course, null, $instance))->get_taxonomy_as_json();
+        return (new taxonomy($instance))->get_taxonomy_as_json();
     }
 
     /**
@@ -96,10 +88,8 @@ class mod_learninggoalwidget_external extends external_api {
     public static function get_taxonomy_for_user_parameters() {
         return new external_function_parameters(
             [
-                'courseid' => new external_value(PARAM_INT, 'ID of the course'),
-                'userid' => new external_value(PARAM_INT, 'ID of the logged in user'),
-                'coursemoduleid' => new external_value(PARAM_INT, ''),
                 'instanceid' => new external_value(PARAM_INT, ''),
+                'userid' => new external_value(PARAM_INT, 'ID of the logged in user'),
             ]
         );
     }
@@ -116,17 +106,13 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * get learning goal taxonomy as json
      *
-     * @param [type] $courseid
-     * @param [type] $userid
-     * @param [type] $coursemoduleid
-     * @param [type] $instanceid
+     * @param number $instanceid
+     * @param number $userid
      * @return void
      */
     public static function get_taxonomy_for_user(
-        $courseid,
-        $userid,
-        $coursemoduleid,
-        $instanceid
+        $instanceid,
+        $userid
     ) {
         global $USER;
 
@@ -134,16 +120,14 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::get_taxonomy_for_user_parameters(),
             [
-                'courseid' => $courseid,
-                'userid' => $userid,
-                'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
+                'userid' => $userid,
             ]
         );
 
         self::validate_context(context_user::instance($USER->id));
 
-        return (new userTaxonomy($coursemoduleid, $courseid, null, $instanceid, $userid))->get_taxonomy_as_json();
+        return (new userTaxonomy($instanceid, $userid))->get_taxonomy_as_json();
     }
 
 
@@ -155,8 +139,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function update_user_progress_parameters() {
         return new external_function_parameters(
             [
-                'courseid' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemoduleid' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instanceid' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'userid' => new external_value(PARAM_INT, 'ID of the user'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
@@ -178,18 +160,14 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * update user's progress for a goal
      *
-     * @param [type] $courseid
-     * @param [type] $coursemoduleid
-     * @param [type] $instanceid
-     * @param [type] $userid
-     * @param [type] $topicid
-     * @param [type] $goalid
-     * @param [type] $progress
+     * @param number $instanceid
+     * @param number $userid
+     * @param number $topicid
+     * @param number $goalid
+     * @param number $progress
      * @return void
      */
     public static function update_user_progress(
-        $courseid,
-        $coursemoduleid,
         $instanceid,
         $userid,
         $topicid,
@@ -203,8 +181,6 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::update_user_progress_parameters(),
             [
-                'courseid' => $courseid,
-                'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
                 'userid' => $userid,
                 'topicid' => $topicid,
@@ -216,40 +192,33 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $sqlstmt = "SELECT id
-                      FROM {learninggoalwidget_i_userpro}
-                     WHERE course = :courseid
-                       AND coursemodule = :coursemoduleid
-                       AND instance = :instanceid
+                      FROM {learninggoalwidget_progs}
+                     WHERE learninggoalwidgetid = :instanceid
                        AND userid = :userid
-                       AND topic = :topicid
-                       AND goal = :goalid";
+                       AND topicid = :topicid
+                       AND goalid = :goalid";
         $params = [
-            'courseid' => $courseid,
-            'coursemoduleid' => $coursemoduleid,
             'instanceid' => $instanceid,
             'userid' => $userid,
             'topicid' => $topicid,
             'goalid' => $goalid,
         ];
         $userprogressrecord = $DB->get_record_sql($sqlstmt, $params);
-        if ($userprogressrecord) {
-            $userprogress = new stdClass;
-            $userprogress->id = $userprogressrecord->id;
-            $userprogress->progress = $progress;
-            $DB->update_record('learninggoalwidget_i_userpro', $userprogress);
-        } else {
-            $userprogress = new stdClass;
-            $userprogress->course = $courseid;
-            $userprogress->coursemodule = $coursemoduleid;
-            $userprogress->instance = $instanceid;
-            $userprogress->topic = $topicid;
-            $userprogress->goal = $goalid;
-            $userprogress->userid = $userid;
-            $userprogress->progress = $progress;
-            $DB->insert_record('learninggoalwidget_i_userpro', $userprogress);
-        }
 
-        return self::get_taxonomy_for_user($courseid, $userid, $coursemoduleid, $instanceid);
+        $userprogress = new stdClass;
+        $userprogress->progress = $progress;
+
+        if ($userprogressrecord) {
+            $userprogress->id = $userprogressrecord->id;
+        } else {
+            $userprogress->learninggoalwidgetid = $instanceid;
+            $userprogress->topicid = $topicid;
+            $userprogress->goalid = $goalid;
+            $userprogress->userid = $userid;
+        }
+        $DB->update_record('learninggoalwidget_progs', $userprogress);
+
+        return self::get_taxonomy_for_user($instanceid, $userid);
     }
 
     /**
@@ -260,8 +229,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function log_event_parameters() {
         return new external_function_parameters(
             [
-                'courseid' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemoduleid' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instanceid' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'userid' => new external_value(PARAM_INT, 'ID of the user'),
                 'eventparams' => new external_multiple_structure(
@@ -288,16 +255,12 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * save an event in the moodle logstore
      *
-     * @param [type] $courseid
-     * @param [type] $coursemoduleid
      * @param [type] $instanceid
      * @param [type] $userid
      * @param [type] $eventparams
      * @return void
      */
     public static function log_event(
-        $courseid,
-        $coursemoduleid,
         $instanceid,
         $userid,
         $eventparams
@@ -307,8 +270,6 @@ class mod_learninggoalwidget_external extends external_api {
         $params = self::validate_parameters(
             self::log_event_parameters(),
             [
-                'courseid' => $courseid,
-                'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
                 'userid' => $userid,
                 'eventparams' => $eventparams,
@@ -342,8 +303,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function insert_topic_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'topicname' => new external_value(PARAM_TEXT, 'topic name'),
                 'topicshortname' => new external_value(PARAM_TEXT, 'topic shortname'),
@@ -364,60 +323,45 @@ class mod_learninggoalwidget_external extends external_api {
      * Insert a new topic in the topic table and reference it with course and ranking from topic instance table
      * without checks, for internal use
      *
-     * @param  [type] $course
-     * @param  [type] $coursemodule
-     * @param  [type] $instance
-     * @param  [type] $topicname
-     * @param  [type] $topicshortname
-     * @param  [type] $topicurl
+     * @param  number $instance
+     * @param  string $topicname
+     * @param  string $topicshortname
+     * @param  string $topicurl
      * @return id the id of the added topic
      */
     public static function add_topic(
-        $course,
-        $coursemodule,
         $instance,
         $topicname,
         $topicshortname,
         $topicurl
     ) {
         global $DB;
+
+        // Find max existing ranking.
+        $sqlstmt = "SELECT MAX(ranking) as maxranking
+                      FROM {learninggoalwidget_topics}
+                     WHERE learninggoalwidgetid = :instance";
+        $params = [
+            'instance' => $instance,
+        ];
+        $maxrankingrecord = $DB->get_record_sql($sqlstmt, $params);
+
         // Insert in topic table.
         $topicrecord = new stdClass;
+        $topicrecord->learninggoalwidgetid = $instance;
         $topicrecord->title = $topicname;
         $topicrecord->shortname = $topicshortname;
         $topicrecord->url = $topicurl;
-        $topicrecord->id = $DB->insert_record('learninggoalwidget_topic', $topicrecord);
+        $topicrecord->ranking = $maxrankingrecord ? $maxrankingrecord->maxranking + 1 : 1;
 
-        // Link topic with learning goal activity in a course.
-        $topicinstancerecord = new stdClass;
-        $topicinstancerecord->course = $course;
-        $topicinstancerecord->coursemodule = $coursemodule;
-        $topicinstancerecord->instance = $instance;
-        $topicinstancerecord->topic = $topicrecord->id;
-        $topicinstancerecord->ranking = 1;
-        $sqlstmt = "SELECT MAX(ranking) as maxranking
-                      FROM {learninggoalwidget_i_topics}
-                     WHERE course = :course
-                       AND coursemodule = :coursemodule
-                       AND instance = :instance";
-        $params = [
-            'course' => $course,
-            'coursemodule' => $coursemodule,
-            'instance' => $instance,
-        ];
-        $topiccountrecord = $DB->get_record_sql($sqlstmt, $params);
-        if ($topiccountrecord) {
-            $topicinstancerecord->ranking = $topiccountrecord->maxranking + 1;
-        }
-        $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
+        $topicrecord->id = $DB->insert_record('learninggoalwidget_topics', $topicrecord);
+
         return $topicrecord->id;
     }
 
     /**
      * Insert a new topic in the topic table and reference it with course and ranking from topic instance table
      *
-     * @param  [type] $course
-     * @param  [type] $coursemodule
      * @param  [type] $instance
      * @param  [type] $topicname
      * @param  [type] $topicshortname
@@ -425,8 +369,6 @@ class mod_learninggoalwidget_external extends external_api {
      * @return void
      */
     public static function insert_topic(
-        $course,
-        $coursemodule,
         $instance,
         $topicname,
         $topicshortname,
@@ -438,8 +380,6 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::insert_topic_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicname' => $topicname,
                 'topicshortname' => $topicshortname,
@@ -449,9 +389,9 @@ class mod_learninggoalwidget_external extends external_api {
 
         self::validate_context(context_user::instance($USER->id));
 
-        self::add_topic($course, $coursemodule, $instance, $topicname, $topicshortname, $topicurl);
+        self::add_topic($instance, $topicname, $topicshortname, $topicurl);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -529,7 +469,7 @@ class mod_learninggoalwidget_external extends external_api {
         $topicrecord->url = $topicurl;
         $DB->update_record('learninggoalwidget_topic', $topicrecord);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -600,7 +540,7 @@ class mod_learninggoalwidget_external extends external_api {
 
         $DB->delete_records('learninggoalwidget_topic', ['id' => $topicid]);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -716,7 +656,7 @@ class mod_learninggoalwidget_external extends external_api {
         $DB->update_record('learninggoalwidget_i_topics', $topicmoveup);
         $DB->update_record('learninggoalwidget_i_topics', $topicmovedown);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -833,7 +773,7 @@ class mod_learninggoalwidget_external extends external_api {
         $DB->update_record('learninggoalwidget_i_topics', $topicmoveup);
         $DB->update_record('learninggoalwidget_i_topics', $topicmovedown);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -964,7 +904,7 @@ class mod_learninggoalwidget_external extends external_api {
         self::add_goal($course, $coursemodule, $instance,
             $topicid, $goalname, $goalshortname, $goalurl);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -1046,7 +986,7 @@ class mod_learninggoalwidget_external extends external_api {
         $goalrecord->url = $goalurl;
         $DB->update_record('learninggoalwidget_goal', $goalrecord);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -1119,7 +1059,7 @@ class mod_learninggoalwidget_external extends external_api {
         $DB->delete_records('learninggoalwidget_i_goals', $params);
         $DB->delete_records('learninggoalwidget_goal', ['id' => $goalid]);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -1202,7 +1142,7 @@ class mod_learninggoalwidget_external extends external_api {
             $DB->delete_records('learninggoalwidget_goal', ['id' => $goalrecord->goal]);
         }
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -1263,7 +1203,7 @@ class mod_learninggoalwidget_external extends external_api {
         $intaxonomy = json_decode($taxonomy);
 
         foreach ($intaxonomy->children as $topic) {
-            $topicid = self::add_topic($course, $coursemodule, $instance,
+            $topicid = self::add_topic($instance,
                 $topic->name, $topic->keyword, $topic->link);
             foreach ($topic->children as $goal) {
                 self::add_goal($course, $coursemodule, $instance,
@@ -1271,7 +1211,7 @@ class mod_learninggoalwidget_external extends external_api {
             }
         }
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -1398,7 +1338,7 @@ class mod_learninggoalwidget_external extends external_api {
         $DB->update_record('learninggoalwidget_i_goals', $goalmoveup);
         $DB->update_record('learninggoalwidget_i_goals', $goalmovedown);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -1525,6 +1465,6 @@ class mod_learninggoalwidget_external extends external_api {
         $DB->update_record('learninggoalwidget_i_goals', $topicmoveup);
         $DB->update_record('learninggoalwidget_i_goals', $goalmovedown);
 
-        return self::get_taxonomy($course, $coursemodule, $instance);
+        return self::get_taxonomy($instance);
     }
 }
