@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/externallib.php');
 require_once(__DIR__ . '/classes/event/learninggoal_updated.php');
 
+use mod_learninggoalwidget\local\topic;
 use mod_learninggoalwidget\local\taxonomy;
 use mod_learninggoalwidget\local\userTaxonomy;
 
@@ -210,13 +211,14 @@ class mod_learninggoalwidget_external extends external_api {
 
         if ($userprogressrecord) {
             $userprogress->id = $userprogressrecord->id;
+            $DB->update_record('learninggoalwidget_progs', $userprogress);
         } else {
             $userprogress->learninggoalwidgetid = $instanceid;
             $userprogress->topicid = $topicid;
             $userprogress->goalid = $goalid;
             $userprogress->userid = $userid;
+            $DB->insert_record('learninggoalwidget_progs', $userprogress);
         }
-        $DB->update_record('learninggoalwidget_progs', $userprogress);
 
         return self::get_taxonomy_for_user($instanceid, $userid);
     }
@@ -563,7 +565,7 @@ class mod_learninggoalwidget_external extends external_api {
 
         $topicmoveup = topic::get_db_entry_by_id($topicid);
 
-        if ($topicmoveup->ranking === 1) {
+        if ($topicmoveup->ranking == '1') {
             // No need to update, as it's already lowest rank.
             return self::get_taxonomy($topicmoveup->learninggoalwidgetid);
         }
@@ -620,7 +622,7 @@ class mod_learninggoalwidget_external extends external_api {
 
         self::validate_context(context_user::instance($USER->id));
 
-        $topicmovedown = topic::get_by_id($topicid);
+        $topicmovedown = topic::get_db_entry_by_id($topicid);
 
         // Find highest rank
         $sqlstmt = "SELECT MAX(ranking) as maxranking
@@ -631,11 +633,11 @@ class mod_learninggoalwidget_external extends external_api {
         ];
         $recordresult = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
 
-        if (!recordresult || $topicmovedown->ranking === $recordresult->maxranking) {
+        if (!$recordresult || $topicmovedown->ranking === $recordresult->maxranking) {
             // No need to update, as it's already highest rank.
             return self::get_taxonomy($topicmovedown->learninggoalwidgetid);
         }
-        $topicmoveup = topic::get_by_ranking($topicmovedown->learninggoalwidgetid, $topicmovedown->ranking + 1);
+        $topicmoveup = topic::get_db_entry_by_ranking($topicmovedown->learninggoalwidgetid, $topicmovedown->ranking + 1);
 
         $topicmovedown->ranking++;
         $topicmoveup->ranking--;
@@ -653,8 +655,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function insert_goal_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
                 'goalname' => new external_value(PARAM_TEXT, 'goal name'),
@@ -676,18 +676,14 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * insert a new goal, internal use only
      *
-     * @param  [type] $course
-     * @param  [type] $coursemodule
      * @param  [type] $instance
      * @param  [type] $topicid
      * @param  [type] $goalname
      * @param  [type] $goalshortname
      * @param  [type] $goalurl
-     * @return void
+     * @return id the id of the added goal
      */
     public static function add_goal(
-        $course,
-        $coursemodule,
         $instance,
         $topicid,
         $goalname,
@@ -695,47 +691,34 @@ class mod_learninggoalwidget_external extends external_api {
         $goalurl
     ) {
         global $DB;
+
+        // Find max existing ranking.
+        $sqlstmt = "SELECT MAX(ranking) as maxranking
+                      FROM {learninggoalwidget_goals}
+                     WHERE learninggoalwidgetid = :instance";
+        $params = [
+            'instance' => $instance,
+        ];
+        $maxrankingrecord = $DB->get_record_sql($sqlstmt, $params);
+
         // Insert in goal table.
         $goalrecord = new stdClass;
+        $goalrecord->learninggoalwidgetid = $instance;
+        $goalrecord->topicid = $topicid;
         $goalrecord->title = $goalname;
         $goalrecord->shortname = $goalshortname;
         $goalrecord->url = $goalurl;
-        $goalrecord->topic = $topicid;
-        $goalrecord->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord);
+        $goalrecord->ranking = $maxrankingrecord ? $maxrankingrecord->maxranking + 1 : 1;
 
-        // Link goal with learning goal activity in a course.
-        $goalinstancerecord = new stdClass;
-        $goalinstancerecord->course = $course;
-        $goalinstancerecord->coursemodule = $coursemodule;
-        $goalinstancerecord->instance = $instance;
-        $goalinstancerecord->topic = $topicid;
-        $goalinstancerecord->goal = $goalrecord->id;
-        $goalinstancerecord->ranking = 1;
-        $sqlstmt = "SELECT MAX(ranking) as maxranking
-                      FROM {learninggoalwidget_i_goals}
-                     WHERE course = :course
-                       AND coursemodule = :coursemodule
-                       AND instance = :instance
-                       AND topic = :topicid";
-        $params = [
-            'course' => $course,
-            'coursemodule' => $coursemodule,
-            'instance' => $instance,
-            'topicid' => $topicid,
-        ];
-        $goalcountrecord = $DB->get_record_sql($sqlstmt, $params);
-        if ($goalcountrecord) {
-            $goalinstancerecord->ranking = $goalcountrecord->maxranking + 1;
-        }
-        $goalinstancerecord->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord);
+        $goalrecord->id = $DB->insert_record('learninggoalwidget_goals', $goalrecord);
+
+        return $goalrecord->id;
     }
 
 
     /**
      * insert a new goal
      *
-     * @param  [type] $course
-     * @param  [type] $coursemodule
      * @param  [type] $instance
      * @param  [type] $topicid
      * @param  [type] $goalname
@@ -744,8 +727,6 @@ class mod_learninggoalwidget_external extends external_api {
      * @return void
      */
     public static function insert_goal(
-        $course,
-        $coursemodule,
         $instance,
         $topicid,
         $goalname,
@@ -758,8 +739,6 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::insert_goal_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'goalname' => $goalname,
@@ -770,8 +749,7 @@ class mod_learninggoalwidget_external extends external_api {
 
         self::validate_context(context_user::instance($USER->id));
 
-        self::add_goal($course, $coursemodule, $instance,
-            $topicid, $goalname, $goalshortname, $goalurl);
+        self::add_goal($instance, $topicid, $goalname, $goalshortname, $goalurl);
 
         return self::get_taxonomy($instance);
     }
@@ -1075,8 +1053,7 @@ class mod_learninggoalwidget_external extends external_api {
             $topicid = self::add_topic($instance,
                 $topic->name, $topic->keyword, $topic->link);
             foreach ($topic->children as $goal) {
-                self::add_goal($course, $coursemodule, $instance,
-                    $topicid, $goal->name, $goal->keyword, $goal->link);
+                self::add_goal($instance, $topicid, $goal->name, $goal->keyword, $goal->link);
             }
         }
 

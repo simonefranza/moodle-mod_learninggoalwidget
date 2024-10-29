@@ -123,11 +123,12 @@ class topic {
      * @return dbentry
      */
     public static function get_db_entry_by_id($id) {
+        global $DB;
         $sqlstmt = "SELECT *
                       FROM {learninggoalwidget_topics}
                      WHERE id = :id";
         $params = [
-            'id' => $topicid,
+            'id' => $id,
         ];
         return $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
     }
@@ -140,6 +141,7 @@ class topic {
      * @return dbentry
      */
     public static function get_db_entry_by_ranking($learninggoalwidgetid, $ranking) {
+        global $DB;
         $sqlstmt = "SELECT *
                       FROM {learninggoalwidget_topics}
                      WHERE learninggoalwidgetid = :instance

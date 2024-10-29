@@ -100,8 +100,8 @@ define(
       taxonomy.children.forEach((topic) => {
 
         var topicContext = {
-          topicname: topic[2],
-          topicid: topic[1]
+          topicname: topic.name,
+          topicid: topic.topicid
         };
         CoreStr.get_string('settings:showgoals', 'mod_learninggoalwidget')
           .then((showGoalStr) => {
@@ -138,8 +138,8 @@ define(
 
           var goalContext = {
             topicid: topicId,
-            goalid: goal[1],
-            learninggoaltitle: goal[2]
+            goalid: goal.id,
+            learninggoaltitle: goal.name
           };
 
           Templates.render(TEMPLATES.GOAL, goalContext)
@@ -179,9 +179,9 @@ define(
       var topicId = $(e.currentTarget).data('topicid');
 
       taxonomy.children.forEach((topic) => {
-        if (topic[1] === topicId) {
+        if (topic.topicid === topicId) {
           $('#learninggoals-list').children().remove();
-          loadGoals(topicId, topic[5]);
+          loadGoals(topicId, topic.children);
         }
       });
 
@@ -258,10 +258,10 @@ define(
       var topicShortname;
       var topicUrl;
       taxonomy.children.forEach(function(topic) {
-        if (topic[1] === topicId) {
-          topicTitle = topic[2];
-          topicShortname = topic[3];
-          topicUrl = topic[4];
+        if (topic.topicid === topicId) {
+          topicTitle = topic.name;
+          topicShortname = topic.keyword;
+          topicUrl = topic.link;
         }
       });
       let strings = [
@@ -418,8 +418,8 @@ define(
       var topicTitle = "";
 
       taxonomy.children.forEach((topic) => {
-        if (topic[1] === selectedTopic) {
-          topicTitle = topic[2];
+        if (topic.topicid === selectedTopic) {
+          topicTitle = topic.name;
         }
       });
       let strings = [
@@ -455,8 +455,6 @@ define(
         .then(([modal, goalName, goalShortname, goalUrl]) => {
           // Make insert goal call
           return Promise.all([modal, Controller.insertGoal({
-            course: course,
-            coursemodule: coursemodule,
             instance: instance,
             topicid: selectedTopic,
             goalname: goalName,
@@ -470,8 +468,8 @@ define(
           taxonomy = JSON.parse(jsonTaxonomy);
           $('#learninggoals-list').children().remove();
           taxonomy.children.forEach((topic) => {
-            if (topic[1] === selectedTopic) {
-              loadGoals(selectedTopic, topic[5]);
+            if (topic.topicid === selectedTopic) {
+              loadGoals(selectedTopic, topic.children);
             }
           });
           return 0;
@@ -497,15 +495,15 @@ define(
       var goalShortname;
       var goalUrl;
       taxonomy.children.forEach((topic) => {
-        if (topic[1] !== topicId) {
+        if (topic.topicid !== topicId) {
           return;
         }
-        topicTitle = topic[2];
-        topic[5].forEach((goal) => {
-          if (goal[1] === goalId) {
-            goalTitle = goal[2];
-            goalShortname = goal[3];
-            goalUrl = goal[4];
+        topicTitle = topic.name;
+        topic.children.forEach((goal) => {
+          if (goal.id === goalId) {
+            goalTitle = goal.name;
+            goalShortname = goal.keyword;
+            goalUrl = goal.link;
           }
         });
       });
@@ -561,8 +559,8 @@ define(
           taxonomy = JSON.parse(jsonTaxonomy);
           $('#learninggoals-list').children().remove();
           taxonomy.children.forEach((topic) => {
-            if (topic[1] === topicId) {
-              loadGoals(topicId, topic[5]);
+            if (topic.topicid === topicId) {
+              loadGoals(topicId, topic.children);
             }
           });
           return 0;
@@ -613,8 +611,8 @@ define(
           taxonomy = JSON.parse(jsonTaxonomy);
           $('#learninggoals-list').children().remove();
           taxonomy.children.forEach((topic) => {
-            if (topic[1] === topicId) {
-              loadGoals(topicId, topic[5]);
+            if (topic.topicid === topicId) {
+              loadGoals(topicId, topic.children);
             }
           });
           return 0;
@@ -647,8 +645,8 @@ define(
 
           $('#learninggoals-list').children().remove();
           taxonomy.children.forEach((topic) => {
-            if (topic[1] === topicId) {
-              loadGoals(topicId, topic[5]);
+            if (topic.id === topicId) {
+              loadGoals(topicId, topic.children);
             }
           });
           return;
@@ -681,8 +679,8 @@ define(
 
           $('#learninggoals-list').children().remove();
           taxonomy.children.forEach((topic) => {
-            if (topic[1] === topicId) {
-              loadGoals(topicId, topic[5]);
+            if (topic.id === topicId) {
+              loadGoals(topicId, topic.children);
             }
           });
           return;
@@ -1028,27 +1026,27 @@ ${isLast ? '\n\n' : '\n'}`;
       jsonTaxonomy.children.forEach((topic) => {
         let goals = [];
         let topicObj = {};
-        if (topic.length >= 3) {
-          topicObj.name = topic[2];
-          if (topic.length >= 4) {
-            topicObj.keyword = topic[3];
-            if (topic.length >= 5) {
-              topicObj.link = topic[4];
-            }
-          }
+        if ('name' in topic) {
+          topicObj.name = topic.name;
+        }
+        if ('keyword' in topic) {
+          topicObj.keyword= topic.keyword;
+        }
+        if ('link' in topic) {
+          topicObj.link = topic.link;
         }
 
-        if (topic.length >= 6) {
-          topic[5].forEach((goal) => {
+        if ('children' in topic) {
+          topic.children.forEach((goal) => {
             goals.push({});
-            if (goal.length >= 3) {
-              goals[goals.length - 1].name = goal[2];
-              if (goal.length >= 4) {
-                goals[goals.length - 1].keyword = goal[3];
-                if (goal.length >= 5) {
-                  goals[goals.length - 1].link = goal[4];
-                }
-              }
+            if ('name' in goal) {
+              goals[goals.length - 1].name = goal.name;
+            }
+            if ('keyword' in goal) {
+              goals[goals.length - 1].keyword = goal.keyword;
+            }
+            if ('link' in goal) {
+              goals[goals.length - 1].link = goal.link;
             }
           });
         }
