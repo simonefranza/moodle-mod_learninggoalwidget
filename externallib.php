@@ -402,8 +402,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function update_topic_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
                 'topicname' => new external_value(PARAM_TEXT, 'topic name'),
@@ -425,18 +423,14 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * Update a topic in the topic table
      *
-     * @param  [type] $course
-     * @param  [type] $coursemodule
-     * @param  [type] $instance
-     * @param  [type] $topicid
-     * @param  [type] $topicname
-     * @param  [type] $topicshortname
-     * @param  [type] $topicurl
+     * @param  number $instance
+     * @param  number $topicid
+     * @param  string $topicname
+     * @param  string $topicshortname
+     * @param  string $topicurl
      * @return void
      */
     public static function update_topic(
-        $course,
-        $coursemodule,
         $instance,
         $topicid,
         $topicname,
@@ -449,8 +443,6 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::update_topic_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'topicname' => $topicname,
@@ -464,10 +456,11 @@ class mod_learninggoalwidget_external extends external_api {
         // Update in topic table.
         $topicrecord = new stdClass;
         $topicrecord->id = $topicid;
+        $topicrecord->learninggoalwidgetid = $instance;
         $topicrecord->title = $topicname;
         $topicrecord->shortname = $topicshortname;
         $topicrecord->url = $topicurl;
-        $DB->update_record('learninggoalwidget_topic', $topicrecord);
+        $DB->update_record('learninggoalwidget_topics', $topicrecord);
 
         return self::get_taxonomy($instance);
     }
@@ -480,9 +473,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function delete_topic_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
-                'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
             ]
         );
@@ -498,18 +488,12 @@ class mod_learninggoalwidget_external extends external_api {
     }
 
     /**
-     * delete a topic (including related goals) from the taxonomy
+     * delete a topic (including related goals and progress) from the taxonomy
      *
-     * @param [type] $course
-     * @param [type] $coursemodule
-     * @param [type] $instance
-     * @param [type] $topicid
+     * @param number $topicid
      * @return void
      */
     public static function delete_topic(
-        $course,
-        $coursemodule,
-        $instance,
         $topicid
     ) {
         global $DB, $USER;
@@ -518,9 +502,6 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::delete_topic_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
-                'instance' => $instance,
                 'topicid' => $topicid,
             ]
         );
@@ -528,16 +509,10 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $params = [
-            'course' => $course,
-            'coursemodule' => $coursemodule,
-            'instance' => $instance,
-            'topic' => $topicid,
+            'topicid' => $topicid,
         ];
-        $DB->delete_records('learninggoalwidget_i_userpro', $params);
-        $DB->delete_records('learninggoalwidget_i_goals', $params);
-        $DB->delete_records('learninggoalwidget_i_topics', $params);
-        $DB->delete_records('learninggoalwidget_goal', ['topic' => $topicid]);
-
+        $DB->delete_records('learninggoalwidget_progs', $params);
+        $DB->delete_records('learninggoalwidget_goal', $params);
         $DB->delete_records('learninggoalwidget_topic', ['id' => $topicid]);
 
         return self::get_taxonomy($instance);

@@ -297,8 +297,6 @@ define(
         .then(([modal, topicName, topicShortname, topicUrl]) => {
           // Make update topic call
           return Promise.all([modal, Controller.updateTopic({
-            course: course,
-            coursemodule: coursemodule,
             instance: instance,
             topicid: topicId,
             topicname: topicName,
@@ -345,9 +343,6 @@ define(
         .then((modal) => {
           // Make delete topic call
           return Promise.all([modal, Controller.deleteTopic({
-            course: course,
-            coursemodule: coursemodule,
-            instance: instance,
             topicid: topicId
           })]);
         })
