@@ -370,9 +370,6 @@ define(
 
       // Make move up topic call
       Controller.moveUpTopic({
-        course: course,
-        coursemodule: coursemodule,
-        instance: instance,
         topicid: topicId
       })
         .then((jsonTaxonomy) => {
@@ -397,9 +394,6 @@ define(
 
       // Make move up topic call
       Controller.moveDownTopic({
-        course: course,
-        coursemodule: coursemodule,
-        instance: instance,
         topicid: topicId
       })
         .then((jsonTaxonomy) => {
