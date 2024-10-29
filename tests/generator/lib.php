@@ -39,7 +39,7 @@ class mod_learninggoalwidget_generator extends testing_module_generator {
      * @param array|null $options
      * @return void
      */
-    public function create_instance($record = null, array $options = null) {
+    public function create_instance($record = null, ?array $options = null) {
         $record = (object) (array) $record;
 
         $defaultsettings = [

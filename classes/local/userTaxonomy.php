@@ -85,7 +85,7 @@ class userTaxonomy {
         }
         $topics = [];
         global $DB;
-        // CONCAT to create unique column
+        // CONCAT to create unique column.
         $sqlstmt = "SELECT CONCAT(IFNULL(t.id, 'miss'), '-', IFNULL(g.id, 'miss'), '-', IFNULL(p.id, 'miss')) as id,
                            t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
@@ -107,7 +107,7 @@ class userTaxonomy {
         $topicrecords = $DB->get_records_sql($sqlstmt, $params);
         $numrecords = count($topicrecords);
         if ($numrecords === 0) {
-          return [];
+            return [];
         }
         $numtopics = 0;
         foreach ($topicrecords as $topicrecord) {
@@ -123,10 +123,10 @@ class userTaxonomy {
                 $topics[] = $topic;
                 $numtopics++;
             } else {
-              $topic = $topics[$numtopics - 1];
+                $topic = $topics[$numtopics - 1];
             }
             if ($topicrecord->gid === null) {
-              continue;
+                continue;
             }
             $goal = new stdClass;
             $goal->goalid = $topicrecord->gid;

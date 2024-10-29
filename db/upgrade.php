@@ -128,7 +128,7 @@ function add_notunique_index($dbman, $tablename, $indexname, $fields) {
     $index = new xmldb_index($indexname, XMLDB_INDEX_NOTUNIQUE, $fields);
 
     if (!$dbman->index_exists($table, $index)) {
-      $dbman->add_index($table, $index);
+        $dbman->add_index($table, $index);
     }
 }
 
@@ -144,7 +144,7 @@ function add_notunique_index($dbman, $tablename, $indexname, $fields) {
 function rename_field($dbman, $tablename, $field, $newname) {
     $table = new xmldb_table($tablename);
     if ($dbman->field_exists($table, $field)) {
-      $dbman->rename_field($table, $field, $newname);
+        $dbman->rename_field($table, $field, $newname);
     }
 }
 
@@ -159,7 +159,7 @@ function rename_field($dbman, $tablename, $field, $newname) {
 function rename_table($dbman, $tablename, $newname) {
     $table = new xmldb_table($tablename);
     if ($dbman->table_exists($table)) {
-      $dbman->rename_table($table, $newname);
+        $dbman->rename_table($table, $newname);
     }
 }
 
@@ -173,7 +173,7 @@ function rename_table($dbman, $tablename, $newname) {
 function drop_table($dbman, $tablename) {
     $table = new xmldb_table($tablename);
     if ($dbman->table_exists($table)) {
-      $dbman->drop_table($table);
+        $dbman->drop_table($table);
     }
 }
 
@@ -272,7 +272,6 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
         // Remove learninggoalwidget->fk_course .
         delete_foreign_key($dbman, 'learninggoalwidget', 'fk_course', ['course'], 'course', ['id']);
 
-
         // Remove all indexes.
         // Remove index learninggoalwidget_goal->topic.
         delete_index($dbman, 'learninggoalwidget_goal', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
@@ -303,11 +302,11 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
         delete_index($dbman, 'learninggoalwidget_i_userpro', 'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
 
         // Rename tables.
-        // learninggoalwidget_topic -> learninggoalwidget_topics.
+        // Rename learninggoalwidget_topic -> learninggoalwidget_topics.
         rename_table($dbman, 'learninggoalwidget_topic', 'learninggoalwidget_topics');
-        // learninggoalwidget_goal -> learninggoalwidget_goals.
+        // Rename learninggoalwidget_goal -> learninggoalwidget_goals.
         rename_table($dbman, 'learninggoalwidget_goal', 'learninggoalwidget_goals');
-        // learninggoalwidget_i_userpro -> learninggoalwidget_progs.
+        // Rename learninggoalwidget_i_userpro -> learninggoalwidget_progs.
         rename_table($dbman, 'learninggoalwidget_i_userpro', 'learninggoalwidget_progs');
 
         // Add/rename new fields.
@@ -348,13 +347,13 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
                         FROM {learninggoalwidget_topics}
                        WHERE id = :topicid";
         foreach ($topicrecords as $topicrecord) {
-          $params = [
-              'topicid' => $topicrecord->topic,
-          ];
-          $record= $DB->get_record_sql($topicstmt, $params);
-          $record->learninggoalwidgetid = $topicrecord->instance;
-          $record->ranking = $topicrecord->ranking;
-          $DB->update_record('learninggoalwidget_topics', $record);
+            $params = [
+                'topicid' => $topicrecord->topic,
+            ];
+            $record= $DB->get_record_sql($topicstmt, $params);
+            $record->learninggoalwidgetid = $topicrecord->instance;
+            $record->ranking = $topicrecord->ranking;
+            $DB->update_record('learninggoalwidget_topics', $record);
         }
 
         // Consolidate goals.
@@ -367,13 +366,13 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
                        FROM {learninggoalwidget_goals}
                       WHERE id = :goalid";
         foreach ($goalrecords as $goalrecord) {
-          $params = [
-              'goalid' => $goalrecord->goal,
-          ];
-          $record= $DB->get_record_sql($goalstmt, $params);
-          $record->learninggoalwidgetid = $goalrecord->instance;
-          $record->ranking = $goalrecord->ranking;
-          $DB->update_record('learninggoalwidget_goals', $record);
+            $params = [
+                'goalid' => $goalrecord->goal,
+            ];
+            $record= $DB->get_record_sql($goalstmt, $params);
+            $record->learninggoalwidgetid = $goalrecord->instance;
+            $record->ranking = $goalrecord->ranking;
+            $DB->update_record('learninggoalwidget_goals', $record);
         }
 
         // Add new indexes.

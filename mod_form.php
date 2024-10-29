@@ -121,7 +121,7 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
                 continue;
             }
             if ($topicsnochild !== '') {
-              $topicsnochild .= ", '";
+                $topicsnochild .= ", '";
             }
             $topicsnochild .= "'" . $topic->name . "'";
         }

@@ -119,7 +119,7 @@ class topic {
     /**
      * returns the topic DB entry given an id
      *
-     * @param int id
+     * @param int $id
      * @return dbentry
      */
     public static function get_db_entry_by_id($id) {
@@ -136,8 +136,8 @@ class topic {
     /**
      * returns the topic DB entry given the learninggoalwidgetid and ranking
      *
-     * @param int learninggoalwidgetid
-     * @param int ranking
+     * @param int $learninggoalwidgetid
+     * @param int $ranking
      * @return dbentry
      */
     public static function get_db_entry_by_ranking($learninggoalwidgetid, $ranking) {

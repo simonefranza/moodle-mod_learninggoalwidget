@@ -624,7 +624,7 @@ class mod_learninggoalwidget_external extends external_api {
 
         $topicmovedown = topic::get_db_entry_by_id($topicid);
 
-        // Find highest rank
+        // Find highest rank.
         $sqlstmt = "SELECT MAX(ranking) as maxranking
                       FROM {learninggoalwidget_topics}
                      WHERE learninggoalwidgetid = :instance";
