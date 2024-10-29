@@ -85,7 +85,7 @@ class userTaxonomy {
         }
         $topics = [];
         global $DB;
-        $sqlstmt = "SELECT t.id tid, t.learninggoalwidgetid,
+        $sqlstmt = "SELECT p.id as pid, t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
                            t.url as turl, t.ranking as tranking,
                            g.id as gid, g.title as gtitle, g.shortname as gshortname,
@@ -111,7 +111,7 @@ class userTaxonomy {
         $numtopics = 0;
         foreach ($topicrecords as $topicrecord) {
             $topic;
-            if (!$numtopics || $topics[$numtopics - 1]->id !== $topicrecord->tid) {
+            if (!$numtopics || $topics[$numtopics - 1]->topicid !== $topicrecord->tid) {
                 $topic = new stdClass;
                 $topic->topicid = $topicrecord->tid;
                 $topic->name = $topicrecord->ttitle;
@@ -121,17 +121,17 @@ class userTaxonomy {
                 $topic->children = [];
                 $topics[] = $topic;
                 $numtopics++;
-          } else {
-            $topic = $topics[$numtopics - 1];
-          }
-          $goal = new stdClass;
-          $goal->goalid = $topicrecord->gid;
-          $goal->name = $topicrecord->gtitle;
-          $goal->keyword = $topicrecord->gshortname;
-          $goal->link = $topicrecord->gurl;
-          $goal->type = "goal";
-          $goal->pro = $topicrecord->progress;
-          $topic->children[] = $goal;
+            } else {
+              $topic = $topics[$numtopics - 1];
+            }
+            $goal = new stdClass;
+            $goal->goalid = $topicrecord->gid;
+            $goal->name = $topicrecord->gtitle;
+            $goal->keyword = $topicrecord->gshortname;
+            $goal->link = $topicrecord->gurl;
+            $goal->type = "goal";
+            $goal->pro = $topicrecord->progress;
+            $topic->children[] = $goal;
         }
         return $topics;
     }

@@ -76,7 +76,7 @@ class taxonomy {
         }
         $topics = [];
         global $DB;
-        $sqlstmt = "SELECT t.id tid, t.learninggoalwidgetid,
+        $sqlstmt = "SELECT t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
                            t.url as turl, t.ranking as tranking,
                            g.id as gid, g.title as gtitle, g.shortname as gshortname,
@@ -88,7 +88,6 @@ class taxonomy {
                   ORDER BY tranking, granking";
         $params = [
             'instanceid' => $this->instanceid,
-            'userid' => $this->userid,
         ];
         $topicrecords = $DB->get_records_sql($sqlstmt, $params);
         $numrecords = count($topicrecords);
@@ -98,7 +97,7 @@ class taxonomy {
         $numtopics = 0;
         foreach ($topicrecords as $topicrecord) {
             $topic;
-            if (!$numtopics || $topics[$numtopics - 1]->id !== $topicrecord->tid) {
+            if (!$numtopics || $topics[$numtopics - 1]->topicid !== $topicrecord->tid) {
                 $topic = new stdClass;
                 $topic->topicid = $topicrecord->tid;
                 $topic->name = $topicrecord->ttitle;
