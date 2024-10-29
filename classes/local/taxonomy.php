@@ -76,10 +76,10 @@ class taxonomy {
         }
         $topics = [];
         global $DB;
-        $sqlstmt = "SELECT t.id as tid, t.learninggoalwidgetid,
+        $sqlstmt = "SELECT g.id as gid, t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
                            t.url as turl, t.ranking as tranking,
-                           g.id as gid, g.title as gtitle, g.shortname as gshortname,
+                           g.title as gtitle, g.shortname as gshortname,
                            g.url as gurl, g.ranking as granking
                       FROM {learninggoalwidget_topics} t
                  LEFT JOIN {learninggoalwidget_goals} g
