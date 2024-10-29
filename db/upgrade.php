@@ -350,7 +350,7 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
             $params = [
                 'topicid' => $topicrecord->topic,
             ];
-            $record= $DB->get_record_sql($topicstmt, $params);
+            $record = $DB->get_record_sql($topicstmt, $params);
             $record->learninggoalwidgetid = $topicrecord->instance;
             $record->ranking = $topicrecord->ranking;
             $DB->update_record('learninggoalwidget_topics', $record);
@@ -369,7 +369,7 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
             $params = [
                 'goalid' => $goalrecord->goal,
             ];
-            $record= $DB->get_record_sql($goalstmt, $params);
+            $record = $DB->get_record_sql($goalstmt, $params);
             $record->learninggoalwidgetid = $goalrecord->instance;
             $record->ranking = $goalrecord->ranking;
             $DB->update_record('learninggoalwidget_goals', $record);
