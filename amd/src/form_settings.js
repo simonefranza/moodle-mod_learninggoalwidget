@@ -976,8 +976,6 @@ ${isLast ? '\n\n' : '\n'}`;
               let jsonTaxonomy = {};
               jsonTaxonomy = await new Promise((resolve, reject) => {
                 Controller.deleteTaxonomy({
-                  course: course,
-                  coursemodule: coursemodule,
                   instance: instance,
                 })
                   .then((jsonTaxonomy) => resolve(jsonTaxonomy))
