@@ -762,10 +762,7 @@ class mod_learninggoalwidget_external extends external_api {
     public static function update_goal_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
-                'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
                 'goalid' => new external_value(PARAM_INT, 'ID of the goal'),
                 'goalname' => new external_value(PARAM_TEXT, 'goal name'),
                 'goalshortname' => new external_value(PARAM_TEXT, 'goal shortname'),
@@ -786,10 +783,7 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * Update a goal in the topic table
      *
-     * @param [type] $course
-     * @param [type] $coursemodule
      * @param [type] $instance
-     * @param [type] $topicid
      * @param [type] $goalid
      * @param [type] $goalname
      * @param [type] $goalshortname
@@ -797,10 +791,7 @@ class mod_learninggoalwidget_external extends external_api {
      * @return void
      */
     public static function update_goal(
-        $course,
-        $coursemodule,
         $instance,
-        $topicid,
         $goalid,
         $goalname,
         $goalshortname,
@@ -812,10 +803,6 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::update_goal_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
-                'instance' => $instance,
-                'topicid' => $topicid,
                 'goalid' => $goalid,
                 'goalname' => $goalname,
                 'goalshortname' => $goalshortname,
@@ -828,10 +815,11 @@ class mod_learninggoalwidget_external extends external_api {
         // Update in goal table.
         $goalrecord = new stdClass;
         $goalrecord->id = $goalid;
+        $goalrecord->learninggoalwidgetid = $instance;
         $goalrecord->title = $goalname;
         $goalrecord->shortname = $goalshortname;
         $goalrecord->url = $goalurl;
-        $DB->update_record('learninggoalwidget_goal', $goalrecord);
+        $DB->update_record('learninggoalwidget_goals', $goalrecord);
 
         return self::get_taxonomy($instance);
     }

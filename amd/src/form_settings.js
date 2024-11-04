@@ -544,10 +544,7 @@ define(
         .then(([modal, goalName, goalShortname, goalUrl]) => {
           // Make insert goal call
           return Promise.all([modal, Controller.updateGoal({
-            course: course,
-            coursemodule: coursemodule,
             instance: instance,
-            topicid: topicId,
             goalid: goalId,
             goalname: goalName,
             goalshortname: goalShortname,
