@@ -659,10 +659,6 @@ define(
 
       // Make move down goal call
       Controller.moveDownGoal({
-        course: course,
-        coursemodule: coursemodule,
-        instance: instance,
-        topicid: topicId,
         goalid: goalId
       })
         .then((jsonTaxonomy) => {
