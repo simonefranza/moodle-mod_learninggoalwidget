@@ -832,8 +832,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function delete_goal_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
                 'goalid' => new external_value(PARAM_INT, 'ID of the goal'),
@@ -853,16 +851,12 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * delete goal from the taxonomy
      *
-     * @param int $course
-     * @param int $coursemodule
      * @param int $instance
      * @param int $topicid
      * @param int $goalid
      * @return string
      */
     public static function delete_goal(
-        $course,
-        $coursemodule,
         $instance,
         $topicid,
         $goalid
@@ -873,8 +867,6 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::delete_goal_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'goalid' => $goalid,
@@ -884,15 +876,17 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_context(context_user::instance($USER->id));
 
         $params = [
-            'course' => $course,
-            'coursemodule' => $coursemodule,
-            'instance' => $instance,
-            'topic' => $topicid,
-            'goal' => $goalid,
+            'learninggoalwidgetid' => $instance,
+            'topicid' => $topicid,
+            'goalid' => $goalid,
         ];
-        $DB->delete_records('learninggoalwidget_i_userpro', $params);
-        $DB->delete_records('learninggoalwidget_i_goals', $params);
-        $DB->delete_records('learninggoalwidget_goal', ['id' => $goalid]);
+        $DB->delete_records('learninggoalwidget_progs', $params);
+        $params = [
+            'id' => $goalid,
+            'learninggoalwidgetid' => $instance,
+            'topicid' => $topicid,
+        ];
+        $DB->delete_records('learninggoalwidget_goals', $params);
 
         return self::get_taxonomy($instance);
     }

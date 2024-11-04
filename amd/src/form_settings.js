@@ -596,8 +596,6 @@ define(
         .then((modal) => {
           // Make delete topic call
           return Promise.all([modal, Controller.deleteGoal({
-            course: course,
-            coursemodule: coursemodule,
             instance: instance,
             topicid: topicId,
             goalid: goalId
