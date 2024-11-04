@@ -942,9 +942,8 @@ class mod_learninggoalwidget_external extends external_api {
         $DB->delete_records('learninggoalwidget_progs', $params);
         $DB->delete_records('learninggoalwidget_goals', $params);
         $DB->delete_records('learninggoalwidget_topics', $params);
-        $DB->delete_records('learninggoalwidget', ['id' => $instance]);
 
-        return '{}';
+        return self::get_taxonomy($instance);
     }
 
     /**
@@ -955,8 +954,6 @@ class mod_learninggoalwidget_external extends external_api {
     public static function add_taxonomy_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'taxonomy' => new external_value(PARAM_TEXT, 'The taxonomy'),
             ]
@@ -975,15 +972,11 @@ class mod_learninggoalwidget_external extends external_api {
     /**
      * add the entire taxonomy
      *
-     * @param int $course
-     * @param int $coursemodule
      * @param int $instance
      * @param json $taxonomy
      * @return string
      */
     public static function add_taxonomy(
-        $course,
-        $coursemodule,
         $instance,
         $taxonomy
     ) {
@@ -993,8 +986,6 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::add_taxonomy_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'taxonomy' => $taxonomy,
             ]
@@ -1005,8 +996,7 @@ class mod_learninggoalwidget_external extends external_api {
         $intaxonomy = json_decode($taxonomy);
 
         foreach ($intaxonomy->children as $topic) {
-            $topicid = self::add_topic($instance,
-                $topic->name, $topic->keyword, $topic->link);
+            $topicid = self::add_topic($instance, $topic->name, $topic->keyword, $topic->link);
             foreach ($topic->children as $goal) {
                 self::add_goal($instance, $topicid, $goal->name, $goal->keyword, $goal->link);
             }

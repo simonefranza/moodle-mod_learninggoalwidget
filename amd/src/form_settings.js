@@ -985,8 +985,6 @@ ${isLast ? '\n\n' : '\n'}`;
               $("#learninggoals-list").children().remove();
               jsonTaxonomy = await new Promise((resolve, reject) => {
                 Controller.addTaxonomy({
-                  course: course,
-                  coursemodule: coursemodule,
                   instance: instance,
                   taxonomy: JSON.stringify(parsed),
                 })
