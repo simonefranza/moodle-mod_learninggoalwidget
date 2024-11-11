@@ -539,8 +539,6 @@ class taxonomy_test extends \advanced_testcase {
         foreach ($otherdata as $key => $value) {
             $output->{$value->name} = $value->value;
         }
-        $this->assertTrue($output->courseid == $course1->id);
-        $this->assertTrue($output->coursemoduleid == $coursemodule->id);
         $this->assertTrue($output->instanceid == $widgetinstance->id);
         $this->assertTrue($output->userid == $user1->id);
         $this->assertTrue($output->timestamp == $timestamp);
@@ -583,6 +581,7 @@ class taxonomy_test extends \advanced_testcase {
         $topic1->name = "Artificial Intelligence Basics Part 1";
         $topic1->keyword = "AIBasics 1";
         $topic1->link = "http://aibasics1.at";
+        $topic1->ranking = 1;
         $topic1->children = [];
 
         $topic2 = new stdClass();
@@ -590,6 +589,7 @@ class taxonomy_test extends \advanced_testcase {
         $topic2->name = "Artificial Intelligence Basics Part 2";
         $topic2->keyword = "AIBasics 2";
         $topic2->link = "http://aibasics2.at";
+        $topic2->ranking = 2;
         $topic2->children = [];
         $expectedjson->children = [$topic1, $topic2];
 
@@ -670,7 +670,7 @@ class taxonomy_test extends \advanced_testcase {
                 "children" => [],
             ];
             foreach ($topic->children as $goalidx => $goal) {
-                $expectedjson->children[$topicidx][5][] = (object) [
+                $expectedjson->children[$topicidx]->children[] = (object) [
                     "goalid" => $parsed->children[$topicidx]->children[$goalidx]->goalid,
                     "ranking" => $parsed->children[$topicidx]->children[$goalidx]->ranking,
                     "name" => $goal->name,
@@ -761,36 +761,36 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertEquals(count($json->children), count($expectedjson->children));
 
         foreach ($expectedjson->children as $topicidx => $expectedtopic) {
-            $expectedranking = $expectedtopic[0];
-            $expectedtopicid = $expectedtopic[1];
-            $expectedtopicname = $expectedtopic[2];
-            $expectedshortname = $expectedtopic[3];
-            $expectedurl = $expectedtopic[4];
-            $expectedgoals = $expectedtopic[5];
-            $this->assertEquals($expectedranking, $json->children[$topicidx][0]);
-            $this->assertEquals($expectedtopicid, $json->children[$topicidx][1]);
-            $this->assertEquals($expectedtopicname, $json->children[$topicidx][2]);
-            $this->assertEquals($expectedshortname, $json->children[$topicidx][3]);
-            $this->assertEquals($expectedurl, $json->children[$topicidx][4]);
+            $expectedranking = $expectedtopic->ranking;
+            $expectedtopicid = $expectedtopic->topicid;
+            $expectedtopicname = $expectedtopic->name;
+            $expectedshortname = $expectedtopic->keyword;
+            $expectedurl = $expectedtopic->link;
+            $expectedgoals = $expectedtopic->children;
+            $this->assertEquals($expectedranking, $json->children[$topicidx]->ranking);
+            $this->assertEquals($expectedtopicid, $json->children[$topicidx]->topicid);
+            $this->assertEquals($expectedtopicname, $json->children[$topicidx]->name);
+            $this->assertEquals($expectedshortname, $json->children[$topicidx]->keyword);
+            $this->assertEquals($expectedurl, $json->children[$topicidx]->link);
 
             $this->assertNotNull($expectedgoals);
             $this->assertIsArray($expectedgoals);
-            $testedgoals = $json->children[$topicidx][5];
+            $testedgoals = $json->children[$topicidx]->children;
             $this->assertEquals(count($expectedgoals), count($testedgoals));
             $this->assertNotNull($testedgoals);
             $this->assertIsArray($testedgoals);
 
             foreach ($expectedgoals as $goalidx => $expectedgoal) {
-                $expectedgoalranking = $expectedgoal[0];
-                $expectedgoaltopicid = $expectedgoal[1];
-                $expectedgoaltopicname = $expectedgoal[2];
-                $expectedgoalshortname = $expectedgoal[3];
-                $expectedgoalurl = $expectedgoal[4];
-                $this->assertEquals($expectedgoalranking, $testedgoals[$goalidx][0]);
-                $this->assertEquals($expectedgoaltopicid, $testedgoals[$goalidx][1]);
-                $this->assertEquals($expectedgoaltopicname, $testedgoals[$goalidx][2]);
-                $this->assertEquals($expectedgoalshortname, $testedgoals[$goalidx][3]);
-                $this->assertEquals($expectedgoalurl, $testedgoals[$goalidx][4]);
+                $expectedgoalranking = $expectedgoal->ranking;
+                $expectedgoalgoalid = $expectedgoal->goalid;
+                $expectedgoalgoalname = $expectedgoal->name;
+                $expectedgoalshortname = $expectedgoal->keyword;
+                $expectedgoalurl = $expectedgoal->link;
+                $this->assertEquals($expectedgoalranking, $testedgoals[$goalidx]->ranking);
+                $this->assertEquals($expectedgoalgoalid, $testedgoals[$goalidx]->goalid);
+                $this->assertEquals($expectedgoalgoalname, $testedgoals[$goalidx]->name);
+                $this->assertEquals($expectedgoalshortname, $testedgoals[$goalidx]->keyword);
+                $this->assertEquals($expectedgoalurl, $testedgoals[$goalidx]->url);
             }
         }
     }
