@@ -218,7 +218,6 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_insertgoal() {
-
         $resultcourse = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
@@ -230,10 +229,8 @@ class taxonomy_test extends \advanced_testcase {
 
         // Insert goal under topic 1.
         $result = mod_learninggoalwidget_external::insert_goal(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
+            $resultcourse->instance->id,
+            $resultcourse->topic->id,
             "Knowing theoretical foundations of AI",
             "TheoreticalFoundationsAI",
             "http://aibasics.goal1.at"
@@ -252,20 +249,15 @@ class taxonomy_test extends \advanced_testcase {
 
         $this->assertIsArray($goals);
         $this->assertEquals(1, count($goals));
-        $this->assertEquals(5, count($goals[0]));
 
-        $goalranking = $goals[0][0];
-        $goalid = $goals[0][1];
-        $goalname = $goals[0][2];
-        $goalshortname = $goals[0][3];
-        $goalurl = $goals[0][4];
+        $goal = $goals[0];
 
-        $this->assertEquals(1, $goalranking);
-        $this->assertIsNumeric($goalid);
-        $this->assertTrue($goalid > 0);
-        $this->assertEquals("Knowing theoretical foundations of AI", $goalname);
-        $this->assertEquals("TheoreticalFoundationsAI", $goalshortname);
-        $this->assertEquals("http://aibasics.goal1.at", $goalurl);
+        $this->assertIsNumeric($goal->id);
+        $this->assertTrue($goal->id > 0);
+        $this->assertEquals("Knowing theoretical foundations of AI", $goal->name);
+        $this->assertEquals("TheoreticalFoundationsAI", $goal->keyword);
+        $this->assertEquals("http://aibasics.goal1.at", $goal->link);
+        $this->assertEquals(1, $goal->ranking);
     }
 
     /**
@@ -274,15 +266,12 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_updategoal() {
-        [$resultcourse, $goalrecord, ] = $this->setup_course_and_insert_goals();
+        $res = $this->setup_course_and_insert_goals();
 
         // Update goal under topic 1.
         $result = mod_learninggoalwidget_external::update_goal(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
-            $goalrecord->id,
+            $res->instance->id,
+            $res->goal->id,
             "Updated Goalname",
             "Updated Goal Shortname",
             "http://goal1.updated.at"
@@ -291,28 +280,23 @@ class taxonomy_test extends \advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::update_goal_returns(), $result);
 
-        $resulttopic = $this->check_topic(
+        $goals = $this->check_topic(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
             $result
         );
 
-        $this->assertEquals(1, count($resulttopic[0]));
-        $this->assertEquals(5, count($resulttopic[0][0]));
+        $this->assertEquals(1, count($goals[0]));
 
-        $goalranking = $resulttopic[0][0][0];
-        $goalid = $resulttopic[0][0][1];
-        $goalname = $resulttopic[0][0][2];
-        $goalshortname = $resulttopic[0][0][3];
-        $goalurl = $resulttopic[0][0][4];
+        $goal = $goals[0];
 
-        $this->assertEquals(1, $goalranking);
-        $this->assertIsNumeric($goalid);
-        $this->assertEquals($goalrecord->id, $goalid);
-        $this->assertEquals("Updated Goalname", $goalname);
-        $this->assertEquals("Updated Goal Shortname", $goalshortname);
-        $this->assertEquals("http://goal1.updated.at", $goalurl);
+        $this->assertIsNumeric($goal->goalid);
+        $this->assertEquals($result->goal->id, $goal->goalid);
+        $this->assertEquals("Updated Goalname", $goal->name);
+        $this->assertEquals("Updated Goal Shortname", $goal->keyword);
+        $this->assertEquals("http://goal1.updated.at", $goal->link);
+        $this->assertEquals(1, $goal->ranking);
     }
 
     /**
@@ -323,34 +307,31 @@ class taxonomy_test extends \advanced_testcase {
     public function test_deletegoal() {
         global $DB;
 
-        [$resultcourse, $goalrecord, $goalinstancerecord] = $this->setup_course_and_insert_goals();
+        //[$resultcourse, $goalrecord, $goalinstancerecord] = $this->setup_course_and_insert_goals();
+        $res = $this->setup_course_and_insert_goals();
 
         // Update goal under topic 1.
         $result = mod_learninggoalwidget_external::delete_goal(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
-            $goalrecord->id
+            $res->instance->id,
+            $res->topic1->id,
+            $res->goal->id
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::delete_goal_returns(), $result);
 
-        $resulttopic = $this->check_topic(
+        $goals = $this->check_topic(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
             $result
         );
 
-        $this->assertIsArray($resulttopic[0]);
-        $this->assertEquals(0, count($resulttopic[0]));
+        $this->assertIsArray($goals);
+        $this->assertEquals(0, count($goals));
 
-        $this->assertTrue($DB->record_exists('learninggoalwidget_topic', ['id' => $resultcourse[3]->id]));
-        $this->assertTrue($DB->record_exists('learninggoalwidget_i_topics', ['id' => $resultcourse[5]->id]));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_goal', ['id' => $goalrecord->id]));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_i_goals', ['id' => $goalinstancerecord->id]));
+        $this->assertTrue($DB->record_exists('learninggoalwidget_topics', ['id' => $res->topic1->id]));
+        $this->assertFalse($DB->record_exists('learninggoalwidget_goals', ['id' => $res->goal->id]));
     }
 
     /**
