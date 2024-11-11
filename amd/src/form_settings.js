@@ -138,7 +138,7 @@ define(
 
           var goalContext = {
             topicid: topicId,
-            goalid: goal.id,
+            goalid: goal.goalid,
             learninggoaltitle: goal.name
           };
 
@@ -500,7 +500,7 @@ define(
         }
         topicTitle = topic.name;
         topic.children.forEach((goal) => {
-          if (goal.id === goalId) {
+          if (goal.goalid === goalId) {
             goalTitle = goal.name;
             goalShortname = goal.keyword;
             goalUrl = goal.link;
@@ -636,7 +636,7 @@ define(
 
           $('#learninggoals-list').children().remove();
           taxonomy.children.forEach((topic) => {
-            if (topic.id === topicId) {
+            if (topic.topicid === topicId) {
               loadGoals(topicId, topic.children);
             }
           });
@@ -666,7 +666,7 @@ define(
 
           $('#learninggoals-list').children().remove();
           taxonomy.children.forEach((topic) => {
-            if (topic.id === topicId) {
+            if (topic.topicid === topicId) {
               loadGoals(topicId, topic.children);
             }
           });

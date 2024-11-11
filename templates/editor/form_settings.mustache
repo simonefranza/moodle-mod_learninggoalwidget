@@ -61,29 +61,29 @@
       <div class="col-sm d-flex flex-wrap px-3 mb-3 grid_column_start" id="topics-listing">
          <div class="topics-listing card w-50">
             <h3 class="card-header" id="topics-listing-title">{{topicheader}}</h3>
-            <div class="card-body">
-               <div class="listing-actions topics-listing-actions mb-3">
-                  <a class="btn btn-secondary" id="newtopic">{{btnnewtopic}}</a>
-               </div>
+            <div class="card-body learninggoalwidget-card">
+               <ul id="topics-list" class="list-unstyled" role="tree" aria-labelledby="topics-listing-title">
+               </ul>
                <div id="notopics" class="ml-1 clearfix d-none">
                   <span class="float-left">{{{notopicsmessage}}}</span>
                </div>
-               <ul id="topics-list" class="ml-1 list-unstyled" role="tree" aria-labelledby="topics-listing-title">
-               </ul>
+               <div class="listing-actions topics-listing-actions d-flex justify-content-center">
+                  <a class="btn btn-secondary" id="newtopic">{{btnnewtopic}}</a>
+               </div>
             </div>
          </div>
-         <div class="col-sm d-flex flex-wrap px-3 mb-3 grid_column_start" id="goals-listing">
+         <div class="col-sm d-flex flex-wrap grid_column_start" id="goals-listing">
             <div class="card goals-listing w-100 firstpage lastpage" data-topics="1" data-page="0" data-totalpages="1" data-totalgoalss="1" data-canmoveoutof="1">
                <h3 id="goals-listing-title" tabindex="0" class="card-header">{{goalheader}}</h3>
-               <div class="card-body">
-                  <div class="listing-actions goals-listing-actions mb-3">
-                     <a class="btn btn-secondary" id="newgoal">{{btnnewgoal}}</a>
-                  </div>
+               <div class="card-body learninggoalwidget-card">
+                  <ul id="learninggoals-list" class="list-unstyled">
+                  </ul>
                   <div id="goalsfortopic" class="ml-1 clearfix d-none">
                      <span id="goalsfortopicstatusmessage" class="float-left"></span>
                   </div>
-                  <ul id="learninggoals-list" class="ml-1 list-unstyled">
-                  </ul>
+                  <div class="listing-actions goals-listing-actions d-flex justify-content-center">
+                     <a class="btn btn-secondary" id="newgoal">{{btnnewgoal}}</a>
+                  </div>
                </div>
             </div>
          </div>

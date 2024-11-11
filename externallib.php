@@ -511,12 +511,46 @@ class mod_learninggoalwidget_external extends external_api {
 
         self::validate_context(context_user::instance($USER->id));
 
+        // Get topic to delete.
         $params = [
+            'id' => $topicid,
+        ];
+        $sqlstmt = "SELECT id, ranking, learninggoalwidgetid
+                      FROM {learninggoalwidget_topics}
+                     WHERE id = :id";
+        $todelete = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
+
+        $instance = $todelete->learninggoalwidgetid;
+
+        // Get topics to update (need to lower the rankings).
+        $params = [
+            'learninggoalwidgetid' => $instance,
+            'ranking' => $todelete->ranking,
+        ];
+        $sqlstmt = "SELECT id, ranking
+                      FROM {learninggoalwidget_topics}
+                     WHERE learninggoalwidgetid = :learninggoalwidgetid
+                       AND ranking > :ranking";
+        $toupdatetopics = $DB->get_records_sql($sqlstmt, $params);
+
+        // Delete related infos (progresses, goals).
+        $params = [
+            'learninggoalwidgetid' => $instance,
             'topicid' => $topicid,
         ];
         $DB->delete_records('learninggoalwidget_progs', $params);
-        $DB->delete_records('learninggoalwidget_goal', $params);
-        $DB->delete_records('learninggoalwidget_topic', ['id' => $topicid]);
+        $DB->delete_records('learninggoalwidget_goals', $params);
+        $params = [
+            'learninggoalwidgetid' => $instance,
+            'id' => $topicid,
+        ];
+        $DB->delete_records('learninggoalwidget_topics', $params);
+
+        // Update other topics
+        foreach ($toupdatetopics as $toupdate) {
+            $toupdate->ranking--;
+            $DB->update_record('learninggoalwidget_topics', $toupdate);
+        }
 
         return self::get_taxonomy($instance);
     }
@@ -804,6 +838,7 @@ class mod_learninggoalwidget_external extends external_api {
         self::validate_parameters(
             self::update_goal_parameters(),
             [
+                'instance' => $instance,
                 'goalid' => $goalid,
                 'goalname' => $goalname,
                 'goalshortname' => $goalshortname,
@@ -876,6 +911,33 @@ class mod_learninggoalwidget_external extends external_api {
 
         self::validate_context(context_user::instance($USER->id));
 
+        // Get goal to delete.
+        $params = [
+            'learninggoalwidgetid' => $instance,
+            'topicid' => $topicid,
+            'id' => $goalid,
+        ];
+        $sqlstmt = "SELECT id, topicid, ranking
+                      FROM {learninggoalwidget_goals}
+                     WHERE id = :id
+                       AND topicid = :topicid
+                       AND learninggoalwidgetid = :learninggoalwidgetid";
+        $todelete = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
+
+        // Get goals to update (need to lower the rankings).
+        $params = [
+            'learninggoalwidgetid' => $instance,
+            'topicid' => $topicid,
+            'ranking' => $todelete->ranking,
+        ];
+        $sqlstmt = "SELECT id, ranking
+                      FROM {learninggoalwidget_goals}
+                     WHERE learninggoalwidgetid = :learninggoalwidgetid
+                       AND topicid = :topicid
+                       AND ranking > :ranking";
+        $toupdategoals = $DB->get_records_sql($sqlstmt, $params);
+
+        // Delete related infos (progresses, goals).
         $params = [
             'learninggoalwidgetid' => $instance,
             'topicid' => $topicid,
@@ -888,6 +950,12 @@ class mod_learninggoalwidget_external extends external_api {
             'topicid' => $topicid,
         ];
         $DB->delete_records('learninggoalwidget_goals', $params);
+
+        // Update other topics
+        foreach ($toupdategoals as $toupdate) {
+            $toupdate->ranking--;
+            $DB->update_record('learninggoalwidget_goals', $toupdate);
+        }
 
         return self::get_taxonomy($instance);
     }
@@ -938,7 +1006,6 @@ class mod_learninggoalwidget_external extends external_api {
         $params = [
             'learninggoalwidgetid' => $instance,
         ];
-
 
         $DB->delete_records('learninggoalwidget_progs', $params);
         $DB->delete_records('learninggoalwidget_goals', $params);
