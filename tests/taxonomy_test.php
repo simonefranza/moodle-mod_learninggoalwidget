@@ -293,7 +293,7 @@ class taxonomy_test extends \advanced_testcase {
         $goal = $goals[0];
 
         $this->assertIsNumeric($goal->goalid);
-        $this->assertEquals($result->goal->id, $goal->goalid);
+        $this->assertEquals($res->goal->id, $goal->goalid);
         $this->assertEquals("Updated Goalname", $goal->name);
         $this->assertEquals("Updated Goal Shortname", $goal->keyword);
         $this->assertEquals("http://goal1.updated.at", $goal->link);
@@ -557,9 +557,7 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_gettaxonomy() {
-        // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
-        $resultcourse = $this->setup_course_with_topics(
+        $res = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
@@ -569,11 +567,7 @@ class taxonomy_test extends \advanced_testcase {
         );
 
         // Get taxonomy.
-        $result = mod_learninggoalwidget_external::get_taxonomy(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id
-        );
+        $result = mod_learninggoalwidget_external::get_taxonomy($res->instance->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::get_taxonomy_returns(), $result);
@@ -584,24 +578,21 @@ class taxonomy_test extends \advanced_testcase {
 
         $expectedjson = new stdClass();
         $expectedjson->name = "Learning Goal's taxonomy";
-        $expectedjson->children = [
-            [
-                $resultcourse[5]->ranking,
-                $resultcourse[3]->id,
-                "Artificial Intelligence Basics Part 1",
-                "AIBasics 1",
-                "http://aibasics1.at",
-                [],
-            ],
-            [
-                $resultcourse[6]->ranking,
-                $resultcourse[4]->id,
-                "Artificial Intelligence Basics Part 2",
-                "AIBasics 2",
-                "http://aibasics2.at",
-                [],
-            ],
-        ];
+        $topic1 = new stdClass();
+        $topic1->topicid = $res->topic1->id;
+        $topic1->name = "Artificial Intelligence Basics Part 1";
+        $topic1->keyword = "AIBasics 1";
+        $topic1->link = "http://aibasics1.at";
+        $topic1->children = [];
+
+        $topic2 = new stdClass();
+        $topic2->topicid = $res->topic2->id;
+        $topic2->name = "Artificial Intelligence Basics Part 2";
+        $topic2->keyword = "AIBasics 2";
+        $topic2->link = "http://aibasics2.at";
+        $topic2->children = [];
+        $expectedjson->children = [$topic1, $topic2];
+
         $this->check_json($parsed, $expectedjson);
     }
 
@@ -611,15 +602,9 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_addtaxonomy() {
-        // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
+        $res = $this->setup_widget();
 
-        $course = $this->getDataGenerator()->create_course();
-        $instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
-
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id, $course->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
 
         $taxonomy = (object) [
             "name" => "Learning Goal's taxonomy",
@@ -661,9 +646,7 @@ class taxonomy_test extends \advanced_testcase {
             ],
         ];
         $result = mod_learninggoalwidget_external::add_taxonomy(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
+            $res->instance->id,
             json_encode($taxonomy)
         );
 
@@ -678,21 +661,21 @@ class taxonomy_test extends \advanced_testcase {
         $expectedjson->name = $taxonomy->name;
         $expectedjson->children = [];
         foreach ($taxonomy->children as $topicidx => $topic) {
-            $expectedjson->children[] = [
-                $parsed->children[$topicidx][0],
-                $parsed->children[$topicidx][1],
-                $topic->name,
-                $topic->keyword,
-                $topic->link,
-                [],
+            $expectedjson->children[] = (object) [
+                "topicid" => $parsed->children[$topicidx]->topicid,
+                "ranking" => $parsed->children[$topicidx]->ranking,
+                "name" => $topic->name,
+                "keyword" => $topic->keyword,
+                "link" => $topic->link,
+                "children" => [],
             ];
             foreach ($topic->children as $goalidx => $goal) {
-                $expectedjson->children[$topicidx][5][] = [
-                    $parsed->children[$topicidx][5][$goalidx][0],
-                    $parsed->children[$topicidx][5][$goalidx][1],
-                    $goal->name,
-                    $goal->keyword,
-                    $goal->link,
+                $expectedjson->children[$topicidx][5][] = (object) [
+                    "goalid" => $parsed->children[$topicidx]->children[$goalidx]->goalid,
+                    "ranking" => $parsed->children[$topicidx]->children[$goalidx]->ranking,
+                    "name" => $goal->name,
+                    "keyword" => $goal->keyword,
+                    "link" => $goal->link,
                 ];
             }
         }
@@ -705,15 +688,9 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_deletetaxonomy() {
-        // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
+        $res = $this->setup_widget();
 
-        $course = $this->getDataGenerator()->create_course();
-        $instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
-
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id, $course->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
 
         $taxonomy = (object) [
             "name" => "Learning Goal's taxonomy",
@@ -738,9 +715,7 @@ class taxonomy_test extends \advanced_testcase {
             ],
         ];
         $result = mod_learninggoalwidget_external::add_taxonomy(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
+            $res->instance->id,
             json_encode($taxonomy)
         );
 
@@ -749,9 +724,7 @@ class taxonomy_test extends \advanced_testcase {
         $parsed = json_decode($result);
 
         $result = mod_learninggoalwidget_external::delete_taxonomy(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
+            $res->instance->id,
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
