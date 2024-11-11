@@ -55,7 +55,7 @@ trait utils {
         $topic->shortname = $shortname;
         $topic->url = $url;
         $topic->ranking = $ranking;
-        $topic-> id = $DB->insert_record('learninggoalwidget_topics', $topic);
+        $topic->id = $DB->insert_record('learninggoalwidget_topics', $topic);
         return $topic;
     }
 
@@ -70,7 +70,7 @@ trait utils {
      * @param [number] $ranking
      * @return dbrecord
      */
-    protected function insert_topic($instance, $topicid, $title, $shortname, $url, $ranking) {
+    protected function insert_goal($instance, $topicid, $title, $shortname, $url, $ranking) {
         global $DB;
         $goal = new stdClass;
         $goal->learninggoalwidgetid = $instance;

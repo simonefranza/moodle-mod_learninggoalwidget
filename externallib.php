@@ -546,7 +546,7 @@ class mod_learninggoalwidget_external extends external_api {
         ];
         $DB->delete_records('learninggoalwidget_topics', $params);
 
-        // Update other topics
+        // Update other topics.
         foreach ($toupdatetopics as $toupdate) {
             $toupdate->ranking--;
             $DB->update_record('learninggoalwidget_topics', $toupdate);
@@ -951,7 +951,7 @@ class mod_learninggoalwidget_external extends external_api {
         ];
         $DB->delete_records('learninggoalwidget_goals', $params);
 
-        // Update other topics
+        // Update other topics.
         foreach ($toupdategoals as $toupdate) {
             $toupdate->ranking--;
             $DB->update_record('learninggoalwidget_goals', $toupdate);
