@@ -57,18 +57,17 @@ class taxonomy_test extends \advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course1->id);
-
         $emptytaxonomy = new \stdClass;
         $emptytaxonomy->name = "Learning Goal's taxonomy";
         $emptytaxonomy->children = [];
         $jsonemptytaxonomy = json_encode($emptytaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
-        $taxonomy = new taxonomy($coursemodule->id, $course1->id, $coursemodule->section, $widgetinstance->id);
+        $taxonomy = new taxonomy($widgetinstance->id);
         $this->assertNotNull($taxonomy);
-        $this->assertNotNull($taxonomy->get_taxonomy_as_json());
-        $this->assertNotEmpty($taxonomy->get_taxonomy_as_json());
-        $this->assertEquals($jsonemptytaxonomy, $taxonomy->get_taxonomy_as_json());
+        $json = $taxonomy->get_taxonomy_as_json();
+        $this->assertNotNull($json);
+        $this->assertNotEmpty($json);
+        $this->assertEquals($jsonemptytaxonomy, $json);
     }
 
     /**
@@ -85,26 +84,21 @@ class taxonomy_test extends \advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course1->id);
+        $title = "Artificial Intelligence Basics";
+        $shorttitle = "AIBasics";
+        $url = "http://aibasics.at";
 
         $result = mod_learninggoalwidget_external::insert_topic(
-            $course1->id,
-            $coursemodule->id,
             $widgetinstance->id,
-            "Artificial Intelligence Basics",
-            "AIBasics",
-            "http://aibasics.at"
+            $title,
+            $shorttitle,
+            $url
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::insert_topic_returns(), $result);
 
-        $resulttopic = $this->check_topic(
-            "Artificial Intelligence Basics",
-            "AIBasics",
-            "http://aibasics.at",
-            $result
-        );
+        $resulttopic = $this->check_topic($title, $shorttitle $url, 1, $result);
 
         $this->assertEquals([], $resulttopic[0]);
     }
@@ -133,15 +127,15 @@ class taxonomy_test extends \advanced_testcase {
             "http://updated.at"
         );
 
-        $this->check_updatetopic(
+        $topicchildren = $this->check_topic(
             "Updated Name",
             "Updated Shortname",
             "http://updated.at",
+            1
             $result
         );
 
-        $goals = $this->check_updatetopic_getgoals($result);
-        $this->assertEquals([], $goals);
+        $this->assertEquals([], $topicchildren);
     }
 
     /**
@@ -277,14 +271,13 @@ class taxonomy_test extends \advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::insert_goal_returns(), $result);
 
-        $this->check_updatetopic(
+        $goals = $this->check_topic(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
+            1,
             $result
         );
-
-        $goals = $this->check_updatetopic_getgoals($result);
 
         $this->assertIsArray($goals);
         $this->assertEquals(1, count($goals));
@@ -911,53 +904,6 @@ class taxonomy_test extends \advanced_testcase {
         }
     }
 
-
-
-    /**
-     * helper function inserting a learning goal
-     *
-     * @return void
-     */
-
-    /**
-     * helper function inserting a learning goal
-     *
-     * @param [type] $expectedtitle
-     * @param [type] $expectedshortname
-     * @param [type] $expectedurl
-     * @param [type] $updatedtopicjson
-     * @return void
-     */
-    protected function check_updatetopic($expectedtitle, $expectedshortname, $expectedurl, $updatedtopicjson) {
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = $updatedtopicjson;
-
-        $this->assertNotNull($result);
-        $this->assertNotEmpty($result);
-        $parsed = json_decode($result);
-
-        [$title, $shortname, $url, ] =
-            $this->check_topic_properties($parsed);
-
-        $this->assertEquals($expectedtitle, $title);
-        $this->assertEquals($expectedshortname, $shortname);
-        $this->assertEquals($expectedurl, $url);
-    }
-
-    /**
-     * helper function testing updating a topic
-     *
-     * @param [string] $updatedtopicjson
-     * @return array
-     */
-    protected function check_updatetopic_getgoals($updatedtopicjson) {
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::update_topic_returns(), $updatedtopicjson);
-        $parsed = json_decode($result);
-        $topic = $parsed->children[0];
-        return $topic[5];
-    }
-
     /**
      * helper function creating a topic
      *
@@ -1052,22 +998,22 @@ class taxonomy_test extends \advanced_testcase {
      * @param [string] $expectedtitle
      * @param [string] $expectedshortname
      * @param [string] $expectedurl
-     * @param string $topicjson
+     * @param [number] $expectedranking
+     * @param string $taxonomy
      * @return array
      */
-    protected function check_topic($expectedtitle, $expectedshortname, $expectedurl, $topicjson) {
+    protected function check_topic($expectedtitle, $expectedshortname, $expectedurl, $expectedranking, $taxonomy) {
+        $this->assertNotNull($taxonomy);
+        $this->assertNotEmpty($taxonomy);
+        $parsed = json_decode($taxonomy);
 
-        $this->assertNotNull($topicjson);
-        $this->assertNotEmpty($topicjson);
-        $parsed = json_decode($topicjson);
+        $topic = $this->check_topic_properties($parsed);
 
-        [$title, $shortname, $url, $goals] =
-            $this->check_topic_properties($parsed);
-
-        $this->assertEquals($expectedtitle, $title);
-        $this->assertEquals($expectedshortname, $shortname);
-        $this->assertEquals($expectedurl, $url);
-        return [$goals];
+        $this->assertEquals($expectedtitle, $topic->name);
+        $this->assertEquals($expectedshortname, $topic->keyworn);
+        $this->assertEquals($expectedurl, $topic->link);
+        $this->assertEquals($expectedranking, $topic->ranking);
+        return $topic->children;
     }
 
     /**
@@ -1236,35 +1182,27 @@ class taxonomy_test extends \advanced_testcase {
     /**
      * check some topic properties
      *
-     * @param object $topic
+     * @param object $taxonomy
      * @return array
      */
-    protected function check_topic_properties($topic) {
-        $this->assertNotNull($topic);
+    protected function check_topic_properties($taxonomy) {
+        $this->assertNotNull($taxonomy);
 
-        $this->assertNotNull($topic->name);
-        $this->assertNotEmpty($topic->name);
-        $this->assertEquals("Learning Goal's taxonomy", $topic->name);
+        $this->assertNotNull($taxonomy->name);
+        $this->assertNotEmpty($taxonomy->name);
+        $this->assertEquals("Learning Goal's taxonomy", $taxonomy->name);
 
-        $this->assertNotNull($topic->children);
-        $this->assertIsArray($topic->children);
-        $this->assertTrue(count($topic->children) > 0);
+        $this->assertNotNull($taxonomy->children);
+        $this->assertIsArray($taxonomy->children);
+        $this->assertTrue(count($taxonomy->children) > 0);
 
-        $topic = $topic->children[0];
-        $this->assertIsArray($topic);
-        $this->assertEquals(6, count($topic));
+        $topic = $taxonomy->children[0];
 
-        $ranking = $topic[0];
-        $topicid = $topic[1];
-        $title = $topic[2];
-        $shortname = $topic[3];
-        $url = $topic[4];
-        $goals = $topic[5];
+        $this->assertIsNumeric($topic->topicid);
+        $this->assertTrue($topic->topicid > 0);
+        $this->assertIsNumeric($topic->ranking);
+        $this->assertEquals(1, $topic->ranking);
 
-        $this->assertEquals(1, $ranking);
-        $this->assertIsNumeric($topicid);
-        $this->assertTrue($topicid > 0);
-
-        return [$title, $shortname, $url, $goals];
+        return $topic;
     }
 }

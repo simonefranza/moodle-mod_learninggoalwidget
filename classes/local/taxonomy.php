@@ -105,6 +105,7 @@ class taxonomy {
                 $topic->name = $topicrecord->ttitle;
                 $topic->keyword = $topicrecord->tshortname;
                 $topic->link = $topicrecord->turl;
+                $topic->ranking = $topicrecord->tranking;
                 $topic->type = "topic";
                 $topic->children = [];
                 $topics[] = $topic;
@@ -120,6 +121,7 @@ class taxonomy {
             $goal->name = $topicrecord->gtitle;
             $goal->keyword = $topicrecord->gshortname;
             $goal->link = $topicrecord->gurl;
+            $goal->ranking= $topicrecord->granking;
             $goal->type = "goal";
             $topic->children[] = $goal;
         }

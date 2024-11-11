@@ -107,10 +107,10 @@ trait utils {
         $this->setUser($user1);
 
         // Create topic 1 in course.
-        $topicrecord1 = insert_topic($widgetinstance->id, $topic1title, $topic1shortname, $topic1url, 1);
+        $topicrecord1 = $this->insert_topic($widgetinstance->id, $topic1title, $topic1shortname, $topic1url, 1);
 
         // Create topic 2 in course.
-        $topicrecord2 = insert_topic($widgetinstance->id, $topic2title, $topic2shortname, $topic2url, 2);
+        $topicrecord2 = $this->insert_topic($widgetinstance->id, $topic2title, $topic2shortname, $topic2url, 2);
 
         return [$widgetinstance, $topicrecord1, $topicrecord2, $user1];
     }
@@ -134,7 +134,7 @@ trait utils {
 
         // Insert goal under topic 1.
         // Insert in goal table.
-        $goalrecord = insert_record(
+        $goalrecord = insert_goal(
             $resultcourse[0]->id,
             $resultcourse[1]->id,
             "Goal under Topic 1 to be updated",
