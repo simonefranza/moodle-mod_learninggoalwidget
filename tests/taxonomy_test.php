@@ -230,7 +230,7 @@ class taxonomy_test extends \advanced_testcase {
         // Insert goal under topic 1.
         $result = mod_learninggoalwidget_external::insert_goal(
             $resultcourse->instance->id,
-            $resultcourse->topic->id,
+            $resultcourse->topic1->id,
             "Knowing theoretical foundations of AI",
             "TheoreticalFoundationsAI",
             "http://aibasics.goal1.at"
@@ -284,6 +284,7 @@ class taxonomy_test extends \advanced_testcase {
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
+            1,
             $result
         );
 
@@ -307,10 +308,9 @@ class taxonomy_test extends \advanced_testcase {
     public function test_deletegoal() {
         global $DB;
 
-        //[$resultcourse, $goalrecord, $goalinstancerecord] = $this->setup_course_and_insert_goals();
         $res = $this->setup_course_and_insert_goals();
 
-        // Update goal under topic 1.
+        // Delete goal under topic 1.
         $result = mod_learninggoalwidget_external::delete_goal(
             $res->instance->id,
             $res->topic1->id,
@@ -324,6 +324,7 @@ class taxonomy_test extends \advanced_testcase {
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
+            1,
             $result
         );
 
@@ -340,23 +341,15 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_moveupgoal() {
-
-        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
-            $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_course_and_insert_two_goals();
 
         // Move goal 2 before goal 1 under topic 1.
-        $result = mod_learninggoalwidget_external::moveup_goal(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
-            $goalrecord2->id
-        );
+        $result = mod_learninggoalwidget_external::moveup_goal($res->goal2->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::moveup_goal_returns(), $result);
 
-        $this->check_goal($result, $goalrecord1, $goalrecord2);
+        $this->check_goal($result, $res->goal1, $res->goal2);
     }
 
     /**
@@ -365,23 +358,15 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_movedowngoal() {
-
-        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
-            $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_course_and_insert_two_goals();
 
         // Move goal 1 behind goal 2 under topic 1.
-        $result = mod_learninggoalwidget_external::movedown_goal(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
-            $goalrecord1->id
-        );
+        $result = mod_learninggoalwidget_external::movedown_goal($res->goal1->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::movedown_goal_returns(), $result);
 
-        $this->check_goal($result, $goalrecord1, $goalrecord2);
+        $this->check_goal($result, $res->goal1, $goal2);
     }
 
     /**
@@ -390,16 +375,12 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_getuserprogress() {
-
-        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
-            $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_course_and_insert_two_goals();
 
         // Get taxonomy with user progress values.
         $result = mod_learninggoalwidget_external::get_taxonomy_for_user(
-            $resultcourse[0]->id,
-            $resultcourse[7]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id
+            $res->instance->id,
+            $res->user->id,
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -410,7 +391,7 @@ class taxonomy_test extends \advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             0,
-            $goalrecord1->id,
+            $res->goal1->id,
             $result
         );
         $this->check_userprogress(
@@ -418,7 +399,7 @@ class taxonomy_test extends \advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             0,
-            $goalrecord2->id,
+            $res->goal2->id,
             $result
         );
     }
@@ -429,18 +410,16 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_updateuserprogress() {
-
-        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
-            $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_course_and_insert_two_goals();
+//        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
+//            $this->setup_course_and_insert_two_goals();
 
         // Update learning goal 1 progess to 99.
         $result = mod_learninggoalwidget_external::update_user_progress(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[7]->id,
-            $resultcourse[3]->id,
-            $goalrecord1->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal1->id,
             99
         );
 
@@ -452,18 +431,16 @@ class taxonomy_test extends \advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             99,
-            $goalrecord1->id,
+            $res->goal1->id,
             $result
         );
 
         // Update learning goal 1 progess to 50.
         $result = mod_learninggoalwidget_external::update_user_progress(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[7]->id,
-            $resultcourse[3]->id,
-            $goalrecord1->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal1->id,
             50
         );
 
@@ -475,18 +452,16 @@ class taxonomy_test extends \advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             50,
-            $goalrecord1->id,
+            $res->goal1->id,
             $result
         );
 
         // Update learning goal 2 progess to 100.
         $result = mod_learninggoalwidget_external::update_user_progress(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[7]->id,
-            $resultcourse[3]->id,
-            $goalrecord2->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal2->id,
             100
         );
 
@@ -498,7 +473,7 @@ class taxonomy_test extends \advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             100,
-            $goalrecord2->id,
+            $res->goal2->id,
             $result
         );
     }
@@ -1046,7 +1021,7 @@ class taxonomy_test extends \advanced_testcase {
     protected function setup_course_and_insert_two_goals() {
         global $DB;
 
-        $resultcourse = $this->setup_course_with_topics(
+        $res = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
@@ -1056,43 +1031,26 @@ class taxonomy_test extends \advanced_testcase {
         );
 
         // Insert goal 1 under topic 1.
-        // Insert in goal 1 table.
-        $goalrecord1 = new stdClass;
-        $goalrecord1->title = "Goal 1 under Topic 1";
-        $goalrecord1->shortname = "Goal 1 shortname";
-        $goalrecord1->url = "http://goal1.at";
-        $goalrecord1->topic = $resultcourse[3]->id;
-        $goalrecord1->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord1);
+        $res->goal1 = $this->insert_goal(
+            $res->instance->id,
+            $res->topic1->id,
+            "Goal 1 under Topic 1",
+            "Goal 1 shortname",
+            "http://goal1.at",
+            1
+        );
 
-        // Link goal 1 with learning goal activity in a course.
-        $goalinstancerecord1 = new stdClass;
-        $goalinstancerecord1->course = $resultcourse[0]->id;
-        $goalinstancerecord1->coursemodule = $resultcourse[1]->id;
-        $goalinstancerecord1->instance = $resultcourse[2]->id;
-        $goalinstancerecord1->topic = $resultcourse[3]->id;
-        $goalinstancerecord1->goal = $goalrecord1->id;
-        $goalinstancerecord1->ranking = 1;
-        $goalinstancerecord1->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord1);
+        // Insert goal 2 under topic 1.
+        $res->goal2 = $this->insert_goal(
+            $res->instance->id,
+            $res->topic1->id,
+            "Goal 2 under Topic 1",
+            "Goal 2 shortname",
+            "http://goal2.at",
+            2
+        );
 
-        // Insert in goal 2.
-        $goalrecord2 = new stdClass;
-        $goalrecord2->title = "Goal 2 under Topic 1";
-        $goalrecord2->shortname = "Goal 2 shortname";
-        $goalrecord2->url = "http://goal2.at";
-        $goalrecord2->topic = $resultcourse[3]->id;
-        $goalrecord2->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord2);
-
-        // Link goal 2 with learning goal activity in a course.
-        $goalinstancerecord2 = new stdClass;
-        $goalinstancerecord2->course = $resultcourse[0]->id;
-        $goalinstancerecord2->coursemodule = $resultcourse[1]->id;
-        $goalinstancerecord2->instance = $resultcourse[2]->id;
-        $goalinstancerecord2->topic = $resultcourse[3]->id;
-        $goalinstancerecord2->goal = $goalrecord2->id;
-        $goalinstancerecord2->ranking = 2;
-        $goalinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord2);
-
-        return [$resultcourse, $goalrecord1, $goalinstancerecord1, $goalrecord2, $goalinstancerecord2];
+        return $res;
     }
 
     /**
@@ -1104,21 +1062,22 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     protected function check_goal($topicjson, $goalrecord1, $goalrecord2) {
-        $resulttopic = $this->check_topic(
+        $goals = $this->check_topic(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
+            1,
             $topicjson
         );
 
-        $this->assertEquals(2, count($resulttopic[0]));
+        $this->assertEquals(2, count($goals));
 
-        foreach ($resulttopic[0] as $goal) {
-            $ranking = $goal[0];
-            $goalid = $goal[1];
-            $goalname = $goal[2];
-            $goalshortname = $goal[3];
-            $goalurl = $goal[4];
+        foreach ($goals as $goal) {
+            $ranking = $goal->ranking;
+            $goalid = $goal->goalid;
+            $goalname = $goal->name;
+            $goalshortname = $goal->keyword;
+            $goalurl = $goal->link;
 
             if ($goalname === "Goal 1 under Topic 1") {
                 $this->assertEquals(2, $ranking);
