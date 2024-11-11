@@ -176,16 +176,13 @@ class taxonomy_test extends \advanced_testcase {
 
         // Move topic 2 up.
         $result = mod_learninggoalwidget_external::moveup_topic(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[4]->id
+            $resultcourse->topic2->id,
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::moveup_topic_returns(), $result);
 
-        $this->check_course_with_topics($result, $resultcourse[3], $resultcourse[4]);
+        $this->check_course_with_topics($result, $resultcourse->topic1, $resultcourse->topic2);
     }
 
     /**
@@ -206,16 +203,13 @@ class taxonomy_test extends \advanced_testcase {
 
         // Move topic 1 behind topic 2.
         $result = mod_learninggoalwidget_external::movedown_topic(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id
+            $resultcourse->topic1->id,
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::movedown_topic_returns(), $result);
 
-        $this->check_course_with_topics($result, $resultcourse[3], $resultcourse[4]);
+        $this->check_course_with_topics($result, $resultcourse->topic1, $resultcourse->topic2);
     }
 
     /**
@@ -915,7 +909,7 @@ class taxonomy_test extends \advanced_testcase {
 
         // Create topic in course.
         $res->topic = $this->insert_topic(
-            $widgetinstance->id,
+            $res->instance->id,
             $topictitle,
             $topicshortname,
             $topicurl,
@@ -950,12 +944,12 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertEquals(2, count($parsed->children));
 
         foreach ($parsed->children as $topic) {
-            $ranking = $topic[0];
-            $topicid = $topic[1];
-            $topicname = $topic[2];
-            $shortname = $topic[3];
-            $url = $topic[4];
-            $goals = $topic[5];
+            $ranking = $topic->ranking;
+            $topicid = $topic->topicid;
+            $topicname = $topic->name;
+            $shortname = $topic->keyword;
+            $url = $topic->link;
+            $goals = $topic->children;
             if ($topicname === "Artificial Intelligence Basics Part 1") {
                 $this->assertEquals(2, $ranking);
                 $this->assertEquals($topicrecord1->id, $topicid);

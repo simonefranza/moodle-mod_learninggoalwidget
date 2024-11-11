@@ -236,7 +236,7 @@ class provider_test extends provider_testcase {
         );
 
         // Delete user 1's data.
-        $approvedlist = new approved_contextlist($user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
+        $approvedlist = new approved_contextlist($res->user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
         provider::delete_data_for_user($approvedlist);
 
         // Check all relevant tables.
