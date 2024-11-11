@@ -86,7 +86,7 @@ class userTaxonomy {
         $topics = [];
         global $DB;
         // CONCAT to create unique column.
-        $sqlstmt = "SELECT CONCAT(IFNULL(t.id, 'miss'), '-', IFNULL(g.id, 'miss'), '-', IFNULL(p.id, 'miss')) as id,
+        $sqlstmt = "SELECT CONCAT(IFNULL(t.id, \"miss\"), '-', IFNULL(g.id, \"miss\"), '-', IFNULL(p.id, \"miss\")) as id,
                            t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
                            t.url as turl, t.ranking as tranking,
