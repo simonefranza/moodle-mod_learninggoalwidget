@@ -790,7 +790,7 @@ class taxonomy_test extends \advanced_testcase {
                 $this->assertEquals($expectedgoalgoalid, $testedgoals[$goalidx]->goalid);
                 $this->assertEquals($expectedgoalgoalname, $testedgoals[$goalidx]->name);
                 $this->assertEquals($expectedgoalshortname, $testedgoals[$goalidx]->keyword);
-                $this->assertEquals($expectedgoalurl, $testedgoals[$goalidx]->url);
+                $this->assertEquals($expectedgoalurl, $testedgoals[$goalidx]->link);
             }
         }
     }
