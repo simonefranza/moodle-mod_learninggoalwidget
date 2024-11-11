@@ -121,7 +121,7 @@ class taxonomy {
             $goal->name = $topicrecord->gtitle;
             $goal->keyword = $topicrecord->gshortname;
             $goal->link = $topicrecord->gurl;
-            $goal->ranking= $topicrecord->granking;
+            $goal->ranking = $topicrecord->granking;
             $goal->type = "goal";
             $topic->children[] = $goal;
         }

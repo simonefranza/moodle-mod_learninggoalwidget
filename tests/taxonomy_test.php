@@ -98,9 +98,9 @@ class taxonomy_test extends \advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::insert_topic_returns(), $result);
 
-        $resulttopic = $this->check_topic($title, $shorttitle $url, 1, $result);
+        $goals = $this->check_topic($title, $shorttitle, $url, 1, $result);
 
-        $this->assertEquals([], $resulttopic[0]);
+        $this->assertEquals([], $goals);
     }
 
     /**
@@ -109,33 +109,28 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_updatetopic() {
-
         $result1 = $this->setup_topic(
             "Artificial Intelligence Basics",
             "AIBasics",
             "http://aibasics.at"
         );
 
+        $newtitle = "new Name";
+        $newshorttitle = "new Shortname";
+        $newurl = "http://new.at";
+
         // Update topic.
         $result = mod_learninggoalwidget_external::update_topic(
             $result1[0]->id,
             $result1[1]->id,
-            $result1[2]->id,
-            $result1[3]->id,
-            "Updated Name",
-            "Updated Shortname",
-            "http://updated.at"
+            $newtitle,
+            $newshorttitle,
+            $newurl
         );
 
-        $topicchildren = $this->check_topic(
-            "Updated Name",
-            "Updated Shortname",
-            "http://updated.at",
-            1
-            $result
-        );
+        $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1 $result);
 
-        $this->assertEquals([], $topicchildren);
+        $this->assertEquals([], $goals);
     }
 
     /**
@@ -926,22 +921,13 @@ class taxonomy_test extends \advanced_testcase {
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course1->id);
 
         // Create topic in course.
-        $topicrecord = new stdClass;
-        $topicrecord->title = $topictitle;
-        $topicrecord->shortname = $topicshortname;
-        $topicrecord->url = $topicurl;
-        $topicrecord->id = $DB->insert_record('learninggoalwidget_topic', $topicrecord);
+        $topicrecord = $this->insert_topic($widgetinstance->id,
+            $topictitle,
+            $topicshortname,
+            $topicurl,
+            1);
 
-        // Link topic with widget instance.
-        $topicinstancerecord = new stdClass;
-        $topicinstancerecord->course = $course1->id;
-        $topicinstancerecord->coursemodule = $coursemodule->id;
-        $topicinstancerecord->instance = $widgetinstance->id;
-        $topicinstancerecord->topic = $topicrecord->id;
-        $topicinstancerecord->ranking = 1;
-        $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
-
-        return [$course1, $coursemodule, $widgetinstance, $topicrecord, $topicinstancerecord];
+        return [$widgetinstance, $topicrecord];
     }
 
     /**
