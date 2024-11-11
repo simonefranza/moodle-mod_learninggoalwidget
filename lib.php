@@ -57,7 +57,6 @@ function learninggoalwidget_add_instance(stdClass $data): int {
     $data->timecreated = time();
     $data->timemodified = $data->timecreated;
     $data->id = $DB->insert_record('learninggoalwidget', $data);
-
     return $data->id;
 }
 

@@ -93,10 +93,10 @@ class userTaxonomy {
                            g.id as gid, g.title as gtitle, g.shortname as gshortname,
                            g.url as gurl, g.ranking as granking,
                            p.userid, p.progress
-                      FROM m_learninggoalwidget_topics as t
-                 LEFT JOIN m_learninggoalwidget_goals as g
+                      FROM {learninggoalwidget_topics} t
+                 LEFT JOIN {learninggoalwidget_goals} g
                         ON t.id = g.topicid
-                 LEFT JOIN m_learninggoalwidget_progs as p
+                 LEFT JOIN {learninggoalwidget_progs} p
                         ON g.id = p.goalid AND p.userid = :userid
                      WHERE t.learninggoalwidgetid = :instanceid
                   ORDER BY tranking, granking";

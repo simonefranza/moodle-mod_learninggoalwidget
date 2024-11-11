@@ -49,20 +49,14 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_emptytaxonomy() {
-        // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
-
-        $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
+        $res = $this->setup_widget();
 
         $emptytaxonomy = new \stdClass;
         $emptytaxonomy->name = "Learning Goal's taxonomy";
         $emptytaxonomy->children = [];
         $jsonemptytaxonomy = json_encode($emptytaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
-        $taxonomy = new taxonomy($widgetinstance->id);
+        $taxonomy = new taxonomy($res->instance->id);
         $this->assertNotNull($taxonomy);
         $json = $taxonomy->get_taxonomy_as_json();
         $this->assertNotNull($json);
@@ -76,14 +70,14 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_inserttopic() {
-        [$widgetinstance, $user] = $this->setup_widget();
+        $res = $this->setup_widget();
 
         $title = "Artificial Intelligence Basics";
         $shorttitle = "AIBasics";
         $url = "http://aibasics.at";
 
         $result = mod_learninggoalwidget_external::insert_topic(
-            $widgetinstance->id,
+            $res->instance->id,
             $title,
             $shorttitle,
             $url
@@ -114,15 +108,15 @@ class taxonomy_test extends \advanced_testcase {
         $newurl = "http://new.at";
 
         // Update topic.
-        $result = mod_learninggoalwidget_external::update_topic(
-            $result[0]->id,
-            $result[1]->id,
+        $update = mod_learninggoalwidget_external::update_topic(
+            $result->instance->id,
+            $result->topic->id,
             $newtitle,
             $newshorttitle,
             $newurl
         );
 
-        $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1, $result);
+        $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1, $update);
 
         $this->assertEquals([], $goals);
     }
@@ -135,26 +129,21 @@ class taxonomy_test extends \advanced_testcase {
     public function test_deletetopic() {
         global $DB;
 
-        $result1 = $this->setup_topic(
+        $result = $this->setup_topic(
             "Artificial Intelligence Basics",
             "AIBasics",
             "http://aibasics.at"
         );
 
         // Delete topic.
-        $result = mod_learninggoalwidget_external::delete_topic(
-            $result1[0]->id,
-            $result1[1]->id,
-            $result1[2]->id,
-            $result1[3]->id
-        );
+        $deleted = mod_learninggoalwidget_external::delete_topic($result->topic->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::delete_topic_returns(), $result);
+        $deleted = external_api::clean_returnvalue(mod_learninggoalwidget_external::delete_topic_returns(), $deleted);
 
-        $this->assertNotNull($result);
-        $this->assertNotEmpty($result);
-        $parsed = json_decode($result);
+        $this->assertNotNull($deleted);
+        $this->assertNotEmpty($deleted);
+        $parsed = json_decode($deleted);
 
         $this->assertNotNull($parsed);
 
@@ -166,8 +155,7 @@ class taxonomy_test extends \advanced_testcase {
         $this->assertIsArray($parsed->children);
         $this->assertEquals(0, count($parsed->children));
 
-        $this->assertFalse($DB->record_exists('learninggoalwidget_topic', ['id' => $result1[3]->id]));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_i_topics', ['id' => $result1[4]->id]));
+        $this->assertFalse($DB->record_exists('learninggoalwidget_topics', ['id' => $result->topic->id]));
     }
 
     /**
@@ -896,7 +884,7 @@ class taxonomy_test extends \advanced_testcase {
     /**
      * helper function creating an instance
      *
-     * @return array
+     * @return stdClass
      */
     protected function setup_widget() {
         global $DB;
@@ -904,12 +892,13 @@ class taxonomy_test extends \advanced_testcase {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
 
+        $return = new stdClass;
         $course = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
+        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
+        $return->user = $this->getDataGenerator()->create_user();
+        $this->setUser($return->user);
 
-        return [$widgetinstance, $user];
+        return $return;
     }
 
     /**
@@ -918,14 +907,14 @@ class taxonomy_test extends \advanced_testcase {
      * @param [string] $topictitle
      * @param [string] $topicshortname
      * @param [string] $topicurl
-     * @return array
+     * @return stdClass
      */
     protected function setup_topic($topictitle, $topicshortname, $topicurl) {
         global $DB;
-        [$widgetinstance, $user] = $this->setup_widget();
+        $res = $this->setup_widget();
 
         // Create topic in course.
-        $topicrecord = $this->insert_topic(
+        $res->topic = $this->insert_topic(
             $widgetinstance->id,
             $topictitle,
             $topicshortname,
@@ -933,7 +922,7 @@ class taxonomy_test extends \advanced_testcase {
             1
         );
 
-        return [$widgetinstance, $topicrecord];
+        return $res;
     }
 
     /**
