@@ -252,8 +252,8 @@ class taxonomy_test extends \advanced_testcase {
 
         $goal = $goals[0];
 
-        $this->assertIsNumeric($goal->id);
-        $this->assertTrue($goal->id > 0);
+        $this->assertIsNumeric($goal->goalid);
+        $this->assertTrue($goal->goalid > 0);
         $this->assertEquals("Knowing theoretical foundations of AI", $goal->name);
         $this->assertEquals("TheoreticalFoundationsAI", $goal->keyword);
         $this->assertEquals("http://aibasics.goal1.at", $goal->link);
@@ -288,7 +288,7 @@ class taxonomy_test extends \advanced_testcase {
             $result
         );
 
-        $this->assertEquals(1, count($goals[0]));
+        $this->assertEquals(1, count($goals));
 
         $goal = $goals[0];
 
@@ -366,7 +366,7 @@ class taxonomy_test extends \advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(mod_learninggoalwidget_external::movedown_goal_returns(), $result);
 
-        $this->check_goal($result, $res->goal1, $goal2);
+        $this->check_goal($result, $res->goal1, $res->goal2);
     }
 
     /**
@@ -411,8 +411,6 @@ class taxonomy_test extends \advanced_testcase {
      */
     public function test_updateuserprogress() {
         $res = $this->setup_course_and_insert_two_goals();
-//        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
-//            $this->setup_course_and_insert_two_goals();
 
         // Update learning goal 1 progess to 99.
         $result = mod_learninggoalwidget_external::update_user_progress(
@@ -492,21 +490,18 @@ class taxonomy_test extends \advanced_testcase {
         set_config('buffersize', 0, 'logstore_standard');
         get_log_manager(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursedata = $res[0];
-        $course1 = $coursedata[0];
-        $coursemodule = $coursedata[1];
-        $widgetinstance = $coursedata[2];
-        $topicrecord = $coursedata[3];
-        $user1 = $coursedata[7];
-        $goalrecord = $res[1];
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $course1 = $coursemodule->course;
+        $coursecontext = \context_course::instance($coursemodule->course);
         $cmcontext = \context_module::instance($coursemodule->id);
-        $coursecontext = \context_course::instance($course1->id);
+        $widgetinstance = $res->instance;
+        $topicrecord = $res->topic1;
+        $user1 = $res->user;
+        $goalrecord = $res->goal;
         $progress = 50;
         $timestamp = 12345678;
 
         mod_learninggoalwidget_external::update_user_progress(
-            $course1->id,
-            $coursemodule->id,
             $widgetinstance->id,
             $user1->id,
             $topicrecord->id,
@@ -516,8 +511,6 @@ class taxonomy_test extends \advanced_testcase {
 
         $eventparams = [];
         $eventname = "\\mod_learninggoalwidget\\event\\learninggoal_updated";
-        $eventparams[1] = ["name" => "courseid", "value" => $course1->id];
-        $eventparams[2] = ["name" => "coursemoduleid", "value" => $coursemodule->id];
         $eventparams[3] = ["name" => "instanceid", "value" => $widgetinstance->id];
         $eventparams[4] = ["name" => "userid", "value" => $user1->id];
         $eventparams[5] = ["name" => "timestamp", "value" => $timestamp];
@@ -526,8 +519,6 @@ class taxonomy_test extends \advanced_testcase {
 
         // Update learning goal 2 progess to 50.
         $result = mod_learninggoalwidget_external::log_event(
-            $course1->id,
-            $coursemodule->id,
             $widgetinstance->id,
             $user1->id,
             $eventparams
