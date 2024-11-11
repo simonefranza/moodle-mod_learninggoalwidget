@@ -58,20 +58,6 @@ function learninggoalwidget_add_instance(stdClass $data): int {
     $data->timemodified = $data->timecreated;
     $data->id = $DB->insert_record('learninggoalwidget', $data);
 
-    $sql = "SELECT 1
-              FROM {learninggoalwidget_i_goals}
-             WHERE course = :courseid
-               AND coursemodule = -1
-               AND instance = -1";
-
-    if ($DB->record_exists_sql($sql, $courseparams)) {
-        $sql = "UPDATE {learninggoalwidget_i_goals}
-                   SET coursemodule = :coursemodule, instance = :instance
-                 WHERE course = :course
-                   AND coursemodule = -1
-                   AND instance = -1";
-        $DB->execute($sql, $updateparams);
-    }
     return $data->id;
 }
 
