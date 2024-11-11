@@ -80,11 +80,7 @@ class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $instance = $res[0];
-        $topicrecord = $res[1];
-        $user = $res[3];
-        $goalrecord = $res[4];
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext = \context_module::instance($coursemodule->id);
 
         // The user will be in these contexts.
@@ -93,14 +89,14 @@ class provider_test extends provider_testcase {
         ];
 
         mod_learninggoalwidget_external::update_user_progress(
-            $instance->id,
-            $user->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
 
-        $contextlist = provider::get_contexts_for_userid($user->id);
+        $contextlist = provider::get_contexts_for_userid($res->user->id);
         $this->assertEquals(count($usercontextids), count($contextlist->get_contextids()));
     }
 
@@ -111,30 +107,27 @@ class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $instance = $res[0];
-        $topicrecord = $res[1];
-        $user1 = $res[3];
-        $goalrecord = $res[4];
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext = \context_module::instance($coursemodule->id);
 
+        $user1 = $res->user;
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
         $user5 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user4->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user5->id, $course->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($user1->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user3->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user4->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user5->id, $coursemodule->course, 'editingteacher');
 
         mod_learninggoalwidget_external::update_user_progress(
-            $instance->id,
+            $res->instance->id,
             $user1->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->topic1->id,
+            $res->goal->id,
             60,
         );
 
@@ -165,19 +158,15 @@ class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $instance = $res[0];
-        $topicrecord = $res[1];
-        $user = $res[3];
-        $goalrecord = $res[4];
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $coursecontext = \context_course::instance($coursemodule->course);
         $cmcontext = \context_module::instance($coursemodule->id);
 
         mod_learninggoalwidget_external::update_user_progress(
-            $instance->id,
-            $user->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
 
@@ -185,7 +174,7 @@ class provider_test extends provider_testcase {
         $this->assertFalse($writer->has_any_data());
 
         // Add the course context as well to make sure there is no error.
-        $approvedlist = new approved_contextlist($user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
+        $approvedlist = new approved_contextlist($res->user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
         provider::export_user_data($approvedlist);
 
         // Check export details.
@@ -206,18 +195,14 @@ class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $instance = $res[0];
-        $topicrecord = $res[1];
-        $user = $res[3];
-        $goalrecord = $res[4];
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext = \context_module::instance($coursemodule->id);
 
         mod_learninggoalwidget_external::update_user_progress(
-            $instance->id,
-            $user->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
 
@@ -238,19 +223,15 @@ class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $instance = $res[0];
-        $topicrecord = $res[1];
-        $user = $res[3];
-        $goalrecord = $res[4];
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext = \context_module::instance($coursemodule->id);
         $coursecontext = \context_course::instance($coursemodule->course);
 
         mod_learninggoalwidget_external::update_user_progress(
-            $instance->id,
-            $user->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
 
@@ -259,7 +240,7 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_user($approvedlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $user->id]);
+        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $res->user->id]);
         $this->assertEmpty($records);
     }
 
@@ -271,13 +252,10 @@ class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $instance = $res[0];
-        $topicrecord = $res[1];
-        $user1 = $res[3];
-        $goalrecord = $res[4];
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext1 = \context_module::instance($coursemodule->id);
 
+        $user1 = $res->user;
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
 
@@ -286,24 +264,24 @@ class provider_test extends provider_testcase {
         $this->getDataGenerator()->enrol_user($user3->id, $coursemodule->course, 'student');
 
         mod_learninggoalwidget_external::update_user_progress(
-            $instance->id,
+            $res->instance->id,
             $user1->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
         mod_learninggoalwidget_external::update_user_progress(
-            $instance->id,
+            $res->instance->id,
             $user2->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->topic1->id,
+            $res->goal->id,
             60,
         );
         mod_learninggoalwidget_external::update_user_progress(
-            $instance->id,
+            $res->instance->id,
             $user3->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->topic1->id,
+            $res->goal->id,
             80,
         );
 

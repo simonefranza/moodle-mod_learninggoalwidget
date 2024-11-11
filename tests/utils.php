@@ -92,7 +92,7 @@ trait utils {
      * @param [string] $topic2title
      * @param [string] $topic2shortname
      * @param [string] $topic2url
-     * @return array
+     * @return stdClass
      */
     protected function setup_course_with_topics($topic1title, $topic1shortname, $topic1url,
         $topic2title, $topic2shortname, $topic2url) {
@@ -101,29 +101,30 @@ trait utils {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
 
+        $return = new stdClass;
         $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
+        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
+        $return->user = $this->getDataGenerator()->create_user();
+        $this->setUser($return->user);
 
         // Create topic 1 in course.
-        $topicrecord1 = $this->insert_topic($widgetinstance->id, $topic1title, $topic1shortname, $topic1url, 1);
+        $return->topic1 = $this->insert_topic($return->instance->id, $topic1title, $topic1shortname, $topic1url, 1);
 
         // Create topic 2 in course.
-        $topicrecord2 = $this->insert_topic($widgetinstance->id, $topic2title, $topic2shortname, $topic2url, 2);
+        $return->topic2 = $this->insert_topic($return->instance->id, $topic2title, $topic2shortname, $topic2url, 2);
 
-        return [$widgetinstance, $topicrecord1, $topicrecord2, $user1];
+        return $return;
     }
 
     /**
      * create course with topics and one learing goal
      *
-     * @return array
+     * @return stdClass
      */
     protected function setup_course_and_insert_goals() {
         global $DB;
 
-        $resultcourse = $this->setup_course_with_topics(
+        $course = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
@@ -134,14 +135,14 @@ trait utils {
 
         // Insert goal under topic 1.
         // Insert in goal table.
-        $goalrecord = insert_goal(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
+        $course->goal = $this->insert_goal(
+            $course->instance->id,
+            $course->topic1->id,
             "Goal under Topic 1 to be updated",
             "Goal 1 shortname to be updated",
             "http://goal1.updateme.at",
             1);
 
-        return [...$resultcourse, $goalrecord];
+        return $course;
     }
 }

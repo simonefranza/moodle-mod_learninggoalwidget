@@ -103,7 +103,7 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_updatetopic() {
-        $result1 = $this->setup_topic(
+        $result = $this->setup_topic(
             "Artificial Intelligence Basics",
             "AIBasics",
             "http://aibasics.at"
@@ -115,8 +115,8 @@ class taxonomy_test extends \advanced_testcase {
 
         // Update topic.
         $result = mod_learninggoalwidget_external::update_topic(
-            $result1[0]->id,
-            $result1[1]->id,
+            $result[0]->id,
+            $result[1]->id,
             $newtitle,
             $newshorttitle,
             $newurl
@@ -1002,7 +1002,7 @@ class taxonomy_test extends \advanced_testcase {
         $topic = $this->check_topic_properties($parsed);
 
         $this->assertEquals($expectedtitle, $topic->name);
-        $this->assertEquals($expectedshortname, $topic->keyworn);
+        $this->assertEquals($expectedshortname, $topic->keyword);
         $this->assertEquals($expectedurl, $topic->link);
         $this->assertEquals($expectedranking, $topic->ranking);
         return $topic->children;
