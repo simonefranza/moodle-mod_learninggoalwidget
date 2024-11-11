@@ -76,13 +76,7 @@ class taxonomy_test extends \advanced_testcase {
      * @return void
      */
     public function test_inserttopic() {
-        // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
-
-        $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
+        [$widgetinstance, $user] = $this->setup_widget();
 
         $title = "Artificial Intelligence Basics";
         $shorttitle = "AIBasics";
@@ -128,7 +122,7 @@ class taxonomy_test extends \advanced_testcase {
             $newurl
         );
 
-        $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1 $result);
+        $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1, $result);
 
         $this->assertEquals([], $goals);
     }
@@ -900,6 +894,25 @@ class taxonomy_test extends \advanced_testcase {
     }
 
     /**
+     * helper function creating an instance
+     *
+     * @return array
+     */
+    protected function setup_widget() {
+        global $DB;
+
+        // Reset all changes automatically after this test.
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        return [$widgetinstance, $user];
+    }
+
+    /**
      * helper function creating a topic
      *
      * @param [string] $topictitle
@@ -909,23 +922,16 @@ class taxonomy_test extends \advanced_testcase {
      */
     protected function setup_topic($topictitle, $topicshortname, $topicurl) {
         global $DB;
-
-        // Reset all changes automatically after this test.
-        $this->resetAfterTest(true);
-
-        $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
-
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course1->id);
+        [$widgetinstance, $user] = $this->setup_widget();
 
         // Create topic in course.
-        $topicrecord = $this->insert_topic($widgetinstance->id,
+        $topicrecord = $this->insert_topic(
+            $widgetinstance->id,
             $topictitle,
             $topicshortname,
             $topicurl,
-            1);
+            1
+        );
 
         return [$widgetinstance, $topicrecord];
     }
