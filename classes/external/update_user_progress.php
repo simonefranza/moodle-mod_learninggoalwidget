@@ -103,7 +103,7 @@ class update_user_progress extends \core_external\external_api {
         ];
         $userprogressrecord = $DB->get_record_sql($sqlstmt, $params);
 
-        $userprogress = new stdClass;
+        $userprogress = new \stdClass;
         $userprogress->progress = $progress;
 
         if ($userprogressrecord) {

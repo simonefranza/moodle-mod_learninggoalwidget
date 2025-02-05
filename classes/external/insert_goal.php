@@ -101,7 +101,7 @@ class insert_goal extends \core_external\external_api {
         $maxrankingrecord = $DB->get_record_sql($sqlstmt, $params);
 
         // Insert in goal table.
-        $goalrecord = new stdClass;
+        $goalrecord = new \stdClass;
         $goalrecord->learninggoalwidgetid = $instance;
         $goalrecord->topicid = $topicid;
         $goalrecord->title = $goalname;

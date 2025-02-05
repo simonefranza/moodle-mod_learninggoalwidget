@@ -97,7 +97,7 @@ class insert_topic extends \core_external\external_api {
         ];
         $maxrankingrecord = $DB->get_record_sql($sqlstmt, $params);
         // Insert in topic table.
-        $topicrecord = new stdClass;
+        $topicrecord = new \stdClass;
         $topicrecord->learninggoalwidgetid = $instance;
         $topicrecord->title = $topicname;
         $topicrecord->shortname = $topicshortname;
