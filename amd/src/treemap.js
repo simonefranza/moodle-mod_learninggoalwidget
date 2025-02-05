@@ -178,8 +178,6 @@ define(
   const logLearningGoalEvent = (instanceid, userid, eventParams) => {
     Controller.logEvent(
       {
-        courseid: courseid,
-        coursemoduleid: coursemoduleid,
         instanceid: instanceid,
         userid: userid,
         eventparams: eventParams
