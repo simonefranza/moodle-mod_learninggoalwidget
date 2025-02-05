@@ -47,7 +47,7 @@ final class mod_form_test extends externallib_advanced_testcase {
      * testing class mod_learninggoalwidget_mod_form
      * @return void
      */
-    public function test_definition() {
+    public function test_definition(): void {
         global $COURSE;
         $this->setUp();
 
@@ -61,7 +61,7 @@ final class mod_form_test extends externallib_advanced_testcase {
 
         $data = new \stdClass();
         $data->instance = $widgetinstance->id;
-        $moodleform = new mod_learninggoalwidget_mod_form($data, $coursemodule->sectionnum, $coursemodule, $course);
+        new mod_learninggoalwidget_mod_form($data, $coursemodule->sectionnum, $coursemodule, $course);
         $this->assertDebuggingNotCalled();
     }
 }

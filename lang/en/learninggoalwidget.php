@@ -22,6 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+$string['contentview'] = 'Learning goals view';
+$string['examview'] = 'Progress view';
+$string['guestaccess'] = 'You need to login first';
+
 $string['learninggoalwidget:addinstance'] = 'Add a new Learning Goal Widget';
 $string['learninggoalwidget:view'] = 'View Learning Goal Widget';
 $string['learninggoalwidgettext'] = 'Learning Goal Widget text';
@@ -29,9 +34,15 @@ $string['modulename'] = 'Learning Goal Widget';
 $string['modulename_help'] = '';
 $string['modulename_link'] = 'mod/learninggoalwidget/view';
 $string['modulenameplural'] = 'Learning Goal Widgets';
+$string['noaccess'] = 'You need to login first';
 $string['pluginadministration'] = 'Learning Goal Widget administration';
 $string['pluginname'] = 'Learning Goal Widget';
 $string['privacy:metadata'] = '';
+$string['progressdialogtitle'] = 'Update learning goal orogress';
+$string['progresslabel0'] = 'Low (0%)';
+$string['progresslabel100'] = 'High (100%)';
+$string['progresslabel50'] = 'Medium (50%)';
+$string['progresslegendlabel'] = 'Learning progress';
 
 $string['search:activity'] = 'learninggoalwidget';
 
@@ -39,8 +50,8 @@ $string['settings:addgoal'] = 'Add a new learning goal';
 $string['settings:addtopic'] = 'Add a new topic';
 $string['settings:btnjsondownload'] = 'Download';
 $string['settings:btnjsonupload'] = 'Upload';
-$string['settings:btnnewtopic'] = 'New topic';
 $string['settings:btnnewgoal'] = 'New learning goal';
+$string['settings:btnnewtopic'] = 'New topic';
 $string['settings:delete'] = 'Delete';
 $string['settings:deletegoal'] = 'Delete learning goal';
 $string['settings:deletegoalmsg'] = 'Do you really want to delete the learning goal?';
@@ -64,7 +75,32 @@ $string['settings:showgoals'] = 'Click on a topic to show its learning goals';
 $string['settings:topic'] = 'Topic';
 $string['settings:topicheader'] = 'Topics';
 
+$string['textualbulletpointlisttitle'] = 'Overview of topics and learning goals';
 $string['title'] = 'Learning Goal\'s taxonomy';
+$string['treemapaccessibilitytext'] = 'Welcome to the Learning Goals Widget <br/> <br/>
+ This tool helps you reflect on the topics you learned
+ and keeps track of your progress.
+ On the left side there are the topics and on right side
+ the learning goals. Each of these goals has a percent near
+ it representing your progress so far. <br/>
+ You can change this value, by clicking on the topic or on
+ the learning goal and then moving the slider
+ to the desired position. On the right side of each topic
+ there is an average of the progress that you made on the
+ learning goals. <br/> <br/>
+ If you are using a screen reader, you can navigate through the document
+ with the Tab key. By pressing enter you can expand the topics.
+ When an action for the keyboard is available, it will be announced.
+ This tool is optimized for Google Chrome and its extension called
+ Screen Reader. For an optimal experience we suggest you to use those. <br/>
+ Under the accessibility icon you can find two buttons to change
+ the size of the font. If instead you would like to change the zoom
+ you can press Ctrl and + or Ctrl and -. <br/>
+ The third icon is used to change the colors of the widget. <br/>
+ If you are colorblind, there you can find some colorschemes,
+ that have a dark blue outline. These have a high contrast and
+ should be suitable to you. <br/> <br/>
+ We wish you a happy learning experience!';
 
 $string['validation:close'] = 'Close';
 $string['validation:invalid'] = 'Invalid taxonomy';
@@ -87,39 +123,3 @@ $string['validation:jsontopic5'] = 'The "keyword" property of the topic "{$a}" i
 $string['validation:jsontopic6'] = 'The "children" property of the topic "{$a}" is not an array.';
 $string['validation:missinggoal'] = 'The topics [{$a}] have no learning goals. Please add at least one to each of them.';
 $string['validation:missingtitle'] = 'The title is mandatory';
-
-
-$string['contentview'] = 'Learning goals view';
-$string['examview'] = 'Progress view';
-$string['guestaccess'] = 'You need to login first';
-$string['noaccess'] = 'You need to login first';
-$string['progresslabel0'] = 'Low (0%)';
-$string['progresslabel100'] = 'High (100%)';
-$string['progresslabel50'] = 'Medium (50%)';
-$string['progressdialogtitle'] = 'Update learning goal orogress';
-$string['progresslegendlabel'] = 'Learning progress';
-$string['textualbulletpointlisttitle'] = 'Overview of topics and learning goals';
-$string['treemapaccessibilitytext'] = 'Welcome to the Learning Goals Widget <br/> <br/>
-This tool helps you reflect on the topics you learned
-and keeps track of your progress.
-On the left side there are the topics and on right side
-the learning goals. Each of these goals has a percent near
-it representing your progress so far. <br/>
-You can change this value, by clicking on the topic or on
-the learning goal and then moving the slider
-to the desired position. On the right side of each topic
-there is an average of the progress that you made on the
-learning goals. <br/> <br/>
-If you are using a screen reader, you can navigate through the document
-with the Tab key. By pressing enter you can expand the topics.
-When an action for the keyboard is available, it will be announced.
-This tool is optimized for Google Chrome and its extension called
-Screen Reader. For an optimal experience we suggest you to use those. <br/>
-Under the accessibility icon you can find two buttons to change
-the size of the font. If instead you would like to change the zoom
-you can press Ctrl and + or Ctrl and -. <br/>
-The third icon is used to change the colors of the widget. <br/>
-If you are colorblind, there you can find some colorschemes,
-that have a dark blue outline. These have a high contrast and
-should be suitable to you. <br/> <br/>
-We wish you a happy learning experience!';

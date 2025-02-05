@@ -45,7 +45,6 @@ trait utils {
      * @return void
      */
     protected function setUp(): void {
-        global $CFG;
         $this->resetAfterTest(true);
         $this->setAdminUser();
     }
@@ -191,16 +190,16 @@ trait utils {
             $this->assertIsArray($testedgoals);
 
             foreach ($expectedgoals as $goalidx => $expectedgoal) {
-                $expectedgoalranking = $expectedgoal[0];
-                $expectedgoaltopicid = $expectedgoal[1];
-                $expectedgoaltopicname = $expectedgoal[2];
-                $expectedgoalshortname = $expectedgoal[3];
-                $expectedgoalurl = $expectedgoal[4];
-                $this->assertEquals($expectedgoalranking, $testedgoals[$goalidx][0]);
-                $this->assertEquals($expectedgoaltopicid, $testedgoals[$goalidx][1]);
-                $this->assertEquals($expectedgoaltopicname, $testedgoals[$goalidx][2]);
-                $this->assertEquals($expectedgoalshortname, $testedgoals[$goalidx][3]);
-                $this->assertEquals($expectedgoalurl, $testedgoals[$goalidx][4]);
+                $expectedgranking = $expectedgoal[0];
+                $expectedgtopicid = $expectedgoal[1];
+                $expectedgtopicname = $expectedgoal[2];
+                $expectedgshortname = $expectedgoal[3];
+                $expectedgurl = $expectedgoal[4];
+                $this->assertEquals($expectedgranking, $testedgoals[$goalidx][0]);
+                $this->assertEquals($expectedgtopicid, $testedgoals[$goalidx][1]);
+                $this->assertEquals($expectedgtopicname, $testedgoals[$goalidx][2]);
+                $this->assertEquals($expectedgshortname, $testedgoals[$goalidx][3]);
+                $this->assertEquals($expectedgurl, $testedgoals[$goalidx][4]);
             }
         }
     }

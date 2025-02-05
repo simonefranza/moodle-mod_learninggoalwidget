@@ -69,8 +69,6 @@ final class log_event_test extends externallib_advanced_testcase {
         $topicrecord = $coursedata[3];
         $user1 = $coursedata[7];
         $goalrecord = $res[1];
-        $cmcontext = \context_module::instance($coursemodule->id);
-        $coursecontext = \context_course::instance($course1->id);
         $progress = 50;
         $timestamp = 12345678;
 
@@ -115,7 +113,7 @@ final class log_event_test extends externallib_advanced_testcase {
         $this->assertTrue($res !== false);
         $otherdata = json_decode($res->other);
         $output = new \stdClass;
-        foreach ($otherdata as $key => $value) {
+        foreach (get_object_vars($otherdata) as $value) {
             $output->{$value->name} = $value->value;
         }
         $this->assertTrue($output->courseid == $course1->id);

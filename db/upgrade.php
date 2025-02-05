@@ -63,7 +63,7 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
 
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
-    global $CFG, $DB;
+    global $DB;
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 

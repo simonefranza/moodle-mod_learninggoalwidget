@@ -79,7 +79,7 @@ final class update_topic_test extends externallib_advanced_testcase {
             $result
         );
 
-        $goals = $this->check_updatetopic_getgoals($result);
+        $this->check_updatetopic_getgoals($result);
         $result = external_api::clean_returnvalue(update_topic::execute_returns(), $result);
         $topic = json_decode($result)->children[0];
         $this->assertEquals([], $topic[5]);
