@@ -45,8 +45,6 @@ class delete_taxonomy extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
             ]
         );
@@ -63,19 +61,15 @@ class delete_taxonomy extends \core_external\external_api {
     /**
      * Delete the entire taxonomy
      *
-     * @param int $course
-     * @param int $coursemodule
-     * @param int $instance
+     * @param number $instance
      * @return string
      */
-    public static function execute($course, $coursemodule, $instance) {
+    public static function execute($instance) {
         global $USER, $DB;
 
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
             ]
         );
@@ -83,34 +77,13 @@ class delete_taxonomy extends \core_external\external_api {
         self::validate_context(\context_user::instance($USER->id));
 
         $params = [
-            'course' => $course,
-            'coursemodule' => $coursemodule,
-            'instance' => $instance,
+            'learninggoalwidgetid' => $instance,
         ];
 
-        $sqlstmt = "SELECT topic
-                      FROM {learninggoalwidget_i_topics}
-                     WHERE course = :course
-                       AND coursemodule = :coursemodule
-                       AND instance = :instance";
-        $topicrecords = $DB->get_records_sql($sqlstmt, $params);
-        $sqlstmt = "SELECT goal
-                      FROM {learninggoalwidget_i_goals}
-                     WHERE course = :course
-                       AND coursemodule = :coursemodule
-                       AND instance = :instance";
-        $goalrecords = $DB->get_records_sql($sqlstmt, $params);
-
-        $DB->delete_records('learninggoalwidget_i_userpro', $params);
-        $DB->delete_records('learninggoalwidget_i_goals', $params);
-        $DB->delete_records('learninggoalwidget_i_topics', $params);
-        foreach ($topicrecords as $topicrecord) {
-            $DB->delete_records('learninggoalwidget_topic', ['id' => $topicrecord->topic]);
-        }
-        foreach ($goalrecords as $goalrecord) {
-            $DB->delete_records('learninggoalwidget_goal', ['id' => $goalrecord->goal]);
-        }
-
-        return get_taxonomy::execute($instance);
+        $DB->delete_records('learninggoalwidget_progs', $params);
+        $DB->delete_records('learninggoalwidget_goals', $params);
+        $DB->delete_records('learninggoalwidget_topics', $params);
+        $DB->delete_records('learninggoalwidget', ['id' => $instance]);
+        return '{}';
     }
 }
