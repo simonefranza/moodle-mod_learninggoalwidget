@@ -112,7 +112,7 @@ class delete_topic extends \core_external\external_api {
         ];
         $DB->delete_records('learninggoalwidget_topics', $params);
 
-        // Update other topics
+        // Update other topics.
         foreach ($toupdatetopics as $toupdate) {
             $toupdate->ranking--;
             $DB->update_record('learninggoalwidget_topics', $toupdate);

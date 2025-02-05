@@ -123,12 +123,11 @@ class delete_goal extends \core_external\external_api {
         ];
         $DB->delete_records('learninggoalwidget_goals', $params);
 
-        // Update other topics
+        // Update other topics.
         foreach ($toupdategoals as $toupdate) {
             $toupdate->ranking--;
             $DB->update_record('learninggoalwidget_goals', $toupdate);
         }
-
 
         return get_taxonomy::execute($instance);
     }

@@ -97,11 +97,11 @@ class goal {
     }
 
      /**
-     * returns the goal DB entry given an id
-     *
-     * @param int $id
-     * @return dbentry
-     */
+      * returns the goal DB entry given an id
+      *
+      * @param int $id
+      * @return dbentry
+      */
     public static function get_db_entry_by_id($id) {
         global $DB;
         $sqlstmt = "SELECT *

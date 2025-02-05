@@ -33,27 +33,12 @@
  * @return int The id of the newly inserted record.
  */
 function learninggoalwidget_add_instance(stdClass $data): int {
-    global $DB, $COURSE;
+    global $DB;
     $data->course = $data->course;
     $data->name = $data->name;
     $data->timecreated = time();
     $data->timemodified = $data->timecreated;
     $data->id = $DB->insert_record('learninggoalwidget', $data);
-
-    $sql = "SELECT 1
-              FROM {learninggoalwidget_i_goals}
-             WHERE course = :courseid
-               AND coursemodule = -1
-               AND instance = -1";
-
-    if ($DB->record_exists_sql($sql, $courseparams)) {
-        $sql = "UPDATE {learninggoalwidget_i_goals}
-                   SET coursemodule = :coursemodule, instance = :instance
-                 WHERE course = :course
-                   AND coursemodule = -1
-                   AND instance = -1";
-        $DB->execute($sql, $updateparams);
-    }
     return $data->id;
 }
 

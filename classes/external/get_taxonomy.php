@@ -73,6 +73,6 @@ class get_taxonomy extends \core_external\external_api {
                 'instance' => $instance,
             ]
         );
-        return (new taxonomy($coursemodule, $course, null, $instance))->get_taxonomy_as_json();
+        return (new taxonomy($instance))->get_taxonomy_as_json();
     }
 }
