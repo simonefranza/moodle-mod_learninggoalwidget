@@ -37,28 +37,6 @@ use mod_learninggoalwidget\local\topic;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class taxonomy {
-
-    /**
-     * the course module id related with the taxonomy
-     *
-     * @var int
-     */
-    private $coursemoduleid;
-
-    /**
-     * the course id related with the taxonomy
-     *
-     * @var int
-     */
-    private $courseid;
-
-    /**
-     * the section id related with the taxonomy
-     *
-     * @var int
-     */
-    private $sectionid;
-
     /**
      * the instance id related with the taxonomy
      *
@@ -69,15 +47,9 @@ class taxonomy {
     /**
      * c'tor of taxonomy (for a specific instance in a course)
      *
-     * @param int $coursemoduleid
-     * @param int $courseid
-     * @param int $sectionid
      * @param int $instanceid
      */
-    public function __construct($coursemoduleid, $courseid, $sectionid, $instanceid) {
-        $this->coursemoduleid = $coursemoduleid;
-        $this->courseid = $courseid;
-        $this->sectionid = $sectionid;
+    public function __construct($instanceid) {
         $this->instanceid = $instanceid;
     }
 
@@ -99,28 +71,52 @@ class taxonomy {
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
     private function get_topics() {
+        if ($this->instanceid === null) {
+            return [];
+        }
         $topics = [];
-        if ($this->coursemoduleid !== null) {
-            global $DB;
-            $sqlstmt = "SELECT b.id, b.title, b.shortname, b.url, a.course,
-                               a.coursemodule, a.instance, a.ranking
-                          FROM {learninggoalwidget_i_topics} a, {learninggoalwidget_topic} b
-                         WHERE a.course = :courseid
-                           AND a.coursemodule = :coursemoduleid
-                           AND a.instance = :instanceid
-                           AND a.topic = b.id
-                      ORDER BY a.ranking";
-            $params = [
-                'courseid' => $this->courseid,
-                'coursemoduleid' => $this->coursemoduleid,
-                'instanceid' => $this->instanceid,
-            ];
-            $topicrecords = $DB->get_records_sql($sqlstmt, $params);
-            foreach ($topicrecords as $topicrecord) {
-                $topic = Topic::from_record($topicrecord);
-                $topics[] = [$topicrecord->ranking, $topicrecord->id, $topic->get_title(), $topic->get_shortname(),
-                $topic->get_url(), $topic->get_goals(), ];
-            }
+        global $DB;
+        $sqlstmt = "SELECT t.id as tid, t.learninggoalwidgetid,
+                           t.title as ttitle, t.shortname as tshortname,
+                           t.url as turl, t.ranking as tranking,
+                           g.id as gid, g.title as gtitle, g.shortname as gshortname,
+                           g.url as gurl, g.ranking as granking
+                      FROM {learninggoalwidget_topics} t
+                 LEFT JOIN {learninggoalwidget_goals} g
+                        ON t.id = g.topicid
+                     WHERE t.learninggoalwidgetid = :instanceid
+                  ORDER BY tranking, granking";
+        $params = [
+            'instanceid' => $this->instanceid,
+        ];
+        $topicrecords = $DB->get_records_sql($sqlstmt, $params);
+        $numrecords = count($topicrecords);
+        if ($numrecords === 0) {
+          return [];
+        }
+        $numtopics = 0;
+        foreach ($topicrecords as $topicrecord) {
+            $topic;
+            if (!$numtopics || $topics[$numtopics - 1]->topicid !== $topicrecord->tid) {
+                $topic = new stdClass;
+                $topic->topicid = $topicrecord->tid;
+                $topic->name = $topicrecord->ttitle;
+                $topic->keyword = $topicrecord->tshortname;
+                $topic->link = $topicrecord->turl;
+                $topic->type = "topic";
+                $topic->children = [];
+                $topics[] = $topic;
+                $numtopics++;
+          } else {
+            $topic = $topics[$numtopics - 1];
+          }
+          $goal = new stdClass;
+          $goal->goalid = $topicrecord->gid;
+          $goal->name = $topicrecord->gtitle;
+          $goal->keyword = $topicrecord->gshortname;
+          $goal->link = $topicrecord->gurl;
+          $goal->type = "goal";
+          $topic->children[] = $goal;
         }
         return $topics;
     }

@@ -59,23 +59,22 @@ class provider implements
     public static function get_metadata(collection $items): collection {
         // The 'block_learninggoals_progress' table stores information about user's learning goal progress.
         $items->add_database_table(
-            'learninggoalwidget_i_userpro',
+            'learninggoalwidget_progs',
             [
-                'course' => 'privacy:metadata:learninggoalwidget_i_userpro:course',
-                'coursemodule' => 'privacy:metadata:learninggoalwidget_i_userpro:coursemodule',
-                'instance' => 'privacy:metadata:learninggoalwidget_i_userpro:instance',
-                'topic' => 'privacy:metadata:learninggoalwidget_i_userpro:topic',
-                'goal' => 'privacy:metadata:learninggoalwidget_i_userpro:goal',
-                'userid' => 'privacy:metadata:learninggoalwidget_i_userpro:userid',
-                'progress' => 'privacy:metadata:learninggoalwidget_i_userpro:progress',
+                'learninggoalwidgetid' => 'privacy:metadata:learninggoalwidget_progs:learninggoalwidgetid',
+                'topicid' => 'privacy:metadata:learninggoalwidget_progs:topicid',
+                'goalid' => 'privacy:metadata:learninggoalwidget_progs:goalid',
+                'userid' => 'privacy:metadata:learninggoalwidget_progs:userid',
+                'progress' => 'privacy:metadata:learninggoalwidget_progs:progress',
             ],
-            'privacy:metadata:learninggoalwidget_i_userpro'
+            'privacy:metadata:learninggoalwidget_progs'
         );
         return $items;
     }
 
     /**
-     * Get the list of contexts where the specified user has attempted a quiz, or been involved with manual marking
+     * Get the list of contexts where the specified user has attempted a quiz,
+     * or been involved with manual marking
      * and/or grading of a quiz.
      *
      * @param  int $userid The user to search.
@@ -85,17 +84,17 @@ class provider implements
         $resultset = new contextlist();
 
         // Users who used the widget and set progress values.
-        $sql = "SELECT c.id
-                  FROM {context} c
-                  JOIN {course_modules} cm
-                    ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-                  JOIN {modules} m
-                    ON m.id = cm.module AND m.name = :modname
-                  JOIN {learninggoalwidget} lgw
-                    ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup
-                    ON lgwup.instance = lgw.id
-                 WHERE lgwup.userid = :userid";
+        $sql = "SELECT DISTINCT c.id
+                           FROM {context} c
+                           JOIN {course_modules} cm
+                             ON cm.id = c.instanceid
+                           JOIN {modules} m
+                             ON cm.module = m.id
+                           JOIN {learninggoalwidget_progs} p
+                             ON p.learninggoalwidgetid = cm.instance
+                          WHERE c.contextlevel = :contextlevel
+                            AND m.name = :modname
+                            AND p.userid = :userid";
         $params = [
             'contextlevel' => CONTEXT_MODULE,
             'modname' => 'learninggoalwidget',
@@ -114,21 +113,20 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
+        $sql = "SELECT DISTINCT p.userid as userid
+                           FROM {context} c
+                           JOIN {course_modules} cm
+                             ON cm.id = c.instanceid
+                           JOIN {modules} m
+                             ON cm.module = m.id
+                           JOIN {learninggoalwidget_progs} p
+                             ON p.learninggoalwidgetid = cm.instance
+                          WHERE m.name = :modname
+                            AND cm.id = :cmid";
         $params = [
             'cmid' => $context->instanceid,
             'modname' => 'learninggoalwidget',
         ];
-
-        // Users who attempted the quiz.
-        $sql = "SELECT lgwup.userid as userid
-                  FROM {course_modules} cm
-                  JOIN {modules} m
-                    ON m.id = cm.module AND m.name = :modname
-                  JOIN {learninggoalwidget} lgw
-                    ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup
-                    ON lgwup.instance = lgw.id
-                 WHERE cm.id = :cmid";
         $userlist->add_from_sql('userid', $sql, $params);
 
         \core_question\privacy\provider::get_users_in_context_from_sql($userlist, 'lgw', $sql, $params);
@@ -150,8 +148,7 @@ class provider implements
         $userid = $user->id;
         list($contextsql, $contextparams) = $DB->get_in_or_equal($contextlist->get_contextids(), SQL_PARAMS_NAMED);
 
-        $sql = "SELECT lgwup.course AS course,
-                       lgwup.instance AS instance,
+        $sql = "SELECT lgwup.learninggoalwidgetid AS instance,
                        lgwup.userid AS userid,
                        lgwup.progress AS progress,
                        lgwtopic.title AS topictitle,
@@ -167,14 +164,12 @@ class provider implements
                     ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
             INNER JOIN {modules} m
                     ON m.id = cm.module AND m.name = :modname
-            INNER JOIN {learninggoalwidget} lgw
-                    ON lgw.id = cm.instance
-                  JOIN {learninggoalwidget_i_userpro} lgwup
-                    ON lgwup.instance = lgw.id AND lgwup.userid = :userid
-            RIGHT JOIN {learninggoalwidget_topic} lgwtopic
-                    ON lgwup.topic = lgwtopic.id
-            RIGHT JOIN {learninggoalwidget_goal} lgwgoal
-                    ON lgwup.goal = lgwgoal.id AND lgwup.topic = lgwgoal.topic
+                  JOIN {learninggoalwidget_progs} lgwup
+                    ON lgwup.learninggoalwidgetid = cm.instance AND lgwup.userid = :userid
+            RIGHT JOIN {learninggoalwidget_topics} lgwtopic
+                    ON lgwup.topicid = lgwtopic.id
+            RIGHT JOIN {learninggoalwidget_goals} lgwgoal
+                    ON lgwup.goalid = lgwgoal.id AND lgwup.topicid = lgwgoal.topic
                  WHERE c.id {$contextsql}";
 
         $params = [
@@ -190,7 +185,6 @@ class provider implements
         foreach ($progressrecords as $progressrecord) {
             $context = $contextlist->current();
             $progress = new stdClass;
-            $progress->course = format_string($progressrecord->course);
             $progress->instance = format_string($progressrecord->instance);
             $progress->topictitle = format_string($progressrecord->topictitle);
             $progress->goaltitle = format_string($progressrecord->goaltitle);
@@ -221,17 +215,8 @@ class provider implements
             return;
         }
 
-        $DB->delete_records('learninggoalwidget_i_userpro', [
-            'coursemodule' => $cm->id,
-            'instance' => $cm->instance,
-        ]);
-        $DB->delete_records('learninggoalwidget_i_goals', [
-            'coursemodule' => $cm->id,
-            'instance' => $cm->instance,
-        ]);
-        $DB->delete_records('learninggoalwidget_i_topics', [
-            'coursemodule' => $cm->id,
-            'instance' => $cm->instance,
+        $DB->delete_records('learninggoalwidget_progs', [
+            'learninggoalwidgetid' => $cm->instance,
         ]);
     }
 
@@ -257,9 +242,8 @@ class provider implements
             // Fetch the details of the data to be removed.
             $user = $contextlist->get_user();
 
-            $DB->delete_records('learninggoalwidget_i_userpro', [
-                'coursemodule' => $cm->id,
-                'instance' => $cm->instance,
+            $DB->delete_records('learninggoalwidget_progs', [
+                'learninggoalwidgetid' => $cm->instance,
                 'userid' => $user->id,
             ]);
         }
@@ -289,9 +273,8 @@ class provider implements
         $userids = $userlist->get_userids();
 
         foreach ($userids as $userid) {
-            $DB->delete_records('learninggoalwidget_i_userpro', [
-                'coursemodule' => $cm->id,
-                'instance' => $cm->instance,
+            $DB->delete_records('learninggoalwidget_progs', [
+                'learninggoalwidgetid' => $cm->instance,
                 'userid' => $userid,
             ]);
         }
