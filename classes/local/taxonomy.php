@@ -76,7 +76,9 @@ class taxonomy {
         }
         $topics = [];
         global $DB;
-        $sqlstmt = "SELECT g.id as gid, t.id as tid, t.learninggoalwidgetid,
+        // CONCAT to create unique column
+        $sqlstmt = "SELECT CONCAT(IFNULL(t.id, 'miss'), '-', IFNULL(g.id, 'miss')) as id,
+                           g.id as gid, t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
                            t.url as turl, t.ranking as tranking,
                            g.title as gtitle, g.shortname as gshortname,
@@ -109,6 +111,9 @@ class taxonomy {
                 $numtopics++;
             } else {
                 $topic = $topics[$numtopics - 1];
+            }
+            if ($topicrecord->gid === null) {
+                continue;
             }
             $goal = new stdClass;
             $goal->goalid = $topicrecord->gid;

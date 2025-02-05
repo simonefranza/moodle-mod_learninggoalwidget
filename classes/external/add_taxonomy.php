@@ -89,11 +89,11 @@ class add_taxonomy extends \core_external\external_api {
         $intaxonomy = json_decode($taxonomy);
 
         foreach ($intaxonomy->children as $topic) {
-            $topicid = insert_topic::execute($instance,
-                $topic->name, $topic->keyword, $topic->link);
+            $topicid = insert_topic::execute($instance, $topic->name,
+                $topic->keyword, $topic->link);
             foreach ($topic->children as $goal) {
-                insert_goal::execute($course, $coursemodule, $instance,
-                    $topicid, $goal->name, $goal->keyword, $goal->link);
+                insert_goal::execute($instance, $topicid, $goal->name,
+                    $goal->keyword, $goal->link);
             }
         }
 

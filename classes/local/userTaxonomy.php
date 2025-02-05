@@ -85,7 +85,9 @@ class userTaxonomy {
         }
         $topics = [];
         global $DB;
-        $sqlstmt = "SELECT p.id as pid, t.id as tid, t.learninggoalwidgetid,
+        // CONCAT to create unique column
+        $sqlstmt = "SELECT CONCAT(IFNULL(t.id, 'miss'), '-', IFNULL(g.id, 'miss'), '-', IFNULL(p.id, 'miss')) as id,
+                           t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
                            t.url as turl, t.ranking as tranking,
                            g.id as gid, g.title as gtitle, g.shortname as gshortname,
@@ -95,9 +97,8 @@ class userTaxonomy {
                  LEFT JOIN {learninggoalwidget_goals} g
                         ON t.id = g.topicid
                  LEFT JOIN {learninggoalwidget_progs} p
-                        ON g.id = p.goalid
+                        ON g.id = p.goalid AND p.userid = :userid
                      WHERE t.learninggoalwidgetid = :instanceid
-                       AND p.userid = :userid
                   ORDER BY tranking, granking";
         $params = [
             'instanceid' => $this->instanceid,
@@ -124,13 +125,16 @@ class userTaxonomy {
             } else {
                 $topic = $topics[$numtopics - 1];
             }
+            if ($topicrecord->gid === null) {
+              continue;
+            }
             $goal = new stdClass;
             $goal->goalid = $topicrecord->gid;
             $goal->name = $topicrecord->gtitle;
             $goal->keyword = $topicrecord->gshortname;
             $goal->link = $topicrecord->gurl;
             $goal->type = "goal";
-            $goal->pro = $topicrecord->progress;
+            $goal->pro = $topicrecord->progress ?? 0;
             $topic->children[] = $goal;
         }
         return $topics;

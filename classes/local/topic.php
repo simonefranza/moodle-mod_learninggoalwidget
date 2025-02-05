@@ -115,4 +115,41 @@ class topic {
     public function get_goals() {
         return $this->goals;
     }
+
+    /**
+     * returns the topic DB entry given an id
+     *
+     * @param int id
+     * @return dbentry
+     */
+    public static function get_db_entry_by_id($id) {
+        global $DB;
+        $sqlstmt = "SELECT *
+                      FROM {learninggoalwidget_topics}
+                     WHERE id = :id";
+        $params = [
+            'id' => $id,
+        ];
+        return $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
+    }
+
+    /**
+     * returns the topic DB entry given the learninggoalwidgetid and ranking
+     *
+     * @param int learninggoalwidgetid
+     * @param int ranking
+     * @return dbentry
+     */
+    public static function get_db_entry_by_ranking($learninggoalwidgetid, $ranking) {
+        global $DB;
+        $sqlstmt = "SELECT *
+                      FROM {learninggoalwidget_topics}
+                     WHERE learninggoalwidgetid = :instance
+                       AND ranking = :ranking";
+        $params = [
+            'instance' => $learninggoalwidgetid,
+            'ranking' => $ranking,
+        ];
+        return $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
+    }
 }

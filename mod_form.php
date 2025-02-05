@@ -118,13 +118,14 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
         }
         $topicsnochild = '';
         foreach ($jsontaxonomy->children as $topic) {
-            if (count($topic[5]) == 0) {
-                if ($topicsnochild === '') {
-                    $topicsnochild .= "'" . $topic[2] . "'";
-                } else {
-                    $topicsnochild .= ", '" . $topic[2] . "'";
-                }
+            if (count($topic->children) != 0) {
+                continue;
             }
+            if ($topicsnochild !== '') {
+                $topicsnochild .= ", '";
+            }
+            $topicsnochild .= "'" . $topic->name . "'";
+
         }
         if ($topicsnochild !== '') {
             $errors["errorfield"] = get_string('validation:missinggoal', 'mod_learninggoalwidget', $topicsnochild);

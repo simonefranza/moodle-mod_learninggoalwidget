@@ -46,8 +46,6 @@ class insert_goal extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
                 'goalname' => new external_value(PARAM_TEXT, 'goal name'),
@@ -68,16 +66,14 @@ class insert_goal extends \core_external\external_api {
     /**
      * Insert a new goal in the goal table
      *
-     * @param  [int] $course
-     * @param  [int] $coursemodule
-     * @param  [int] $instance
-     * @param  [int] $topicid
-     * @param  [string] $goalname
-     * @param  [string] $goalshortname
-     * @param  [string] $goalurl
+     * @param number $instance
+     * @param number $topicid
+     * @param string $goalname
+     * @param string $goalshortname
+     * @param string $goalurl
      * @return int goal_id
      */
-    public static function execute($course, $coursemodule, $instance, $topicid, $goalname, $goalshortname, $goalurl) {
+    public static function execute($instance, $topicid, $goalname, $goalshortname, $goalurl) {
         global $USER;
         global $DB;
 
@@ -85,8 +81,6 @@ class insert_goal extends \core_external\external_api {
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'goalname' => $goalname,
@@ -97,40 +91,27 @@ class insert_goal extends \core_external\external_api {
 
         self::validate_context(\context_user::instance($USER->id));
 
+        // Find max existing ranking.
+        $sqlstmt = "SELECT MAX(ranking) as maxranking
+                      FROM {learninggoalwidget_goals}
+                     WHERE learninggoalwidgetid = :instance";
+        $params = [
+            'instance' => $instance,
+        ];
+        $maxrankingrecord = $DB->get_record_sql($sqlstmt, $params);
+
         // Insert in goal table.
-        $goalrecord = new \stdClass;
+        $goalrecord = new stdClass;
+        $goalrecord->learninggoalwidgetid = $instance;
+        $goalrecord->topicid = $topicid;
         $goalrecord->title = $goalname;
         $goalrecord->shortname = $goalshortname;
         $goalrecord->url = $goalurl;
-        $goalrecord->topic = $topicid;
-        $goalrecord->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord);
 
-        // Link goal with learning goal activity in a course.
-        $goalinstancerecord = new \stdClass;
-        $goalinstancerecord->course = $course;
-        $goalinstancerecord->coursemodule = $coursemodule;
-        $goalinstancerecord->instance = $instance;
-        $goalinstancerecord->topic = $topicid;
-        $goalinstancerecord->goal = $goalrecord->id;
-        $goalinstancerecord->ranking = 1;
-        $sqlstmt = "SELECT MAX(ranking) as maxranking
-                      FROM {learninggoalwidget_i_goals}
-                     WHERE course = :course
-                       AND coursemodule = :coursemodule
-                       AND instance = :instance
-                       AND topic = :topicid";
-        $params = [
-            'course' => $course,
-            'coursemodule' => $coursemodule,
-            'instance' => $instance,
-            'topicid' => $topicid,
-        ];
-        $goalcountrecord = $DB->get_record_sql($sqlstmt, $params);
-        if ($goalcountrecord) {
-            $goalinstancerecord->ranking = $goalcountrecord->maxranking + 1;
-        }
-        $goalinstancerecord->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord);
+        $goalrecord->ranking = $maxrankingrecord ? $maxrankingrecord->maxranking + 1 : 1;
 
-        return $goalinstancerecord->id;
+        $goalrecord->id = $DB->insert_record('learninggoalwidget_goals', $goalrecord);
+
+        return $goalrecord->id;
     }
 }

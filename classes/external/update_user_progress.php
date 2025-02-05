@@ -108,13 +108,14 @@ class update_user_progress extends \core_external\external_api {
 
         if ($userprogressrecord) {
             $userprogress->id = $userprogressrecord->id;
+            $DB->update_record('learninggoalwidget_progs', $userprogress);
         } else {
             $userprogress->learninggoalwidgetid = $instanceid;
             $userprogress->topicid = $topicid;
             $userprogress->goalid = $goalid;
             $userprogress->userid = $userid;
+            $DB->insert_record('learninggoalwidget_progs', $userprogress);
         }
-        $DB->update_record('learninggoalwidget_progs', $userprogress);
 
         return get_taxonomy_for_user::execute($instanceid, $userid);
     }
