@@ -47,8 +47,6 @@ class log_event extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'courseid' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemoduleid' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instanceid' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'userid' => new external_value(PARAM_INT, 'ID of the user'),
                 'eventparams' => new external_multiple_structure(
@@ -74,19 +72,15 @@ class log_event extends \core_external\external_api {
     /**
      * Save an event in the moodle logstore
      *
-     * @param [int] $courseid
-     * @param [int] $coursemoduleid
-     * @param [int] $instanceid
-     * @param [int] $userid
-     * @param [int] $eventparams
+     * @param number $instanceid
+     * @param number $userid
+     * @param object $eventparams
      * @return bool
      */
-    public static function execute($courseid, $coursemoduleid, $instanceid, $userid, $eventparams) {
+    public static function execute($instanceid, $userid, $eventparams) {
         $params = self::validate_parameters(
             self::execute_parameters(),
             [
-                'courseid' => $courseid,
-                'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
                 'userid' => $userid,
                 'eventparams' => $eventparams,

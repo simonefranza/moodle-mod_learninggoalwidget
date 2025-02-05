@@ -46,8 +46,6 @@ class insert_topic extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'topicname' => new external_value(PARAM_TEXT, 'topic name'),
                 'topicshortname' => new external_value(PARAM_TEXT, 'topic shortname'),
@@ -67,15 +65,13 @@ class insert_topic extends \core_external\external_api {
      * Insert a new topic in the topic table and reference it with course and
      * ranking from topic instance table
      *
-     * @param  int $course
-     * @param  int $coursemodule
-     * @param  int $instance
-     * @param  string $topicname
-     * @param  string $topicshortname
-     * @param  string $topicurl
+     * @param number $instance
+     * @param string $topicname
+     * @param string $topicshortname
+     * @param string $topicurl
      * @return int topic_id
      */
-    public static function execute($course, $coursemodule, $instance, $topicname, $topicshortname, $topicurl) {
+    public static function execute($instance, $topicname, $topicshortname, $topicurl) {
         global $USER;
         global $DB;
 
@@ -83,8 +79,6 @@ class insert_topic extends \core_external\external_api {
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicname' => $topicname,
                 'topicshortname' => $topicshortname,
@@ -94,35 +88,23 @@ class insert_topic extends \core_external\external_api {
 
         self::validate_context(\context_user::instance($USER->id));
 
+        // Find max existing ranking.
+        $sqlstmt = "SELECT MAX(ranking) as maxranking
+                      FROM {learninggoalwidget_topics}
+                     WHERE learninggoalwidgetid = :instance";
+        $params = [
+            'instance' => $instance,
+        ];
+        $maxrankingrecord = $DB->get_record_sql($sqlstmt, $params);
         // Insert in topic table.
-        $topicrecord = new \stdClass;
+        $topicrecord = new stdClass;
+        $topicrecord->learninggoalwidgetid = $instance;
         $topicrecord->title = $topicname;
         $topicrecord->shortname = $topicshortname;
         $topicrecord->url = $topicurl;
-        $topicrecord->id = $DB->insert_record('learninggoalwidget_topic', $topicrecord);
 
-        // Link topic with learning goal activity in a course.
-        $topicinstancerecord = new \stdClass;
-        $topicinstancerecord->course = $course;
-        $topicinstancerecord->coursemodule = $coursemodule;
-        $topicinstancerecord->instance = $instance;
-        $topicinstancerecord->topic = $topicrecord->id;
-        $topicinstancerecord->ranking = 1;
-        $sqlstmt = "SELECT MAX(ranking) as maxranking
-                      FROM {learninggoalwidget_i_topics}
-                     WHERE course = :course
-                       AND coursemodule = :coursemodule
-                       AND instance = :instance";
-        $params = [
-            'course' => $course,
-            'coursemodule' => $coursemodule,
-            'instance' => $instance,
-        ];
-        $topiccountrecord = $DB->get_record_sql($sqlstmt, $params);
-        if ($topiccountrecord) {
-            $topicinstancerecord->ranking = $topiccountrecord->maxranking + 1;
-        }
-        $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
+        $topicrecord->ranking = $maxrankingrecord ? $maxrankingrecord->maxranking + 1 : 1;
+        $topicrecord->id = $DB->insert_record('learninggoalwidget_topics', $topicrecord);
         return $topicrecord->id;
     }
 }

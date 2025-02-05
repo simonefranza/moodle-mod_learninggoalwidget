@@ -104,6 +104,6 @@ class update_topic extends \core_external\external_api {
         $topicrecord->url = $topicurl;
         $DB->update_record('learninggoalwidget_topic', $topicrecord);
 
-        return get_taxonomy::execute($course, $coursemodule, $instance);
+        return get_taxonomy::execute($instance);
     }
 }

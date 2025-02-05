@@ -154,6 +154,6 @@ class moveup_goal extends \core_external\external_api {
         $DB->update_record('learninggoalwidget_i_goals', $goalmoveup);
         $DB->update_record('learninggoalwidget_i_goals', $goalmovedown);
 
-        return get_taxonomy::execute($course, $coursemodule, $instance);
+        return get_taxonomy::execute($instance);
     }
 }

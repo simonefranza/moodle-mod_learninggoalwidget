@@ -226,8 +226,6 @@ define(
         .then(([modal, topicName, topicShortname, topicUrl]) => {
           // Make insert topic call
           return Promise.all([modal, Controller.insertTopic({
-            course: course,
-            coursemodule: coursemodule,
             instance: instance,
             topicname: topicName,
             topicshortname: topicShortname,
@@ -1021,8 +1019,6 @@ ${isLast ? '\n\n' : '\n'}`;
               $("#learninggoals-list").children().remove();
               jsonTaxonomy = await new Promise((resolve, reject) => {
                 Controller.addTaxonomy({
-                  course: course,
-                  coursemodule: coursemodule,
                   instance: instance,
                   taxonomy: JSON.stringify(parsed),
                 })

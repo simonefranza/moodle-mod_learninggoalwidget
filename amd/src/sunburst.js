@@ -74,7 +74,7 @@ define(
         });
 
         // Request learning goals taxonomy
-        Controller.getLearningGoals({courseid: courseid, userid: userid, coursemoduleid: coursemoduleid, instanceid: instanceid})
+        Controller.getLearningGoals({instanceid: instanceid, userid: userid})
             .then((jsonLearningGoals) => {
 
                     var loadedTaxonomy = JSON.parse(jsonLearningGoals);
@@ -103,7 +103,7 @@ define(
 
             // Log overview click event
             var learningGoalEvent = createLearningGoalEvent("clickedOverview", courseid, coursemoduleid, instanceid, userid);
-            logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
+            logLearningGoalEvent(instanceid, userid, learningGoalEvent);
         };
 
         document.getElementById(sunburstId + "-ClickedPreparation").onclick = function() {
@@ -118,7 +118,7 @@ define(
 
             // Log preparation click event
             var learningGoalEvent = createLearningGoalEvent("clickedPreparation", courseid, coursemoduleid, instanceid, userid);
-            logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
+            logLearningGoalEvent(instanceid, userid, learningGoalEvent);
         };
 
         // Setting the visualisation container to fit nicely ;)
@@ -567,7 +567,7 @@ define(
                                 eventLinkParam.name = "url";
                                 eventLinkParam.value = d.data.link;
                                 learningGoalEvent.push(eventLinkParam);
-                                logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
+                                logLearningGoalEvent(instanceid, userid, learningGoalEvent);
                             }
 
                             const sunburstClickEvent = new CustomEvent('sunburstclick', {
@@ -1311,8 +1311,6 @@ define(
         // Learninggoals webservice: save the learning goal progress for a learning goal
         Controller.updateUserProgress(
             {
-                courseid: courseid,
-                coursemoduleid: coursemoduleid,
                 instanceid: instanceid,
                 userid: userid,
                 topicid: topicId,
@@ -1353,22 +1351,18 @@ define(
         eventGoalProgressParam.value = goalProgressValue;
         learningGoalEvent.push(eventGoalParam);
         learningGoalEvent.push(eventGoalProgressParam);
-        logLearningGoalEvent(courseid, coursemoduleid, instanceid, userid, learningGoalEvent);
+        logLearningGoalEvent(instanceid, userid, learningGoalEvent);
     };
 
     /**
      * Logs learning goal events into moodles standard log store
-     * @param {*} courseid The course ID
-     * @param {*} coursemoduleid The course module ID
      * @param {*} instanceid The course module instance ID
      * @param {*} userid The user ID
      * @param {*} eventParams The learning goal event parameters
      */
-    var logLearningGoalEvent = function(courseid, coursemoduleid, instanceid, userid, eventParams) {
+    var logLearningGoalEvent = function(instanceid, userid, eventParams) {
         Controller.logEvent(
             {
-                courseid: courseid,
-                coursemoduleid: coursemoduleid,
                 instanceid: instanceid,
                 userid: userid,
                 eventparams: eventParams

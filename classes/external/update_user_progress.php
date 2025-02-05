@@ -46,8 +46,6 @@ class update_user_progress extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'courseid' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemoduleid' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instanceid' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'userid' => new external_value(PARAM_INT, 'ID of the user'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
@@ -68,23 +66,19 @@ class update_user_progress extends \core_external\external_api {
     /**
      * Updates the progress of a learning goal for the chosen user
      *
-     * @param [int] $courseid
-     * @param [int] $coursemoduleid
-     * @param [int] $instanceid
-     * @param [int] $userid
-     * @param [int] $topicid
-     * @param [int] $goalid
-     * @param [int] $progress
+     * @param number $instanceid
+     * @param number $userid
+     * @param number $topicid
+     * @param number $goalid
+     * @param number $progress
      * @return [string] taxonomy
      */
-    public static function execute($courseid, $coursemoduleid, $instanceid, $userid, $topicid, $goalid, $progress) {
+    public static function execute($instanceid, $userid, $topicid, $goalid, $progress) {
         global $USER, $DB;
 
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'courseid' => $courseid,
-                'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
                 'userid' => $userid,
                 'topicid' => $topicid,
@@ -96,39 +90,32 @@ class update_user_progress extends \core_external\external_api {
         self::validate_context(\context_user::instance($USER->id));
 
         $sqlstmt = "SELECT id
-                      FROM {learninggoalwidget_i_userpro}
-                     WHERE course = :courseid
-                       AND coursemodule = :coursemoduleid
-                       AND instance = :instanceid
+                      FROM {learninggoalwidget_progs}
+                     WHERE learninggoalwidgetid = :instanceid
                        AND userid = :userid
-                       AND topic = :topicid
-                       AND goal = :goalid";
+                       AND topicid = :topicid
+                       AND goalid = :goalid";
         $params = [
-            'courseid' => $courseid,
-            'coursemoduleid' => $coursemoduleid,
             'instanceid' => $instanceid,
             'userid' => $userid,
             'topicid' => $topicid,
             'goalid' => $goalid,
         ];
         $userprogressrecord = $DB->get_record_sql($sqlstmt, $params);
-        if ($userprogressrecord) {
-            $userprogress = new \stdClass;
-            $userprogress->id = $userprogressrecord->id;
-            $userprogress->progress = $progress;
-            $DB->update_record('learninggoalwidget_i_userpro', $userprogress);
-        } else {
-            $userprogress = new \stdClass;
-            $userprogress->course = $courseid;
-            $userprogress->coursemodule = $coursemoduleid;
-            $userprogress->instance = $instanceid;
-            $userprogress->topic = $topicid;
-            $userprogress->goal = $goalid;
-            $userprogress->userid = $userid;
-            $userprogress->progress = $progress;
-            $DB->insert_record('learninggoalwidget_i_userpro', $userprogress);
-        }
 
-        return get_taxonomy_for_user::execute($courseid, $userid, $coursemoduleid, $instanceid);
+        $userprogress = new stdClass;
+        $userprogress->progress = $progress;
+
+        if ($userprogressrecord) {
+            $userprogress->id = $userprogressrecord->id;
+        } else {
+            $userprogress->learninggoalwidgetid = $instanceid;
+            $userprogress->topicid = $topicid;
+            $userprogress->goalid = $goalid;
+            $userprogress->userid = $userid;
+        }
+        $DB->update_record('learninggoalwidget_progs', $userprogress);
+
+        return get_taxonomy_for_user::execute($instanceid, $userid);
     }
 }

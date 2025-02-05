@@ -47,10 +47,8 @@ class get_taxonomy_for_user extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'courseid' => new external_value(PARAM_INT, 'ID of the course'),
-                'userid' => new external_value(PARAM_INT, 'ID of the logged in user'),
-                'coursemoduleid' => new external_value(PARAM_INT, ''),
                 'instanceid' => new external_value(PARAM_INT, ''),
+                'userid' => new external_value(PARAM_INT, 'ID of the logged in user'),
             ]
         );
     }
@@ -66,28 +64,24 @@ class get_taxonomy_for_user extends \core_external\external_api {
     /**
      * Get taxonomy as JSON for a user
      *
-     * @param [type] $courseid
-     * @param [type] $userid
-     * @param [type] $coursemoduleid
-     * @param [type] $instanceid
+     * @param number $instanceid
+     * @param number $userid
      * @return void
      */
-    public static function execute($courseid, $userid, $coursemoduleid, $instanceid) {
+    public static function execute($instanceid, $userid) {
         global $USER;
 
         // Parameter validation.
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'courseid' => $courseid,
-                'userid' => $userid,
-                'coursemoduleid' => $coursemoduleid,
                 'instanceid' => $instanceid,
+                'userid' => $userid,
             ]
         );
 
         self::validate_context(\context_user::instance($USER->id));
 
-        return (new userTaxonomy($coursemoduleid, $courseid, null, $instanceid, $userid))->get_taxonomy_as_json();
+        return (new userTaxonomy($instanceid, $userid))->get_taxonomy_as_json();
     }
 }

@@ -111,6 +111,6 @@ class delete_taxonomy extends \core_external\external_api {
             $DB->delete_records('learninggoalwidget_goal', ['id' => $goalrecord->goal]);
         }
 
-        return get_taxonomy::execute($course, $coursemodule, $instance);
+        return get_taxonomy::execute($instance);
     }
 }

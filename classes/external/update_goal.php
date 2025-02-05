@@ -106,6 +106,6 @@ class update_goal extends \core_external\external_api {
         $goalrecord->url = $goalurl;
         $DB->update_record('learninggoalwidget_goal', $goalrecord);
 
-        return get_taxonomy::execute($course, $coursemodule, $instance);
+        return get_taxonomy::execute($instance);
     }
 }

@@ -144,6 +144,6 @@ class moveup_topic extends \core_external\external_api {
         $DB->update_record('learninggoalwidget_i_topics', $topicmoveup);
         $DB->update_record('learninggoalwidget_i_topics', $topicmovedown);
 
-        return get_taxonomy::execute($course, $coursemodule, $instance);
+        return get_taxonomy::execute($instance);
     }
 }

@@ -65,11 +65,7 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
           get_string('settings:header', 'mod_learninggoalwidget'));
 
         // Load topics and goals.
-        $taxonomy = new taxonomy(($this->_cm) ? $this->_cm->id : null,
-            ($this->_course != null) ? $this->_course->id : null,
-            $this->_section,
-            $this->_instance,
-        );
+        $taxonomy = new taxonomy($this->_instance);
 
         $jsontaxonomy = addslashes($taxonomy->get_taxonomy_as_json());
 
@@ -114,11 +110,7 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        $taxonomy = new taxonomy(($this->_cm) ? $this->_cm->id : null,
-            ($this->_course != null) ? $this->_course->id : null,
-            $this->_section,
-            $this->_instance,
-        );
+        $taxonomy = new taxonomy($this->_instance);
         $jsontaxonomy = json_decode($taxonomy->get_taxonomy_as_json());
 
         if (count($jsontaxonomy->children) == 0) {

@@ -47,8 +47,6 @@ class get_taxonomy extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the coursemodule'),
                 'instance' => new external_value(PARAM_INT, 'ID of the instance'),
             ]
         );
@@ -65,17 +63,13 @@ class get_taxonomy extends \core_external\external_api {
     /**
      * Get the taxonomy
      *
-     * @param int $course
-     * @param int $coursemodule
      * @param int $instance
      * @return string
      */
-    public static function execute($course, $coursemodule, $instance) {
+    public static function execute($instance) {
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
             ]
         );
