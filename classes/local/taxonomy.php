@@ -107,16 +107,16 @@ class taxonomy {
                 $topic->children = [];
                 $topics[] = $topic;
                 $numtopics++;
-          } else {
-            $topic = $topics[$numtopics - 1];
-          }
-          $goal = new stdClass;
-          $goal->goalid = $topicrecord->gid;
-          $goal->name = $topicrecord->gtitle;
-          $goal->keyword = $topicrecord->gshortname;
-          $goal->link = $topicrecord->gurl;
-          $goal->type = "goal";
-          $topic->children[] = $goal;
+            } else {
+                $topic = $topics[$numtopics - 1];
+            }
+            $goal = new stdClass;
+            $goal->goalid = $topicrecord->gid;
+            $goal->name = $topicrecord->gtitle;
+            $goal->keyword = $topicrecord->gshortname;
+            $goal->link = $topicrecord->gurl;
+            $goal->type = "goal";
+            $topic->children[] = $goal;
         }
         return $topics;
     }

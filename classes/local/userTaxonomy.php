@@ -106,7 +106,7 @@ class userTaxonomy {
         $topicrecords = $DB->get_records_sql($sqlstmt, $params);
         $numrecords = count($topicrecords);
         if ($numrecords === 0) {
-          return [];
+            return [];
         }
         $numtopics = 0;
         foreach ($topicrecords as $topicrecord) {
@@ -122,7 +122,7 @@ class userTaxonomy {
                 $topics[] = $topic;
                 $numtopics++;
             } else {
-              $topic = $topics[$numtopics - 1];
+                $topic = $topics[$numtopics - 1];
             }
             $goal = new stdClass;
             $goal->goalid = $topicrecord->gid;
