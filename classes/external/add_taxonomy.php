@@ -46,8 +46,6 @@ class add_taxonomy extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'taxonomy' => new external_value(PARAM_TEXT, 'The taxonomy in JSON format'),
             ]
@@ -65,20 +63,16 @@ class add_taxonomy extends \core_external\external_api {
     /**
      * Add an entire taxonomy (topics + goals) via a JSON file
      *
-     * @param int $course
-     * @param int $coursemodule
      * @param int $instance
      * @param string $taxonomy
      * @return string
      */
-    public static function execute($course, $coursemodule, $instance, $taxonomy) {
+    public static function execute($instance, $taxonomy) {
         global $USER;
 
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'taxonomy' => $taxonomy,
             ]
