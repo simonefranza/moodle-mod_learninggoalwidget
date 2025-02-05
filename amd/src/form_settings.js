@@ -643,10 +643,6 @@ define(
 
       // Make move up goal call
       Controller.moveUpGoal({
-        course: course,
-        coursemodule: coursemodule,
-        instance: instance,
-        topicid: topicId,
         goalid: goalId
       })
         .then((jsonTaxonomy) => {
