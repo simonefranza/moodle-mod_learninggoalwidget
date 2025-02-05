@@ -76,7 +76,7 @@ class taxonomy {
         }
         $topics = [];
         global $DB;
-        // CONCAT to create unique column
+        // CONCAT to create unique column.
         $sqlstmt = "SELECT CONCAT(IFNULL(t.id, 'miss'), '-', IFNULL(g.id, 'miss')) as id,
                            g.id as gid, t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
@@ -94,7 +94,7 @@ class taxonomy {
         $topicrecords = $DB->get_records_sql($sqlstmt, $params);
         $numrecords = count($topicrecords);
         if ($numrecords === 0) {
-          return [];
+            return [];
         }
         $numtopics = 0;
         foreach ($topicrecords as $topicrecord) {
