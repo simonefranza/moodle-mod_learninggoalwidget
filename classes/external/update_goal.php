@@ -46,10 +46,7 @@ class update_goal extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
-                'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
                 'goalid' => new external_value(PARAM_INT, 'ID of the goal'),
                 'goalname' => new external_value(PARAM_TEXT, 'goal name'),
                 'goalshortname' => new external_value(PARAM_TEXT, 'goal shortname'),
@@ -69,26 +66,20 @@ class update_goal extends \core_external\external_api {
     /**
      * Update a goal in the goal table
      *
-     * @param [int] $course
-     * @param [int] $coursemodule
-     * @param [int] $instance
-     * @param [int] $topicid
-     * @param [int] $goalid
-     * @param [string] $goalname
-     * @param [string] $goalshortname
-     * @param [string] $goalurl
-     * @return [string] taxonomy
+     * @param number $instance
+     * @param number $goalid
+     * @param string $goalname
+     * @param string $goalshortname
+     * @param string $goalurl
+     * @return string taxonomy
      */
-    public static function execute($course, $coursemodule, $instance, $topicid, $goalid, $goalname, $goalshortname, $goalurl) {
+    public static function execute($instance, $goalid, $goalname, $goalshortname, $goalurl) {
         global $USER, $DB;
 
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
-                'topicid' => $topicid,
                 'goalid' => $goalid,
                 'goalname' => $goalname,
                 'goalshortname' => $goalshortname,
@@ -101,10 +92,11 @@ class update_goal extends \core_external\external_api {
         // Update in goal table.
         $goalrecord = new \stdClass;
         $goalrecord->id = $goalid;
+        $goalrecord->learninggoalwidgetid = $instance;
         $goalrecord->title = $goalname;
         $goalrecord->shortname = $goalshortname;
         $goalrecord->url = $goalurl;
-        $DB->update_record('learninggoalwidget_goal', $goalrecord);
+        $DB->update_record('learninggoalwidget_goals', $goalrecord);
 
         return get_taxonomy::execute($instance);
     }
