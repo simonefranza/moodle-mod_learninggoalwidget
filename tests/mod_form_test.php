@@ -41,11 +41,10 @@ use core_external\external_api;
  *
  * @runTestsInSeparateProcesses
  */
-class mod_form_test extends externallib_advanced_testcase {
+final class mod_form_test extends externallib_advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
      * testing class mod_learninggoalwidget_mod_form
-     *
      * @return void
      */
     public function test_definition() {

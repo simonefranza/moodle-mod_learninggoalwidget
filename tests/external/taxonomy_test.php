@@ -45,11 +45,10 @@ use externallib_advanced_testcase;
  *
  * @runTestsInSeparateProcesses
  */
-class taxonomy_test extends externallib_advanced_testcase {
+final class taxonomy_test extends externallib_advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
      * testing class taxonomy
-     *
      * @return void
      */
     public function test_emptytaxonomy() {

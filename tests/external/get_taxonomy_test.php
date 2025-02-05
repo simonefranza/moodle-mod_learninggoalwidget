@@ -44,7 +44,7 @@ use core_external\external_api;
  *
  * @runTestsInSeparateProcesses
  */
-class get_taxonomy_test extends externallib_advanced_testcase {
+final class get_taxonomy_test extends externallib_advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
      * Test get_taxonomy

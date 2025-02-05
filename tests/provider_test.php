@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Learning Goal Taxonomy Privacy Provider Test
+ * Learning Goal Taxonomy Provider Test
  *
  * @package   mod_learninggoalwidget
  * @copyright 2023 Know Center GmbH
@@ -26,17 +26,15 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+require_once($CFG->dirroot . '/mod/learninggoalwidget/externallib.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use core_external\external_api;
 use core_privacy\tests\provider_testcase;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\contextlist_collection;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\approved_contextlist;
 use mod_learninggoalwidget\privacy\provider;
-use mod_learninggoalwidget\external\update_user_progress;
 
 /**
  * Learning Goal Taxonomy Privacy Provider Test
@@ -44,64 +42,43 @@ use mod_learninggoalwidget\external\update_user_progress;
  * @package   mod_learninggoalwidget
  * @copyright 2023 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
  * @runTestsInSeparateProcesses
  */
-class provider_test extends provider_testcase {
+ginal class provider_test extends provider_testcase {
     use mod_learninggoalwidget\utils;
     /**
-     * helper function, sets up test environment
-     *
-     * @return void
-     */
-    protected function setUp(): void {
-        global $CFG;
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-    }
-    /**
      * testing privacy provider: get metadata
-     *
      * @return void
      */
     public function test_get_metadata() {
         // Reset all changes automatically after this test.
-        $this->setUp();
+        $this->resetAfterTest(true);
         $metadata = provider::get_metadata(new collection('mod_learninggoalwidget'));
         $itemcollection = $metadata->get_collection();
         $this->assertCount(1, $itemcollection);
 
         $item = reset($itemcollection);
-        $this->assertEquals('learninggoalwidget_i_userpro', $item->get_name());
+        $this->assertEquals('learninggoalwidget_progs', $item->get_name());
 
         $privacyfields = $item->get_privacy_fields();
-        $this->assertCount(7, $privacyfields);
-        $this->assertArrayHasKey('course', $privacyfields);
-        $this->assertArrayHasKey('coursemodule', $privacyfields);
-        $this->assertArrayHasKey('instance', $privacyfields);
-        $this->assertArrayHasKey('topic', $privacyfields);
-        $this->assertArrayHasKey('goal', $privacyfields);
+        $this->assertCount(5, $privacyfields);
+        $this->assertArrayHasKey('learninggoalwidgetid', $privacyfields);
+        $this->assertArrayHasKey('topicid', $privacyfields);
+        $this->assertArrayHasKey('goalid', $privacyfields);
         $this->assertArrayHasKey('userid', $privacyfields);
         $this->assertArrayHasKey('progress', $privacyfields);
 
-        $this->assertEquals('privacy:metadata:learninggoalwidget_i_userpro', $item->get_summary());
+        $this->assertEquals('privacy:metadata:learninggoalwidget_progs', $item->get_summary());
     }
     /**
      * testing privacy provider: get contexts for userid
-     *
      * @return void
      */
     public function test_get_contexts_for_userid() {
         // Reset all changes automatically after this test.
-        $this->setUp();
+        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursedata = $res[0];
-        $course = $coursedata[0];
-        $coursemodule = $coursedata[1];
-        $instance = $coursedata[2];
-        $topicrecord = $coursedata[3];
-        $user = $coursedata[7];
-        $goalrecord = $res[1];
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext = \context_module::instance($coursemodule->id);
 
         // The user will be in these contexts.
@@ -109,55 +86,47 @@ class provider_test extends provider_testcase {
             $cmcontext,
         ];
 
-        update_user_progress::execute(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
-            $user->id,
-            $topicrecord->id,
-            $goalrecord->id,
+        mod_learninggoalwidget_external::update_user_progress(
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
 
-        $contextlist = provider::get_contexts_for_userid($user->id);
+        $contextlist = provider::get_contexts_for_userid($res->user->id);
         $this->assertEquals(count($usercontextids), count($contextlist->get_contextids()));
     }
 
     /**
      * Test returning a list of user IDs related to a context (assign).
+     * @return void
      */
     public function test_get_users_in_context() {
         // Reset all changes automatically after this test.
-        $this->setUp();
+        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursedata = $res[0];
-        $course = $coursedata[0];
-        $coursemodule = $coursedata[1];
-        $instance = $coursedata[2];
-        $topicrecord = $coursedata[3];
-        $user1 = $coursedata[7];
-        $goalrecord = $res[1];
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext = \context_module::instance($coursemodule->id);
 
+        $user1 = $res->user;
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
         $user4 = $this->getDataGenerator()->create_user();
         $user5 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user3->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user4->id, $course->id, 'student');
-        $this->getDataGenerator()->enrol_user($user5->id, $course->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($user1->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user3->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user4->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user5->id, $coursemodule->course, 'editingteacher');
 
-        update_user_progress::execute(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
+        mod_learninggoalwidget_external::update_user_progress(
+            $res->instance->id,
             $user1->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->topic1->id,
+            $res->goal->id,
             60,
         );
 
@@ -173,9 +142,10 @@ class provider_test extends provider_testcase {
 
     /**
      * Test exporting data with empty contextlist
+     * @return void
      */
     public function test_empty_export_user_data_student() {
-        $this->setUp();
+        $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
         $approvedlist = new approved_contextlist($user, '', []);
         $this->assertEquals(provider::export_user_data($approvedlist), null);
@@ -183,28 +153,21 @@ class provider_test extends provider_testcase {
 
     /**
      * Test exporting data
+     * @return void
      */
     public function test_export_user_data_student() {
         // Reset all changes automatically after this test.
-        $this->setUp();
+        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursedata = $res[0];
-        $course = $coursedata[0];
-        $coursecontext = \context_course::instance($course->id);
-        $coursemodule = $coursedata[1];
-        $instance = $coursedata[2];
-        $topicrecord = $coursedata[3];
-        $user = $coursedata[7];
-        $goalrecord = $res[1];
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $coursecontext = \context_course::instance($coursemodule->course);
         $cmcontext = \context_module::instance($coursemodule->id);
 
-        update_user_progress::execute(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
-            $user->id,
-            $topicrecord->id,
-            $goalrecord->id,
+        mod_learninggoalwidget_external::update_user_progress(
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
 
@@ -212,7 +175,7 @@ class provider_test extends provider_testcase {
         $this->assertFalse($writer->has_any_data());
 
         // Add the course context as well to make sure there is no error.
-        $approvedlist = new approved_contextlist($user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
+        $approvedlist = new approved_contextlist($res->user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
         provider::export_user_data($approvedlist);
 
         // Check export details.
@@ -226,29 +189,22 @@ class provider_test extends provider_testcase {
 
     /**
      * Test delete all users data wrt training amplifier widget
+     * @return void
      */
     public function test_delete_data_for_all_users_in_context() {
-        $this->setUp();
         global $DB;
 
         // Reset all changes automatically after this test.
+        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursedata = $res[0];
-        $course = $coursedata[0];
-        $coursemodule = $coursedata[1];
-        $instance = $coursedata[2];
-        $topicrecord = $coursedata[3];
-        $user = $coursedata[7];
-        $goalrecord = $res[1];
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext = \context_module::instance($coursemodule->id);
 
-        update_user_progress::execute(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
-            $user->id,
-            $topicrecord->id,
-            $goalrecord->id,
+        mod_learninggoalwidget_external::update_user_progress(
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
 
@@ -256,114 +212,80 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_all_users_in_context($cmcontext);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_i_userpro');
+        $records = $DB->get_records('learninggoalwidget_progs');
         $this->assertEmpty($records);
-        $records = $DB->get_records('learninggoalwidget_i_goals');
-        $this->assertEmpty($records);
-        $records = $DB->get_records('learninggoalwidget_i_topics');
-        $this->assertEmpty($records);
-
-        $widgetinstance1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
-        $coursemodule1 = get_coursemodule_from_instance('quiz', $widgetinstance1->id, $course->id);
-        $cmcontext1 = \context_module::instance($coursemodule1->id);
-        // Delete all user data for this assignment.
-        provider::delete_data_for_all_users_in_context($cmcontext1);
     }
 
     /**
      * A test for deleting all user data for one user.
+     * @return void
      */
     public function test_delete_data_for_user() {
         global $DB;
-        $this->setUp();
 
         // Reset all changes automatically after this test.
+        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursedata = $res[0];
-        $course = $coursedata[0];
-        $coursemodule = $coursedata[1];
-        $instance = $coursedata[2];
-        $topicrecord = $coursedata[3];
-        $user = $coursedata[7];
-        $goalrecord = $res[1];
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $cmcontext = \context_module::instance($coursemodule->id);
-        $coursecontext = \context_course::instance($course->id);
+        $coursecontext = \context_course::instance($coursemodule->course);
 
-        update_user_progress::execute(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
-            $user->id,
-            $topicrecord->id,
-            $goalrecord->id,
+        mod_learninggoalwidget_external::update_user_progress(
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
 
         // Delete user 1's data.
-        $approvedlist = new approved_contextlist($user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
+        $approvedlist = new approved_contextlist($res->user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
         provider::delete_data_for_user($approvedlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['userid' => $user->id]);
+        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $res->user->id]);
         $this->assertEmpty($records);
-
-        $widgetinstance1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
-        $coursemodule1 = get_coursemodule_from_instance('quiz', $widgetinstance1->id, $course->id);
-        $cmcontext1 = \context_module::instance($coursemodule1->id);
-
-        $approvedlist = new approved_contextlist($user, 'quiz', [$cmcontext1->id, $coursecontext->id]);
-        provider::delete_data_for_user($approvedlist);
     }
 
     /**
      * A test for deleting all user data for a bunch of users.
+     * @return void
      */
     public function test_delete_data_for_users() {
         global $DB;
-        $this->setUp();
         // Reset all changes automatically after this test.
+        $this->resetAfterTest(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursedata = $res[0];
-        $course1 = $coursedata[0];
-        $cm = $coursedata[1];
-        $widgetinstance = $coursedata[2];
-        $topicrecord = $coursedata[3];
-        $user1 = $coursedata[7];
-        $goalrecord = $res[1];
-        $cmcontext1 = \context_module::instance($cm->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $cmcontext1 = \context_module::instance($coursemodule->id);
 
+        $user1 = $res->user;
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
 
-        $this->getDataGenerator()->enrol_user($user1->id, $course1->id, 'student');
-        $this->getDataGenerator()->enrol_user($user2->id, $course1->id, 'student');
-        $this->getDataGenerator()->enrol_user($user3->id, $course1->id, 'student');
+        $this->getDataGenerator()->enrol_user($user1->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user2->id, $coursemodule->course, 'student');
+        $this->getDataGenerator()->enrol_user($user3->id, $coursemodule->course, 'student');
 
-        update_user_progress::execute(
-            $course1->id,
-            $cm->id,
-            $widgetinstance->id,
+        mod_learninggoalwidget_external::update_user_progress(
+            $res->instance->id,
             $user1->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->topic1->id,
+            $res->goal->id,
             50,
         );
-        update_user_progress::execute(
-            $course1->id,
-            $cm->id,
-            $widgetinstance->id,
+        mod_learninggoalwidget_external::update_user_progress(
+            $res->instance->id,
             $user2->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->topic1->id,
+            $res->goal->id,
             60,
         );
-        update_user_progress::execute(
-            $course1->id,
-            $cm->id,
-            $widgetinstance->id,
+        mod_learninggoalwidget_external::update_user_progress(
+            $res->instance->id,
             $user3->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $res->topic1->id,
+            $res->goal->id,
             80,
         );
 
@@ -371,18 +293,11 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_users($userlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['userid' => $user2->id]);
+        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $user2->id]);
         $this->assertEmpty($records);
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['userid' => $user3->id]);
+        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $user3->id]);
         $this->assertEmpty($records);
-        $records = $DB->get_records('learninggoalwidget_i_userpro', ['userid' => $user1->id]);
+        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $user1->id]);
         $this->assertNotEmpty($records);
-
-        $widgetinstance2 = $this->getDataGenerator()->create_module('quiz', ['course' => $course1->id]);
-        $coursemodule2 = get_coursemodule_from_instance('quiz', $widgetinstance2->id, $course1->id);
-        $cmcontext2 = \context_module::instance($coursemodule2->id);
-
-        $userlist = new \core_privacy\local\request\approved_userlist($cmcontext2, 'quiz', [$user2->id, $user3->id]);
-        provider::delete_data_for_users($userlist);
     }
 }

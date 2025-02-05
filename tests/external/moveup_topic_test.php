@@ -44,7 +44,7 @@ use core_external\external_api;
  *
  * @runTestsInSeparateProcesses
  */
-class moveup_topic_test extends externallib_advanced_testcase {
+final class moveup_topic_test extends externallib_advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
      * Test moveup_topic

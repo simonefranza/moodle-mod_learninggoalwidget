@@ -44,7 +44,7 @@ use core_external\external_api;
  *
  * @runTestsInSeparateProcesses
  */
-class movedown_goal_test extends externallib_advanced_testcase {
+final class movedown_goal_test extends externallib_advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
      * Test movedown_goal
