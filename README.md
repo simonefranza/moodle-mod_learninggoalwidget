@@ -18,7 +18,7 @@
   </tr>
   <tr>
     <td>Maintainer(s)</td>
-    <td>Alfred Wertner, Simone Franza</td>
+    <td>Simone Franza</td>
   </tr>
 </table>
 

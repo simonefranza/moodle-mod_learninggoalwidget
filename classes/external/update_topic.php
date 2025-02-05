@@ -46,8 +46,6 @@ class update_topic extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'course' => new external_value(PARAM_INT, 'ID of the course'),
-                'coursemodule' => new external_value(PARAM_INT, 'ID of the course module'),
                 'instance' => new external_value(PARAM_INT, 'ID of the course module instance'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
                 'topicname' => new external_value(PARAM_TEXT, 'topic name'),
@@ -68,24 +66,20 @@ class update_topic extends \core_external\external_api {
     /**
      * Update a topic in the topic table
      *
-     * @param  int $course
-     * @param  int $coursemodule
-     * @param  int $instance
-     * @param  int $topicid
-     * @param  string $topicname
-     * @param  string $topicshortname
-     * @param  string $topicurl
+     * @param number $instance
+     * @param number $topicid
+     * @param string $topicname
+     * @param string $topicshortname
+     * @param string $topicurl
      * @return void
      */
-    public static function execute($course, $coursemodule, $instance, $topicid, $topicname, $topicshortname, $topicurl) {
+    public static function execute($instance, $topicid, $topicname, $topicshortname, $topicurl) {
         global $DB, $USER;
 
         // Parameter validation.
         self::validate_parameters(
             self::execute_parameters(),
             [
-                'course' => $course,
-                'coursemodule' => $coursemodule,
                 'instance' => $instance,
                 'topicid' => $topicid,
                 'topicname' => $topicname,
@@ -99,10 +93,11 @@ class update_topic extends \core_external\external_api {
         // Update in topic table.
         $topicrecord = new \stdClass;
         $topicrecord->id = $topicid;
+        $topicrecord->learninggoalwidgetid = $instance;
         $topicrecord->title = $topicname;
         $topicrecord->shortname = $topicshortname;
         $topicrecord->url = $topicurl;
-        $DB->update_record('learninggoalwidget_topic', $topicrecord);
+        $DB->update_record('learninggoalwidget_topics', $topicrecord);
 
         return get_taxonomy::execute($instance);
     }
