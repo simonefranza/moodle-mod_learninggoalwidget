@@ -347,3 +347,10 @@
     fill-opacity: 0;
     opacity: 0;
 }
+
+.learninggoalwidget-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-direction: column;
+}

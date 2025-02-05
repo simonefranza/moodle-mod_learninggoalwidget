@@ -83,6 +83,33 @@ class delete_goal extends \core_external\external_api {
 
         self::validate_context(\context_user::instance($USER->id));
 
+        // Get goal to delete.
+        $params = [
+            'learninggoalwidgetid' => $instance,
+            'topicid' => $topicid,
+            'id' => $goalid,
+        ];
+        $sqlstmt = "SELECT id, topicid, ranking
+                      FROM {learninggoalwidget_goals}
+                     WHERE id = :id
+                       AND topicid = :topicid
+                       AND learninggoalwidgetid = :learninggoalwidgetid";
+        $todelete = $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
+
+        // Get goals to update (need to lower the rankings).
+        $params = [
+            'learninggoalwidgetid' => $instance,
+            'topicid' => $topicid,
+            'ranking' => $todelete->ranking,
+        ];
+        $sqlstmt = "SELECT id, ranking
+                      FROM {learninggoalwidget_goals}
+                     WHERE learninggoalwidgetid = :learninggoalwidgetid
+                       AND topicid = :topicid
+                       AND ranking > :ranking";
+        $toupdategoals = $DB->get_records_sql($sqlstmt, $params);
+
+        // Delete related infos (progresses, goals).
         $params = [
             'learninggoalwidgetid' => $instance,
             'topicid' => $topicid,
@@ -95,6 +122,13 @@ class delete_goal extends \core_external\external_api {
             'topicid' => $topicid,
         ];
         $DB->delete_records('learninggoalwidget_goals', $params);
+
+        // Update other topics
+        foreach ($toupdategoals as $toupdate) {
+            $toupdate->ranking--;
+            $DB->update_record('learninggoalwidget_goals', $toupdate);
+        }
+
 
         return get_taxonomy::execute($instance);
     }
