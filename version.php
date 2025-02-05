@@ -29,5 +29,5 @@ $plugin->requires = 2021051700; // Moodle 4.1 version.
 $plugin->component = 'mod_learninggoalwidget'; // Full name of the plugin (used for diagnostics).
 $plugin->cron = 0;
 $plugin->release = 'v1.1.1';
-$plugin->supported = [405];
+$plugin->supported = [405, 405];
 $plugin->maturity = MATURITY_STABLE;
