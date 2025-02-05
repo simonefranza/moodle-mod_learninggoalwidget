@@ -51,7 +51,7 @@ final class taxonomy_test extends externallib_advanced_testcase {
      * testing class taxonomy
      * @return void
      */
-    public function test_emptytaxonomy() {
+    public function test_emptytaxonomy(): void {
         $this->setUp();
 
         $course1 = $this->getDataGenerator()->create_course();

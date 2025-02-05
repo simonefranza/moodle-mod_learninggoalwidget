@@ -55,7 +55,6 @@ final class provider_test extends provider_testcase {
      */
     protected function setUp(): void {
         parent::setUp();
-        global $CFG;
         $this->resetAfterTest(true);
         $this->setAdminUser();
     }

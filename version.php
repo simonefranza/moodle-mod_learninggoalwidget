@@ -18,16 +18,16 @@
  * learninggoalwidget module version info
  *
  * @package   mod_learninggoalwidget
- * @copyright 2021 Know Center GmbH
+ * @copyright 2025 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024042202; // The current module version (Date: YYYYMMDDXX).
+$plugin->version = 2025020500; // The current module version (Date: YYYYMMDDXX).
 $plugin->requires = 2021051700; // Moodle 4.1 version.
 $plugin->component = 'mod_learninggoalwidget'; // Full name of the plugin (used for diagnostics).
 $plugin->cron = 0;
-$plugin->release = 'v1.1.0';
-$plugin->supported = [402, 403];
+$plugin->release = 'v1.1.1';
+$plugin->supported = [405];
 $plugin->maturity = MATURITY_STABLE;
