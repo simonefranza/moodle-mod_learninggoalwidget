@@ -61,7 +61,7 @@ trait utils {
      */
     protected function insert_topic($instance, $title, $shortname, $url, $ranking) {
         global $DB;
-        $topic = new stdClass;
+        $topic = new \stdClass;
         $topic->learninggoalwidgetid = $instance;
         $topic->title = $title;
         $topic->shortname = $shortname;
@@ -84,7 +84,7 @@ trait utils {
      */
     protected function insert_goal($instance, $topicid, $title, $shortname, $url, $ranking) {
         global $DB;
-        $goal = new stdClass;
+        $goal = new \stdClass;
         $goal->learninggoalwidgetid = $instance;
         $goal->topicid = $topicid;
         $goal->title = $title;
@@ -105,7 +105,7 @@ trait utils {
      * @param [string] $topic2title
      * @param [string] $topic2shortname
      * @param [string] $topic2url
-     * @return stdClass
+     * @return \stdClass
      */
     protected function setup_course_with_topics($topic1title, $topic1shortname, $topic1url,
         $topic2title, $topic2shortname, $topic2url) {
@@ -133,7 +133,7 @@ trait utils {
     /**
      * create course with topics and one learing goal
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function setup_course_and_insert_goals() {
         global $DB;
@@ -200,16 +200,16 @@ trait utils {
             $this->assertIsArray($testedgoals);
 
             foreach ($expectedgoals as $goalidx => $expectedgoal) {
-                $expectedgoalranking = $expectedgoal->ranking;
-                $expectedgoalgoalid = $expectedgoal->goalid;
-                $expectedgoalgoalname = $expectedgoal->name;
-                $expectedgoalshortname = $expectedgoal->keyword;
-                $expectedgoalurl = $expectedgoal->link;
-                $this->assertEquals($expectedgoalranking, $testedgoals[$goalidx]->ranking);
-                $this->assertEquals($expectedgoalgoalid, $testedgoals[$goalidx]->goalid);
-                $this->assertEquals($expectedgoalgoalname, $testedgoals[$goalidx]->name);
-                $this->assertEquals($expectedgoalshortname, $testedgoals[$goalidx]->keyword);
-                $this->assertEquals($expectedgoalurl, $testedgoals[$goalidx]->link);
+                $expectedgranking = $expectedgoal->ranking;
+                $expectedggoalid = $expectedgoal->goalid;
+                $expectedggoalname = $expectedgoal->name;
+                $expectedgshortname = $expectedgoal->keyword;
+                $expectedgurl = $expectedgoal->link;
+                $this->assertEquals($expectedgranking, $testedgoals[$goalidx]->ranking);
+                $this->assertEquals($expectedggoalid, $testedgoals[$goalidx]->goalid);
+                $this->assertEquals($expectedggoalname, $testedgoals[$goalidx]->name);
+                $this->assertEquals($expectedgshortname, $testedgoals[$goalidx]->keyword);
+                $this->assertEquals($expectedgurl, $testedgoals[$goalidx]->link);
             }
         }
     }
@@ -217,10 +217,9 @@ trait utils {
     /**
      * helper function creating an instance
      *
-     * @return stdClass
+     * @return \stdClass
      */
     protected function setup_widget() {
-        global $DB;
         $this->setUp();
 
         $return = new \stdClass;
@@ -238,10 +237,9 @@ trait utils {
      * @param [string] $topictitle
      * @param [string] $topicshortname
      * @param [string] $topicurl
-     * @return stdClass
+     * @return \stdClass
      */
     protected function setup_topic($topictitle, $topicshortname, $topicurl) {
-        global $DB;
         $res = $this->setup_widget();
 
         // Create topic in course.
@@ -262,8 +260,6 @@ trait utils {
      * @return array
      */
     protected function setup_course_and_insert_two_goals() {
-        global $DB;
-
         $res = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",

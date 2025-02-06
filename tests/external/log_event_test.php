@@ -62,7 +62,6 @@ final class log_event_test extends externallib_advanced_testcase {
         set_config('buffersize', 0, 'logstore_standard');
         get_log_manager(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
         $widgetinstance = $res->instance;
         $topicrecord = $res->topic1;
         $user1 = $res->user;
