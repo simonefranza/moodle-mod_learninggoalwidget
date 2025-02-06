@@ -78,7 +78,7 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
         $expectedjson = new \stdClass();
         $expectedjson->name = "Learning Goal's taxonomy";
 
-        $topic1 = new stdClass();
+        $topic1 = new \stdClass();
         $topic1->topicid = $res->topic1->id;
         $topic1->name = "Artificial Intelligence Basics Part 1";
         $topic1->keyword = "AIBasics 1";
@@ -86,7 +86,7 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
         $topic1->ranking = 1;
         $topic1->children = [];
 
-        $topic2 = new stdClass();
+        $topic2 = new \stdClass();
         $topic2->topicid = $res->topic2->id;
         $topic2->name = "Artificial Intelligence Basics Part 2";
         $topic2->keyword = "AIBasics 2";

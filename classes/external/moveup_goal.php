@@ -24,6 +24,7 @@
  */
 
 namespace mod_learninggoalwidget\external;
+use mod_learninggoalwidget\local\goal;
 
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;

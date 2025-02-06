@@ -109,8 +109,6 @@ trait utils {
      */
     protected function setup_course_with_topics($topic1title, $topic1shortname, $topic1url,
         $topic2title, $topic2shortname, $topic2url) {
-        global $DB;
-
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
 
@@ -136,8 +134,6 @@ trait utils {
      * @return \stdClass
      */
     protected function setup_course_and_insert_goals() {
-        global $DB;
-
         $course = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",

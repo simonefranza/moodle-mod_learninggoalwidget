@@ -76,7 +76,7 @@ final class update_topic_test extends externallib_advanced_testcase {
 
         $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1, $update);
 
-        $result = external_api::clean_returnvalue(update_topic::execute_returns(), $result);
+        $update = external_api::clean_returnvalue(update_topic::execute_returns(), $update);
         $this->assertEquals([], $goals);
     }
 }

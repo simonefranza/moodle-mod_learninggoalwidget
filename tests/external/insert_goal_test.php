@@ -78,9 +78,7 @@ final class insert_goal_test extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(insert_goal::execute_returns(), $result);
 
         $result = get_taxonomy::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
+            $resultcourse->instance->id,
         );
 
         $result = external_api::clean_returnvalue(get_taxonomy::execute_returns(), $result);
