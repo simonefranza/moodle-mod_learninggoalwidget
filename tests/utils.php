@@ -282,6 +282,7 @@ trait utils {
             "http://goal1.at",
             1
         );
+
         // Insert goal 2 under topic 1.
         $res->goal2 = $this->insert_goal(
             $res->instance->id,
@@ -291,7 +292,8 @@ trait utils {
             "http://goal2.at",
             2
         );
-        return $res:
+
+        return $res;
     }
 
     /**

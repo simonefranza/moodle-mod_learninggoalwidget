@@ -70,7 +70,7 @@ final class insert_topic_test extends externallib_advanced_testcase {
 
         $result = external_api::clean_returnvalue(insert_topic::execute_returns(), $result);
 
-        $result = get_taxonomy::execute($widgetinstance->id);
+        $result = get_taxonomy::execute($res->instance->id);
 
         $result = external_api::clean_returnvalue(get_taxonomy::execute_returns(), $result);
 

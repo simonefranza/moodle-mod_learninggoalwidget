@@ -63,9 +63,6 @@ final class log_event_test extends externallib_advanced_testcase {
         get_log_manager(true);
         $res = $this->setup_course_and_insert_goals();
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
-        $course1 = $coursemodule->course;
-        $coursecontext = \context_course::instance($coursemodule->course);
-        $cmcontext = \context_module::instance($coursemodule->id);
         $widgetinstance = $res->instance;
         $topicrecord = $res->topic1;
         $user1 = $res->user;

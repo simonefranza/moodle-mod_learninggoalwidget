@@ -57,8 +57,6 @@ final class add_taxonomy_test extends externallib_advanced_testcase {
     public function test_add_taxonomy(): void {
         $res = $this->setup_widget();
 
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
-
         $taxonomy = (object) [
             "name" => "Learning Goal's taxonomy",
             "children" => [

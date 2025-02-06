@@ -107,7 +107,7 @@ final class provider_test extends provider_testcase {
             50,
         );
 
-        $contextlist = provider::get_contexts_for_userid($res->$user->id);
+        $contextlist = provider::get_contexts_for_userid($res->user->id);
         $this->assertEquals(count($usercontextids), count($contextlist->get_contextids()));
     }
 
