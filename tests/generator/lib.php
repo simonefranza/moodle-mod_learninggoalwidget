@@ -41,6 +41,9 @@ class mod_learninggoalwidget_generator extends testing_module_generator {
      */
     public function create_instance($record = null, ?array $options = null) {
         $record = (object) (array) $record;
+        $taxonomy = new \stdClass;
+        $taxonomy->name = "Learning Goal's taxonomy";
+        $taxonomy->children = [];
 
         $defaultsettings = [
             'alwaysshowdescription' => 1,
@@ -62,6 +65,7 @@ class mod_learninggoalwidget_generator extends testing_module_generator {
             'maxattempts' => -1,
             'markingworkflow' => 0,
             'markingallocation' => 0,
+            'taxonomy' => $taxonomy,
         ];
 
         foreach ($defaultsettings as $name => $value) {
