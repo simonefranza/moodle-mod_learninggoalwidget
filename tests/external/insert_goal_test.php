@@ -87,14 +87,13 @@ final class insert_goal_test extends externallib_advanced_testcase {
 
         $result = external_api::clean_returnvalue(get_taxonomy::execute_returns(), $result);
 
-        $this->check_updatetopic(
+        $goals = $this->check_topic(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
+            1,
             $result
         );
-
-        $goals = $this->check_updatetopic_getgoals($result);
 
         $this->assertIsArray($goals);
         $this->assertEquals(1, count($goals));

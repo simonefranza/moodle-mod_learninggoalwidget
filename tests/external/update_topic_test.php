@@ -61,27 +61,22 @@ final class update_topic_test extends externallib_advanced_testcase {
             "http://aibasics.at"
         );
 
+        $newtitle = "new Name";
+        $newshorttitle = "new Shortname";
+        $newurl = "http://new.at";
+
         // Update topic.
         $result = update_topic::execute(
             $result1[0]->id,
             $result1[1]->id,
-            $result1[2]->id,
-            $result1[3]->id,
-            "Updated Name",
-            "Updated Shortname",
-            "http://updated.at"
+            $newtitle,
+            $newshorttitle,
+            $newurl
         );
 
-        $this->check_updatetopic(
-            "Updated Name",
-            "Updated Shortname",
-            "http://updated.at",
-            $result
-        );
+        $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1, $result);
 
-        $this->check_updatetopic_getgoals($result);
         $result = external_api::clean_returnvalue(update_topic::execute_returns(), $result);
-        $topic = json_decode($result)->children[0];
-        $this->assertEquals([], $topic[5]);
+        $this->assertEquals([], $goals);
     }
 }

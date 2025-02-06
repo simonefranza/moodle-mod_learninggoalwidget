@@ -50,6 +50,8 @@ final class taxonomy_test extends externallib_advanced_testcase {
     /**
      * testing class taxonomy
      * @return void
+     *
+     * @covers \mod_learninggoalwidget\local\taxonomy
      */
     public function test_emptytaxonomy(): void {
         $this->setUp();
@@ -59,17 +61,16 @@ final class taxonomy_test extends externallib_advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $this->setUser($user1);
 
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course1->id);
-
         $emptytaxonomy = new \stdClass;
         $emptytaxonomy->name = "Learning Goal's taxonomy";
         $emptytaxonomy->children = [];
         $jsonemptytaxonomy = json_encode($emptytaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
-        $taxonomy = new taxonomy($coursemodule->id, $course1->id, $coursemodule->section, $widgetinstance->id);
+        $taxonomy = new taxonomy($widgetinstance->id);
         $this->assertNotNull($taxonomy);
-        $this->assertNotNull($taxonomy->get_taxonomy_as_json());
-        $this->assertNotEmpty($taxonomy->get_taxonomy_as_json());
-        $this->assertEquals($jsonemptytaxonomy, $taxonomy->get_taxonomy_as_json());
+        $json = $taxonomy->get_taxonomy_as_json();
+        $this->assertNotNull($json);
+        $this->assertNotEmpty($json);
+        $this->assertEquals($jsonemptytaxonomy, $json);
     }
 }

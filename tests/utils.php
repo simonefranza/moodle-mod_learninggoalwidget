@@ -213,52 +213,20 @@ trait utils {
     }
 
     /**
-     * helper function inserting a learning goal
+     * helper function creating an instance
      *
-     * @param [type] $expectedtitle
-     * @param [type] $expectedshortname
-     * @param [type] $expectedurl
-     * @param [type] $updatedtopicjson
-     * @return void
-     */
-    protected function check_updatetopic($expectedtitle, $expectedshortname, $expectedurl, $updatedtopicjson) {
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = $updatedtopicjson;
-
-        $this->assertNotNull($result);
-        $this->assertNotEmpty($result);
-        $parsed = json_decode($result);
-
-        [$title, $shortname, $url, ] =
-            $this->check_topic_properties($parsed);
-
-        $this->assertEquals($expectedtitle, $title);
-        $this->assertEquals($expectedshortname, $shortname);
-        $this->assertEquals($expectedurl, $url);
-    }
-
-    /**
-     * helper function testing a course with topics
-     *
-     * @param [string] $expectedtitle
-     * @param [string] $expectedshortname
-     * @param [string] $expectedurl
-     * @param string $topicjson
      * @return array
      */
-    protected function check_topic($expectedtitle, $expectedshortname, $expectedurl, $topicjson) {
+    protected function setup_widget() {
+        global $DB;
+        $this->setUp();
 
-        $this->assertNotNull($topicjson);
-        $this->assertNotEmpty($topicjson);
-        $parsed = json_decode($topicjson);
+        $course = $this->getDataGenerator()->create_course();
+        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
 
-        [$title, $shortname, $url, $goals] =
-            $this->check_topic_properties($parsed);
-
-        $this->assertEquals($expectedtitle, $title);
-        $this->assertEquals($expectedshortname, $shortname);
-        $this->assertEquals($expectedurl, $url);
-        return [$goals];
+        return [$widgetinstance, $user];
     }
 
     /**
@@ -271,31 +239,18 @@ trait utils {
      */
     protected function setup_topic($topictitle, $topicshortname, $topicurl) {
         global $DB;
-
-        $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
-
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course1->id);
+        [$widgetinstance, $user] = $this->setup_widget();
 
         // Create topic in course.
-        $topicrecord = new \stdClass;
-        $topicrecord->title = $topictitle;
-        $topicrecord->shortname = $topicshortname;
-        $topicrecord->url = $topicurl;
-        $topicrecord->id = $DB->insert_record('learninggoalwidget_topic', $topicrecord);
+        $topicrecord = $this->insert_topic(
+            $widgetinstance->id,
+            $topictitle,
+            $topicshortname,
+            $topicurl,
+            1
+        );
 
-        // Link topic with widget instance.
-        $topicinstancerecord = new \stdClass;
-        $topicinstancerecord->course = $course1->id;
-        $topicinstancerecord->coursemodule = $coursemodule->id;
-        $topicinstancerecord->instance = $widgetinstance->id;
-        $topicinstancerecord->topic = $topicrecord->id;
-        $topicinstancerecord->ranking = 1;
-        $topicinstancerecord->id = $DB->insert_record('learninggoalwidget_i_topics', $topicinstancerecord);
-
-        return [$course1, $coursemodule, $widgetinstance, $topicrecord, $topicinstancerecord];
+        return [$widgetinstance, $topicrecord];
     }
 
     /**
@@ -356,38 +311,54 @@ trait utils {
     }
 
     /**
-     * helper function, check some topic properties
+     * helper function testing a course with topics
      *
-     * @param object $topic
+     * @param [string] $expectedtitle
+     * @param [string] $expectedshortname
+     * @param [string] $expectedurl
+     * @param [number] $expectedranking
+     * @param string $taxonomy
      * @return array
      */
-    protected function check_topic_properties($topic) {
-        $this->assertNotNull($topic);
+    protected function check_topic($expectedtitle, $expectedshortname, $expectedurl, $expectedranking, $taxonomy) {
+        $this->assertNotNull($taxonomy);
+        $this->assertNotEmpty($taxonomy);
+        $parsed = json_decode($taxonomy);
 
-        $this->assertNotNull($topic->name);
-        $this->assertNotEmpty($topic->name);
-        $this->assertEquals("Learning Goal's taxonomy", $topic->name);
+        $topic = $this->check_topic_properties($parsed);
 
-        $this->assertNotNull($topic->children);
-        $this->assertIsArray($topic->children);
-        $this->assertTrue(count($topic->children) > 0);
+        $this->assertEquals($expectedtitle, $topic->name);
+        $this->assertEquals($expectedshortname, $topic->keyworn);
+        $this->assertEquals($expectedurl, $topic->link);
+        $this->assertEquals($expectedranking, $topic->ranking);
+        return $topic->children;
+    }
 
-        $topic = $topic->children[0];
-        $this->assertIsArray($topic);
-        $this->assertEquals(6, count($topic));
+    /**
+     * helper function, check some topic properties
+     *
+     * @param object $taxonomy
+     * @return array
+     */
+    protected function check_topic_properties($taxonomy) {
+        $this->assertNotNull($taxonomy);
 
-        $ranking = $topic[0];
-        $topicid = $topic[1];
-        $title = $topic[2];
-        $shortname = $topic[3];
-        $url = $topic[4];
-        $goals = $topic[5];
+        $this->assertNotNull($taxonomy->name);
+        $this->assertNotEmpty($taxonomy->name);
+        $this->assertEquals("Learning Goal's taxonomy", $taxonomy->name);
 
-        $this->assertEquals(1, $ranking);
-        $this->assertIsNumeric($topicid);
-        $this->assertTrue($topicid > 0);
+        $this->assertNotNull($taxonomy->children);
+        $this->assertIsArray($taxonomy->children);
+        $this->assertTrue(count($taxonomy->children) > 0);
 
-        return [$title, $shortname, $url, $goals];
+        $topic = $taxonomy->children[0];
+
+        $this->assertIsNumeric($topic->topicid);
+        $this->assertTrue($topic->topicid > 0);
+        $this->assertIsNumeric($topic->ranking);
+        $this->assertEquals(1, $topic->ranking);
+
+        return $topic;
     }
 
     /**
@@ -454,20 +425,6 @@ trait utils {
                 $this->assertEquals($expectedprogress, $goalprogress);
             }
         }
-    }
-
-    /**
-     * helper function testing updating a topic
-     *
-     * @param [string] $updatedtopicjson
-     * @return array
-     */
-    protected function check_updatetopic_getgoals($updatedtopicjson) {
-        // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(update_topic::execute_returns(), $updatedtopicjson);
-        $parsed = json_decode($result);
-        $topic = $parsed->children[0];
-        return $topic[5];
     }
 
     /**

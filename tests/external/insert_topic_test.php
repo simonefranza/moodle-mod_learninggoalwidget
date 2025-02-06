@@ -55,41 +55,27 @@ final class insert_topic_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\insert_topic::execute_parameters
      */
     public function test_insert_topic(): void {
-        $this->setUp();
+        [$widgetinstance, $user] = $this->setup_widget();
 
-        $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
-
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course1->id);
+        $title = "Artificial Intelligence Basics";
+        $shorttitle = "AIBasics";
+        $url = "http://aibasics.at";
 
         $result = insert_topic::execute(
-            $course1->id,
-            $coursemodule->id,
             $widgetinstance->id,
-            "Artificial Intelligence Basics",
-            "AIBasics",
-            "http://aibasics.at"
+            $title,
+            $shorttitle,
+            $url
         );
 
         $result = external_api::clean_returnvalue(insert_topic::execute_returns(), $result);
 
-        $result = get_taxonomy::execute(
-            $course1->id,
-            $coursemodule->id,
-            $widgetinstance->id,
-        );
+        $result = get_taxonomy::execute($widgetinstance->id);
 
         $result = external_api::clean_returnvalue(get_taxonomy::execute_returns(), $result);
 
-        $resulttopic = $this->check_topic(
-            "Artificial Intelligence Basics",
-            "AIBasics",
-            "http://aibasics.at",
-            $result
-        );
+        $goals = $this->check_topic($title, $shorttitle, $url, 1, $result);
 
-        $this->assertEquals([], $resulttopic[0]);
+        $this->assertEquals([], $goals);
     }
 }
