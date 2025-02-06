@@ -62,19 +62,19 @@ final class log_event_test extends externallib_advanced_testcase {
         set_config('buffersize', 0, 'logstore_standard');
         get_log_manager(true);
         $res = $this->setup_course_and_insert_goals();
-        $coursedata = $res[0];
-        $course1 = $coursedata[0];
-        $coursemodule = $coursedata[1];
-        $widgetinstance = $coursedata[2];
-        $topicrecord = $coursedata[3];
-        $user1 = $coursedata[7];
-        $goalrecord = $res[1];
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $course1 = $coursemodule->course;
+        $coursecontext = \context_course::instance($coursemodule->course);
+        $cmcontext = \context_module::instance($coursemodule->id);
+        $widgetinstance = $res->instance;
+        $topicrecord = $res->topic1;
+        $user1 = $res->user;
+        $goalrecord = $res->goal;
+
         $progress = 50;
         $timestamp = 12345678;
 
         update_user_progress::execute(
-            $course1->id,
-            $coursemodule->id,
             $widgetinstance->id,
             $user1->id,
             $topicrecord->id,
@@ -84,8 +84,6 @@ final class log_event_test extends externallib_advanced_testcase {
 
         $eventparams = [];
         $eventname = "\\mod_learninggoalwidget\\event\\learninggoal_updated";
-        $eventparams[1] = ["name" => "courseid", "value" => $course1->id];
-        $eventparams[2] = ["name" => "coursemoduleid", "value" => $coursemodule->id];
         $eventparams[3] = ["name" => "instanceid", "value" => $widgetinstance->id];
         $eventparams[4] = ["name" => "userid", "value" => $user1->id];
         $eventparams[5] = ["name" => "timestamp", "value" => $timestamp];
@@ -94,8 +92,6 @@ final class log_event_test extends externallib_advanced_testcase {
 
         // Update learning goal 2 progess to 50.
         $result = log_event::execute(
-            $course1->id,
-            $coursemodule->id,
             $widgetinstance->id,
             $user1->id,
             $eventparams
@@ -116,8 +112,6 @@ final class log_event_test extends externallib_advanced_testcase {
         foreach (get_object_vars($otherdata) as $value) {
             $output->{$value->name} = $value->value;
         }
-        $this->assertTrue($output->courseid == $course1->id);
-        $this->assertTrue($output->coursemoduleid == $coursemodule->id);
         $this->assertTrue($output->instanceid == $widgetinstance->id);
         $this->assertTrue($output->userid == $user1->id);
         $this->assertTrue($output->timestamp == $timestamp);

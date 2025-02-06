@@ -74,13 +74,16 @@ final class update_goal_test extends externallib_advanced_testcase {
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
+            1,
             $result
         );
 
-        $this->assertEquals(1, count($goals[0]));
+        $this->assertEquals(1, count($goals));
+
         $goal = $goals[0];
+
         $this->assertIsNumeric($goal->goalid);
-        $this->assertEquals($result->goal->id, $goal->goalid);
+        $this->assertEquals($res->goal->id, $goal->goalid);
         $this->assertEquals("Updated Goalname", $goal->name);
         $this->assertEquals("Updated Goal Shortname", $goal->keyword);
         $this->assertEquals("http://goal1.updated.at", $goal->link);

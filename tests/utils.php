@@ -49,7 +49,7 @@ trait utils {
         $this->setAdminUser();
     }
 
-   /**
+    /**
      * helper function inserting a topic
      *
      * @param [number] $instance
@@ -180,36 +180,36 @@ trait utils {
         $this->assertEquals(count($json->children), count($expectedjson->children));
 
         foreach ($expectedjson->children as $topicidx => $expectedtopic) {
-            $expectedranking = $expectedtopic[0];
-            $expectedtopicid = $expectedtopic[1];
-            $expectedtopicname = $expectedtopic[2];
-            $expectedshortname = $expectedtopic[3];
-            $expectedurl = $expectedtopic[4];
-            $expectedgoals = $expectedtopic[5];
-            $this->assertEquals($expectedranking, $json->children[$topicidx][0]);
-            $this->assertEquals($expectedtopicid, $json->children[$topicidx][1]);
-            $this->assertEquals($expectedtopicname, $json->children[$topicidx][2]);
-            $this->assertEquals($expectedshortname, $json->children[$topicidx][3]);
-            $this->assertEquals($expectedurl, $json->children[$topicidx][4]);
+            $expectedranking = $expectedtopic->ranking;
+            $expectedtopicid = $expectedtopic->topicid;
+            $expectedtopicname = $expectedtopic->name;
+            $expectedshortname = $expectedtopic->keyword;
+            $expectedurl = $expectedtopic->link;
+            $expectedgoals = $expectedtopic->children;
+            $this->assertEquals($expectedranking, $json->children[$topicidx]->ranking);
+            $this->assertEquals($expectedtopicid, $json->children[$topicidx]->topicid);
+            $this->assertEquals($expectedtopicname, $json->children[$topicidx]->name);
+            $this->assertEquals($expectedshortname, $json->children[$topicidx]->keyword);
+            $this->assertEquals($expectedurl, $json->children[$topicidx]->link);
 
             $this->assertNotNull($expectedgoals);
             $this->assertIsArray($expectedgoals);
-            $testedgoals = $json->children[$topicidx][5];
+            $testedgoals = $json->children[$topicidx]->children;
             $this->assertEquals(count($expectedgoals), count($testedgoals));
             $this->assertNotNull($testedgoals);
             $this->assertIsArray($testedgoals);
 
             foreach ($expectedgoals as $goalidx => $expectedgoal) {
-                $expectedgranking = $expectedgoal[0];
-                $expectedgtopicid = $expectedgoal[1];
-                $expectedgtopicname = $expectedgoal[2];
-                $expectedgshortname = $expectedgoal[3];
-                $expectedgurl = $expectedgoal[4];
-                $this->assertEquals($expectedgranking, $testedgoals[$goalidx][0]);
-                $this->assertEquals($expectedgtopicid, $testedgoals[$goalidx][1]);
-                $this->assertEquals($expectedgtopicname, $testedgoals[$goalidx][2]);
-                $this->assertEquals($expectedgshortname, $testedgoals[$goalidx][3]);
-                $this->assertEquals($expectedgurl, $testedgoals[$goalidx][4]);
+                $expectedgoalranking = $expectedgoal->ranking;
+                $expectedgoalgoalid = $expectedgoal->goalid;
+                $expectedgoalgoalname = $expectedgoal->name;
+                $expectedgoalshortname = $expectedgoal->keyword;
+                $expectedgoalurl = $expectedgoal->link;
+                $this->assertEquals($expectedgoalranking, $testedgoals[$goalidx]->ranking);
+                $this->assertEquals($expectedgoalgoalid, $testedgoals[$goalidx]->goalid);
+                $this->assertEquals($expectedgoalgoalname, $testedgoals[$goalidx]->name);
+                $this->assertEquals($expectedgoalshortname, $testedgoals[$goalidx]->keyword);
+                $this->assertEquals($expectedgoalurl, $testedgoals[$goalidx]->link);
             }
         }
     }
@@ -264,7 +264,7 @@ trait utils {
     protected function setup_course_and_insert_two_goals() {
         global $DB;
 
-        $resultcourse = $this->setup_course_with_topics(
+        $res = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
@@ -274,43 +274,24 @@ trait utils {
         );
 
         // Insert goal 1 under topic 1.
-        // Insert in goal 1 table.
-        $goalrecord1 = new \stdClass;
-        $goalrecord1->title = "Goal 1 under Topic 1";
-        $goalrecord1->shortname = "Goal 1 shortname";
-        $goalrecord1->url = "http://goal1.at";
-        $goalrecord1->topic = $resultcourse[3]->id;
-        $goalrecord1->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord1);
-
-        // Link goal 1 with learning goal activity in a course.
-        $goalinstancerecord1 = new \stdClass;
-        $goalinstancerecord1->course = $resultcourse[0]->id;
-        $goalinstancerecord1->coursemodule = $resultcourse[1]->id;
-        $goalinstancerecord1->instance = $resultcourse[2]->id;
-        $goalinstancerecord1->topic = $resultcourse[3]->id;
-        $goalinstancerecord1->goal = $goalrecord1->id;
-        $goalinstancerecord1->ranking = 1;
-        $goalinstancerecord1->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord1);
-
-        // Insert in goal 2.
-        $goalrecord2 = new \stdClass;
-        $goalrecord2->title = "Goal 2 under Topic 1";
-        $goalrecord2->shortname = "Goal 2 shortname";
-        $goalrecord2->url = "http://goal2.at";
-        $goalrecord2->topic = $resultcourse[3]->id;
-        $goalrecord2->id = $DB->insert_record('learninggoalwidget_goal', $goalrecord2);
-
-        // Link goal 2 with learning goal activity in a course.
-        $goalinstancerecord2 = new \stdClass;
-        $goalinstancerecord2->course = $resultcourse[0]->id;
-        $goalinstancerecord2->coursemodule = $resultcourse[1]->id;
-        $goalinstancerecord2->instance = $resultcourse[2]->id;
-        $goalinstancerecord2->topic = $resultcourse[3]->id;
-        $goalinstancerecord2->goal = $goalrecord2->id;
-        $goalinstancerecord2->ranking = 2;
-        $goalinstancerecord2->id = $DB->insert_record('learninggoalwidget_i_goals', $goalinstancerecord2);
-
-        return [$resultcourse, $goalrecord1, $goalinstancerecord1, $goalrecord2, $goalinstancerecord2];
+        $res->goal1 = $this->insert_goal(
+            $res->instance->id,
+            $res->topic1->id,
+            "Goal 1 under Topic 1",
+            "Goal 1 shortname",
+            "http://goal1.at",
+            1
+        );
+        // Insert goal 2 under topic 1.
+        $res->goal2 = $this->insert_goal(
+            $res->instance->id,
+            $res->topic1->id,
+            "Goal 2 under Topic 1",
+            "Goal 2 shortname",
+            "http://goal2.at",
+            2
+        );
+        return $res:
     }
 
     /**
@@ -487,21 +468,22 @@ trait utils {
      * @return void
      */
     protected function check_goal($topicjson, $goalrecord1, $goalrecord2) {
-        $resulttopic = $this->check_topic(
+        $goals = $this->check_topic(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
+            1,
             $topicjson
         );
 
-        $this->assertEquals(2, count($resulttopic[0]));
+        $this->assertEquals(2, count($goals));
 
-        foreach ($resulttopic[0] as $goal) {
-            $ranking = $goal[0];
-            $goalid = $goal[1];
-            $goalname = $goal[2];
-            $goalshortname = $goal[3];
-            $goalurl = $goal[4];
+        foreach ($goals as $goal) {
+            $ranking = $goal->ranking;
+            $goalid = $goal->goalid;
+            $goalname = $goal->name;
+            $goalshortname = $goal->keyword;
+            $goalurl = $goal->link;
 
             if ($goalname === "Goal 1 under Topic 1") {
                 $this->assertEquals(2, $ranking);

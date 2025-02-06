@@ -57,15 +57,12 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
     public function test_get_taxonomy_for_user(): void {
         $this->setUp();
 
-        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
-            $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_course_and_insert_two_goals();
 
         // Get taxonomy with user progress values.
         $result = get_taxonomy_for_user::execute(
-            $resultcourse[0]->id,
-            $resultcourse[7]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id
+            $res->instance->id,
+            $res->user->id,
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
@@ -76,7 +73,7 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             0,
-            $goalrecord1->id,
+            $res->goal1->id,
             $result
         );
         $this->check_userprogress(
@@ -84,7 +81,7 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             0,
-            $goalrecord2->id,
+            $res->goal2->id,
             $result
         );
     }

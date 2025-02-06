@@ -55,14 +55,9 @@ final class add_taxonomy_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\add_taxonomy::execute_parameters
      */
     public function test_add_taxonomy(): void {
-        $this->setUp();
+        $res = $this->setup_widget();
 
-        $course = $this->getDataGenerator()->create_course();
-        $instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
-
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id, $course->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
 
         $taxonomy = (object) [
             "name" => "Learning Goal's taxonomy",
@@ -104,9 +99,7 @@ final class add_taxonomy_test extends externallib_advanced_testcase {
             ],
         ];
         $result = add_taxonomy::execute(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
+            $res->instance->id,
             json_encode($taxonomy)
         );
 
@@ -121,21 +114,21 @@ final class add_taxonomy_test extends externallib_advanced_testcase {
         $expectedjson->name = $taxonomy->name;
         $expectedjson->children = [];
         foreach ($taxonomy->children as $topicidx => $topic) {
-            $expectedjson->children[] = [
-                $parsed->children[$topicidx][0],
-                $parsed->children[$topicidx][1],
-                $topic->name,
-                $topic->keyword,
-                $topic->link,
-                [],
+            $expectedjson->children[] = (object) [
+                "topicid" => $parsed->children[$topicidx]->topicid,
+                "ranking" => $parsed->children[$topicidx]->ranking,
+                "name" => $topic->name,
+                "keyword" => $topic->keyword,
+                "link" => $topic->link,
+                "children" => [],
             ];
             foreach ($topic->children as $goalidx => $goal) {
-                $expectedjson->children[$topicidx][5][] = [
-                    $parsed->children[$topicidx][5][$goalidx][0],
-                    $parsed->children[$topicidx][5][$goalidx][1],
-                    $goal->name,
-                    $goal->keyword,
-                    $goal->link,
+                $expectedjson->children[$topicidx]->children[] = (object) [
+                    "goalid" => $parsed->children[$topicidx]->children[$goalidx]->goalid,
+                    "ranking" => $parsed->children[$topicidx]->children[$goalidx]->ranking,
+                    "name" => $goal->name,
+                    "keyword" => $goal->keyword,
+                    "link" => $goal->link,
                 ];
             }
         }

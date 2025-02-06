@@ -57,20 +57,13 @@ final class moveup_goal_test extends externallib_advanced_testcase {
     public function test_moveup_goal(): void {
         $this->setUp();
 
-        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
-            $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_course_and_insert_two_goals();
 
         // Move goal 2 before goal 1 under topic 1.
-        $result = moveup_goal::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
-            $goalrecord2->id
-        );
+        $result = moveup_goal::execute($res->goal2->id);
 
         $result = external_api::clean_returnvalue(moveup_goal::execute_returns(), $result);
 
-        $this->check_goal($result, $goalrecord1, $goalrecord2);
+        $this->check_goal($result, $res->goal1, $res->goal2);
     }
 }

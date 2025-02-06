@@ -77,7 +77,7 @@ class taxonomy {
         $topics = [];
         global $DB;
         // CONCAT to create unique column.
-        $sqlstmt = "SELECT CONCAT(IFNULL(t.id, 'miss'), '-', IFNULL(g.id, 'miss')) as id,
+        $sqlstmt = "SELECT CONCAT(COALESCE(t.id, -1), '-', COALESCE(g.id, -1)) as id,
                            g.id as gid, t.id as tid, t.learninggoalwidgetid,
                            t.title as ttitle, t.shortname as tshortname,
                            t.url as turl, t.ranking as tranking,

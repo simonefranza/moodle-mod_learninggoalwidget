@@ -60,7 +60,7 @@ final class delete_goal_test extends externallib_advanced_testcase {
 
         $res = $this->setup_course_and_insert_goals();
 
-        // Update goal under topic 1.
+        // Delete goal under topic 1.
         $result = delete_goal::execute(
             $res->instance->id,
             $res->topic1->id,
@@ -73,6 +73,7 @@ final class delete_goal_test extends externallib_advanced_testcase {
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
+            1,
             $result
         );
 

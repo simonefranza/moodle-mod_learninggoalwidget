@@ -73,7 +73,7 @@ final class provider_test extends provider_testcase {
         $this->assertEquals('learninggoalwidget_progs', $item->get_name());
 
         $privacyfields = $item->get_privacy_fields();
-        $this->assertCount(7, $privacyfields);
+        $this->assertCount(5, $privacyfields);
         $this->assertArrayHasKey('learninggoalwidgetid', $privacyfields);
         $this->assertArrayHasKey('topicid', $privacyfields);
         $this->assertArrayHasKey('goalid', $privacyfields);

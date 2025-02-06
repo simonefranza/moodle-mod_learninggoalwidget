@@ -57,21 +57,14 @@ final class movedown_goal_test extends externallib_advanced_testcase {
     public function test_movedown_goal(): void {
         $this->setUp();
 
-        [$resultcourse, $goalrecord1, , $goalrecord2, ] =
-            $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_course_and_insert_two_goals();
 
         // Move goal 1 behind goal 2 under topic 1.
-        $result = movedown_goal::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
-            $goalrecord1->id
-        );
+        $result = movedown_goal::execute($res->goal1->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(movedown_goal::execute_returns(), $result);
 
-        $this->check_goal($result, $goalrecord1, $goalrecord2);
+        $this->check_goal($result, $res->goal1, $res->goal2);
     }
 }

@@ -55,14 +55,9 @@ final class delete_taxonomy_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\delete_taxonomy::execute_parameters
      */
     public function test_delete_taxonomy(): void {
-        $this->setUp();
+        $res = $this->setup_widget();
 
-        $course = $this->getDataGenerator()->create_course();
-        $instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
-
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $instance->id, $course->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
 
         $taxonomy = (object) [
             "name" => "Learning Goal's taxonomy",
@@ -87,9 +82,7 @@ final class delete_taxonomy_test extends externallib_advanced_testcase {
             ],
         ];
         $result = add_taxonomy::execute(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
+            $res->instance->id,
             json_encode($taxonomy)
         );
 
@@ -97,11 +90,7 @@ final class delete_taxonomy_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result);
         $parsed = json_decode($result);
 
-        $result = delete_taxonomy::execute(
-            $course->id,
-            $coursemodule->id,
-            $instance->id,
-        );
+        $result = delete_taxonomy::execute($res->instance->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(delete_taxonomy::execute_returns(), $result);

@@ -69,7 +69,7 @@ final class insert_goal_test extends externallib_advanced_testcase {
         // Insert goal under topic 1.
         $result = insert_goal::execute(
             $resultcourse->instance->id,
-            $resultcourse->topic->id,
+            $resultcourse->topic1->id,
             "Knowing theoretical foundations of AI",
             "TheoreticalFoundationsAI",
             "http://aibasics.goal1.at"
@@ -97,8 +97,9 @@ final class insert_goal_test extends externallib_advanced_testcase {
         $this->assertEquals(1, count($goals));
 
         $goal = $goals[0];
-        $this->assertIsNumeric($goal->id);
-        $this->assertTrue($goal->id > 0);
+
+        $this->assertIsNumeric($goal->goalid);
+        $this->assertTrue($goal->goalid > 0);
         $this->assertEquals("Knowing theoretical foundations of AI", $goal->name);
         $this->assertEquals("TheoreticalFoundationsAI", $goal->keyword);
         $this->assertEquals("http://aibasics.goal1.at", $goal->link);

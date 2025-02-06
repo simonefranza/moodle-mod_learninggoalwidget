@@ -56,16 +56,14 @@ final class update_user_progress_test extends externallib_advanced_testcase {
      */
     public function test_update_user_progress(): void {
         $this->setUp();
-        [$resultcourse, $goalrecord1, , $goalrecord2, ] = $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_course_and_insert_two_goals();
 
         // Update learning goal 1 progess to 99.
         $result = update_user_progress::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[7]->id,
-            $resultcourse[3]->id,
-            $goalrecord1->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal1->id,
             99
         );
 
@@ -77,18 +75,16 @@ final class update_user_progress_test extends externallib_advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             99,
-            $goalrecord1->id,
+            $res->goal1->id,
             $result
         );
 
         // Update learning goal 1 progess to 50.
         $result = update_user_progress::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[7]->id,
-            $resultcourse[3]->id,
-            $goalrecord1->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal1->id,
             50
         );
 
@@ -100,18 +96,16 @@ final class update_user_progress_test extends externallib_advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             50,
-            $goalrecord1->id,
+            $res->goal1->id,
             $result
         );
 
         // Update learning goal 2 progess to 100.
         $result = update_user_progress::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[7]->id,
-            $resultcourse[3]->id,
-            $goalrecord2->id,
+            $res->instance->id,
+            $res->user->id,
+            $res->topic1->id,
+            $res->goal2->id,
             100
         );
 
@@ -123,7 +117,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
             "AIBasics 1",
             "http://aibasics1.at",
             100,
-            $goalrecord2->id,
+            $res->goal2->id,
             $result
         );
     }

@@ -56,7 +56,7 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
      */
     public function test_get_taxonomy(): void {
         $this->setUp();
-        $resultcourse = $this->setup_course_with_topics(
+        $res = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
@@ -66,11 +66,7 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
         );
 
         // Get taxonomy.
-        $result = get_taxonomy::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id
-        );
+        $result = get_taxonomy::execute($res->instance->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(get_taxonomy::execute_returns(), $result);
@@ -81,24 +77,24 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
 
         $expectedjson = new \stdClass();
         $expectedjson->name = "Learning Goal's taxonomy";
-        $expectedjson->children = [
-            [
-                $resultcourse[5]->ranking,
-                $resultcourse[3]->id,
-                "Artificial Intelligence Basics Part 1",
-                "AIBasics 1",
-                "http://aibasics1.at",
-                [],
-            ],
-            [
-                $resultcourse[6]->ranking,
-                $resultcourse[4]->id,
-                "Artificial Intelligence Basics Part 2",
-                "AIBasics 2",
-                "http://aibasics2.at",
-                [],
-            ],
-        ];
+
+        $topic1 = new stdClass();
+        $topic1->topicid = $res->topic1->id;
+        $topic1->name = "Artificial Intelligence Basics Part 1";
+        $topic1->keyword = "AIBasics 1";
+        $topic1->link = "http://aibasics1.at";
+        $topic1->ranking = 1;
+        $topic1->children = [];
+
+        $topic2 = new stdClass();
+        $topic2->topicid = $res->topic2->id;
+        $topic2->name = "Artificial Intelligence Basics Part 2";
+        $topic2->keyword = "AIBasics 2";
+        $topic2->link = "http://aibasics2.at";
+        $topic2->ranking = 2;
+        $topic2->children = [];
+        $expectedjson->children = [$topic1, $topic2];
+
         $this->check_json($parsed, $expectedjson);
     }
 }
