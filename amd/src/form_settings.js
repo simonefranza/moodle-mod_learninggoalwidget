@@ -60,8 +60,11 @@ define(
       ITEM_URL_FIELD: '[data-action="itemurl"]',
     };
 
-    var course = null;
-    var coursemodule = null;
+    // Keys to mark topics or goals as deleted/added/edited
+    const ADD_KEY = 'new';
+    const DELETE_KEY = 'deleted';
+    const EDIT_KEY = 'edit';
+
     var instance = null;
     var taxonomy = null;
     var selectedTopic = null;
@@ -69,103 +72,103 @@ define(
 
     /**
      * Initialise all of the modules for the Learning Goals Widget.
-     * @param {string} paramCourse The course ID
-     * @param {string} paramCoursemodule The course module ID
      * @param {string} paramInstance The course module instance ID
      * @param {string} paramTaxonomy The learning goal taxonomy as string
      */
-    const init = (paramCourse, paramCoursemodule, paramInstance, paramTaxonomy) => {
-      course = paramCourse;
-      coursemodule = paramCoursemodule;
+    const init = (paramInstance, paramTaxonomy) => {
       instance = paramInstance;
       taxonomy = JSON.parse(paramTaxonomy);
 
-      loadTopics(taxonomy);
+      loadTopics();
 
       $("#newtopic").click(clickedNewTopic);
       $("#newgoal").click(clickedNewGoal);
       $("#json-upload").click(clickedJSONUpload);
       $("#json-download").click(clickedJSONDownload);
+      $("#json-download-template").click(clickedJSONDownloadTemplate);
     };
 
     /**
      * Render the topics of the learning goal taxonomy
-     * @param {*} taxonomy The learning goal taxonomy
      */
-    const loadTopics = (taxonomy) => {
+    const loadTopics = async() => {
+      $("#topics-list").children().remove();
+      taxonomy.children.sort((a, b) => a.ranking - b.ranking);
+      console.log("taxonomy", taxonomy);
+
       if (taxonomy.children.length === 0) {
         $("#notopics").removeClass("d-none");
-        return;
       }
-      taxonomy.children.forEach((topic) => {
+      for (let topic of taxonomy.children) {
+        if (DELETE_KEY in topic && topic[DELETE_KEY]) {
+          continue;
+        }
 
-        var topicContext = {
+        const topicContext = {
           topicname: topic.name,
           topicid: topic.topicid
         };
-        CoreStr.get_string('settings:showgoals', 'mod_learninggoalwidget')
-          .then((showGoalStr) => {
-            return Promise.all([showGoalStr, Templates.render(TEMPLATES.TOPIC, topicContext)]);
-          })
-          .then(([showGoalStr, html]) => {
-            $("#notopics").addClass("d-none");
-            $("#goalsfortopic").removeClass("d-none");
-            $("#goalsfortopicstatusmessage").html(showGoalStr);
-            $("#topics-list").append(html);
-            var topicId = topicContext.topicid;
-            $("#topic-item-" + topicId).click(clickedTopicName);
-            $("#" + topicId + "-action-edit").click(clickedEditTopic);
-            $("#" + topicId + "-action-delete").click(clickedDeleteTopic);
-            $("#" + topicId + "-action-moveup").click(clickedMoveupTopic);
-            $("#" + topicId + "-action-movedown").click(clickedMovedownTopic);
-            return html;
-          })
-          .catch(() => {
-            // Do nothing
-          });
-      });
+        const html = await Templates.render(TEMPLATES.TOPIC, topicContext);
+
+        $("#notopics").addClass("d-none");
+        $("#topics-list").append(html);
+
+        const topicid = topic.topicid;
+        $("#topic-item-" + topicid).click(clickedTopicName);
+        const baseID = `#${topicid}-action-`;
+        $(baseID + "edit").click(clickedEditTopic);
+        $(baseID + "delete").click(clickedDeleteTopic);
+        $(baseID + "moveup").click(clickedMoveupTopic);
+        $(baseID + "movedown").click(clickedMovedownTopic);
+      }
+      if (!selectedTopic) {
+        const showGoalStr = await CoreStr.get_string('settings:showgoals', 'mod_learninggoalwidget');
+        $('#learninggoals-list').children().remove();
+        $("#goalsfortopic").removeClass("d-none");
+        $("#goalsfortopicstatusmessage").html(showGoalStr);
+        return;
+      }
+      const selectedTopicObj = getTopicById(selectedTopic);
+      loadGoals(selectedTopicObj);
     };
 
     /**
      * Render the goals of the learning goal taxonomy
-     * @param {*} topicId The topic ID
-     * @param {*} taxonomy The learning goal taxonomy
+     * @param {*} topic The topic
      */
-    const loadGoals = (topicId, taxonomy) => {
-      if (taxonomy.length > 0) {
-        $("#goalsfortopic").addClass("d-none");
-        taxonomy.forEach((goal) => {
+    const loadGoals = async(topic) => {
+      $('#learninggoals-list').children().remove();
+      topic.children.sort((a, b) => a.ranking - b.ranking);
+      if (!topic.children.length) {
+        const noGoalStr = await CoreStr.get_string('settings:nogoals', 'mod_learninggoalwidget');
+        $("#goalsfortopic").removeClass("d-none");
+        $("#goalsfortopicstatusmessage").html(noGoalStr);
+        return;
+      }
 
-          var goalContext = {
-            topicid: topicId,
-            goalid: goal.goalid,
-            learninggoaltitle: goal.name
-          };
+      $("#goalsfortopic").addClass("d-none");
+      const topicid = topic.topicid;
+      for (let goal of topic.children) {
+        if (DELETE_KEY in goal && goal[DELETE_KEY]) {
+          continue;
+        }
 
-          Templates.render(TEMPLATES.GOAL, goalContext)
-            .then((html) => {
-              $('#learninggoals-list').append(html);
-              var goalId = goalContext.goalid;
-              $("#" + topicId + "-goal-" + goalId + "-action-edit").click(clickedEditGoal);
-              $("#" + topicId + "-goal-" + goalId + "-action-delete").click(clickedDeleteGoal);
-              $("#" + topicId + "-goal-" + goalId + "-action-moveup").click(clickedMoveupGoal);
-              $("#" + topicId + "-goal-" + goalId + "-action-movedown").click(clickedMovedownGoal);
-              return;
-            })
-            .catch(() => {
-              // Do nothing
-            });
-        });
-      } else {
-        CoreStr.get_string('settings:nogoals', 'mod_learninggoalwidget')
-        .then((noGoalStr) => {
-          $("#goalsfortopic").removeClass("d-none");
-          $("#goalsfortopicstatusmessage").html(noGoalStr);
-          return 0;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+        const goalid = goal.goalid;
+
+        var goalContext = {
+          topicid: topicid,
+          goalid: goalid,
+          learninggoaltitle: goal.name
+        };
+
+        const html = await Templates.render(TEMPLATES.GOAL, goalContext);
+        $('#learninggoals-list').append(html);
+
+        const baseID = `#${topicid}-goal-${goalid}-action-`;
+        $(baseID + "edit").click(clickedEditGoal);
+        $(baseID + "delete").click(clickedDeleteGoal);
+        $(baseID + "moveup").click(clickedMoveupGoal);
+        $(baseID + "movedown").click(clickedMovedownGoal);
       }
     };
 
@@ -177,13 +180,12 @@ define(
       e.preventDefault();
 
       var topicId = $(e.currentTarget).data('topicid');
+      let topic = getTopicById(topicId);
+      if (!topic) {
+        return;
+      }
 
-      taxonomy.children.forEach((topic) => {
-        if (topic.topicid === topicId) {
-          $('#learninggoals-list').children().remove();
-          loadGoals(topicId, topic.children);
-        }
-      });
+      loadGoals(topic);
 
       selectedTopic = topicId;
       if (selectedTopicElement !== null) {
@@ -196,57 +198,37 @@ define(
     /**
      * Show 'New Topic' Modal
      */
-    const clickedNewTopic = () => {
+    const clickedNewTopic = async() => {
       let strings = [
         {key: 'settings:topic', component: 'mod_learninggoalwidget'},
         {key: 'settings:description', component: 'mod_learninggoalwidget'},
         {key: 'settings:addtopic', component: 'mod_learninggoalwidget'},
         {key: 'settings:link', component: 'mod_learninggoalwidget'},
+        {key: 'settings:save', component: 'mod_learninggoalwidget'},
       ];
-      CoreStr.get_strings(strings)
-        .then((results) => {
-          const context = {
-            title: results[0],
-            shortname: results[1],
-            weburl: results[3],
-          };
+      try {
+        const results = await CoreStr.get_strings(strings);
+        const context = {
+          title: results[0],
+          shortname: results[1],
+          weburl: results[3],
+        };
+        let [modal, topicName, topicShortname, topicUrl] = await showModal(
+          context,
+          results[2],
+          TEMPLATES.TOPIC_MODAL_VIEW,
+          results[4],
+        );
+        modal.hide();
 
-          return new Promise((resolve) => {
-            showModal(
-              context,
-              results[2],
-              TEMPLATES.TOPIC_MODAL_VIEW,
-              "Speichern",
-              (modal, topicName, topicShortname, topicUrl) => {
-                resolve([modal, topicName, topicShortname, topicUrl]);
-              }
-            );
-          });
-        })
-        .then(([modal, topicName, topicShortname, topicUrl]) => {
-          // Make insert topic call
-          return Promise.all([modal, Controller.insertTopic({
-            instance: instance,
-            topicname: topicName,
-            topicshortname: topicShortname,
-            topicurl: topicUrl,
-          })]);
-        })
-        .then(([modal, id]) => {
-          return Promise.all([modal, id, Controller.getTaxonomy({
-            instance: instance,
-          })]);
-        })
-        .then(([modal, , jsonTaxonomy]) => {
-          modal.hide();
-          $("#topics-list").children().remove();
-          taxonomy = JSON.parse(jsonTaxonomy);
-          loadTopics(taxonomy);
-          return 0;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+        // Add topic to local taxonomy
+        addLocalTopic(topicName, topicShortname, topicUrl);
+        updateTaxonomyValue();
+
+        loadTopics();
+      } catch (e) {
+        console.error("Failed to create new topic", e);
+      }
     };
 
 
@@ -254,21 +236,19 @@ define(
      * Handle edit topic click event
      * @param {event} e Clicked event
      */
-    const clickedEditTopic = (e) => {
+    const clickedEditTopic = async(e) => {
       e.preventDefault();
 
-      var topicId = $(e.currentTarget).data('topicid');
+      var topicid = $(e.currentTarget).data('topicid');
 
-      var topicTitle;
-      var topicShortname;
-      var topicUrl;
-      taxonomy.children.forEach(function(topic) {
-        if (topic.topicid === topicId) {
-          topicTitle = topic.name;
-          topicShortname = topic.keyword;
-          topicUrl = topic.link;
-        }
-      });
+      let topic = getTopicById(topicid);
+      if (!topic) {
+        return;
+      }
+      const oldTopicTitle = topic.name;
+      const oldTopicShortname = topic.keyword;
+      const oldTopicUrl = topic.link;
+
       let strings = [
         {key: 'settings:topic', component: 'mod_learninggoalwidget'},
         {key: 'settings:description', component: 'mod_learninggoalwidget'},
@@ -276,92 +256,72 @@ define(
         {key: 'settings:link', component: 'mod_learninggoalwidget'},
         {key: 'settings:save', component: 'mod_learninggoalwidget'},
       ];
-      CoreStr.get_strings(strings)
-        .then((results) => {
-          var context = {
-            title: results[0],
-            shortname: results[1],
-            weburl: results[3],
-            topictitle: topicTitle,
-            topicshortname: topicShortname,
-            topicurl: topicUrl,
-          };
+      try {
+        const results = await CoreStr.get_strings(strings);
+        var context = {
+          title: results[0],
+          shortname: results[1],
+          weburl: results[3],
+          topictitle: oldTopicTitle,
+          topicshortname: oldTopicShortname,
+          topicurl: oldTopicUrl,
+        };
+        const [modal, topicName, topicShortname, topicUrl] = await showModal(
+          context,
+          results[2],
+          TEMPLATES.TOPIC_MODAL_VIEW,
+          results[4],
+        );
+        modal.hide();
 
-          return new Promise((resolve) => {
-            showModal(
-              context,
-              results[2],
-              TEMPLATES.TOPIC_MODAL_VIEW,
-              results[4],
-              (modal, topicName, topicShortname, topicUrl) => {
-                resolve([modal, topicName, topicShortname, topicUrl]);
-              }
-            );
-          });
-        })
-        .then(([modal, topicName, topicShortname, topicUrl]) => {
-          // Make update topic call
-          return Promise.all([modal, Controller.updateTopic({
-            instance: instance,
-            topicid: topicId,
-            topicname: topicName,
-            topicshortname: topicShortname,
-            topicurl: topicUrl,
-          })]);
-        })
-        .then(([modal, jsonTaxonomy]) => {
-          modal.hide();
-          $("#topics-list").children().remove();
-          taxonomy = JSON.parse(jsonTaxonomy);
-          loadTopics(taxonomy);
-          return 0;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+        // Update topic
+        topic.name = topicName;
+        topic.keywork = topicShortname;
+        topic.link = topicUrl;
+        topic[EDIT_KEY] = true;
+        updateTaxonomyValue();
+
+        loadTopics();
+      } catch (e) {
+        console.error("Failed to edit topic", e);
+      }
     };
 
     /**
      * Handle delete topic event
      * @param {event} e click event
      */
-    const clickedDeleteTopic = (e) => {
+    const clickedDeleteTopic = async(e) => {
       e.preventDefault();
 
-      const topicId = $(e.currentTarget).data('topicid');
+      const topicid = $(e.currentTarget).data('topicid');
+      let topicToDelete = getTopicById(topicid);
+      if (!topicToDelete) {
+        return;
+      }
+
       let strings = [
         {key: 'settings:deletetopic', component: 'mod_learninggoalwidget'},
         {key: 'settings:deletetopicmsg', component: 'mod_learninggoalwidget'},
         {key: 'settings:delete', component: 'mod_learninggoalwidget'},
       ];
-      CoreStr.get_strings(strings)
-        .then((results) => {
-          return new Promise((resolve) => {
-            showMessage(
-              results[0],
-              results[1],
-              results[2],
-              (modal) => resolve(modal)
-            );
-          });
-        })
-        .then((modal) => {
-          // Make delete topic call
-          return Promise.all([modal, Controller.deleteTopic({
-            topicid: topicId
-          })]);
-        })
-        .then(([modal, jsonTaxonomy]) => {
-          modal.hide();
-          $("#topics-list").children().remove();
-          $("#learninggoals-list").children().remove();
-          taxonomy = JSON.parse(jsonTaxonomy);
-          loadTopics(taxonomy);
-          return 0;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+      try {
+        const results = await CoreStr.get_strings(strings);
+        const modal = await showMessage(
+          results[0],
+          results[1],
+          results[2],
+        );
+        modal.hide();
+
+        // Mark topic as deleted
+        deleteLocalTopic(topicToDelete);
+        updateTaxonomyValue();
+
+        loadTopics();
+      } catch (e) {
+        console.error("Failed to delete topic", e);
+      }
     };
 
     /**
@@ -371,21 +331,25 @@ define(
     const clickedMoveupTopic = (e) => {
       e.preventDefault();
 
-      var topicId = $(e.currentTarget).data('topicid');
+      var topicid = $(e.currentTarget).data('topicid');
+      let topicToMove = getTopicById(topicid);
+      if (!topicToMove || topicToMove.ranking == 1) {
+        // No topic or is already first
+        return;
+      }
+      for (let topic of taxonomy.children) {
+        // Only topic directly above is affected
+        if (topic.ranking === topicToMove.ranking - 1) {
+          topic.ranking++;
+          topic[EDIT_KEY] = true;
+          topicToMove.ranking--;
+          topicToMove[EDIT_KEY] = true;
+          break;
+        }
+      }
+      updateTaxonomyValue();
 
-      // Make move up topic call
-      Controller.moveUpTopic({
-        topicid: topicId
-      })
-        .then((jsonTaxonomy) => {
-          $("#topics-list").children().remove();
-          taxonomy = JSON.parse(jsonTaxonomy);
-          loadTopics(taxonomy);
-          return;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+      loadTopics();
     };
 
     /**
@@ -395,38 +359,40 @@ define(
     const clickedMovedownTopic = (e) => {
       e.preventDefault();
 
-      var topicId = $(e.currentTarget).data('topicid');
+      var topicid = $(e.currentTarget).data('topicid');
+      let topicToMove = getTopicById(topicid);
+      if (!topicToMove) {
+        return;
+      }
+      for (let topic of taxonomy.children) {
+        // Only topic directly below (aka ranking + 1) is affected
+        if (topic.ranking === topicToMove.ranking + 1) {
+          topic.ranking--;
+          topic[EDIT_KEY] = true;
+          topicToMove.ranking++;
+          topicToMove[EDIT_KEY] = true;
+          break;
+        }
+      }
+      updateTaxonomyValue();
 
-      // Make move up topic call
-      Controller.moveDownTopic({
-        topicid: topicId
-      })
-        .then((jsonTaxonomy) => {
-          $("#topics-list").children().remove();
-          taxonomy = JSON.parse(jsonTaxonomy);
-          loadTopics(taxonomy);
-          return;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+      loadTopics();
     };
 
     /**
      * Show 'New Goal' Modal
      */
-    const clickedNewGoal = () => {
+    const clickedNewGoal = async() => {
       if (selectedTopic === null) {
         return;
       }
 
-      var topicTitle = "";
+      const topic = getTopicById(selectedTopic);
+      if (!topic) {
+        return;
+      }
+      const topicTitle = topic.name;
 
-      taxonomy.children.forEach((topic) => {
-        if (topic.topicid === selectedTopic) {
-          topicTitle = topic.name;
-        }
-      });
       let strings = [
         {key: 'settings:topic', component: 'mod_learninggoalwidget'},
         {key: 'settings:goal', component: 'mod_learninggoalwidget'},
@@ -435,88 +401,51 @@ define(
         {key: 'settings:addgoal', component: 'mod_learninggoalwidget'},
         {key: 'settings:save', component: 'mod_learninggoalwidget'},
       ];
-      CoreStr.get_strings(strings)
-        .then((results) => {
-          const context = {
-            topiclabel: results[0],
-            title: results[1],
-            shortname: results[2],
-            weburl: results[3],
-            topictitle: topicTitle,
-          };
+      try {
+        const results = await CoreStr.get_strings(strings);
+        const context = {
+          topiclabel: results[0],
+          title: results[1],
+          shortname: results[2],
+          weburl: results[3],
+          topictitle: topicTitle,
+        };
 
-          return new Promise((resolve) => {
-            showModal(
-              context,
-              results[4],
-              TEMPLATES.GOAL_MODAL_VIEW,
-              results[5],
-              (modal, goalName, goalShortname, goalUrl) => {
-                resolve([modal, goalName, goalShortname, goalUrl]);
-              }
-            );
-          });
-        })
-        .then(([modal, goalName, goalShortname, goalUrl]) => {
-          // Make insert goal call
-          return Promise.all([modal, Controller.insertGoal({
-            instance: instance,
-            topicid: selectedTopic,
-            goalname: goalName,
-            goalshortname: goalShortname,
-            goalurl: goalUrl,
-          })]);
-        })
-        .then(([modal, id]) => {
-          return Promise.all([modal, id, Controller.getTaxonomy({
-            instance: instance,
-          })]);
-        })
-        .then(([modal, , jsonTaxonomy]) => {
-          modal.hide();
+        const [modal, goalName, goalShortname, goalUrl] = await showModal(
+          context,
+          results[4],
+          TEMPLATES.GOAL_MODAL_VIEW,
+          results[5],
+        );
+        modal.hide();
 
-          taxonomy = JSON.parse(jsonTaxonomy);
-          $('#learninggoals-list').children().remove();
-          taxonomy.children.forEach((topic) => {
-            if (topic.topicid === selectedTopic) {
-              loadGoals(selectedTopic, topic.children);
-            }
-          });
-          return 0;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+        // Add goal to local taxonomy
+        addLocalGoal(topic, goalName, goalShortname, goalUrl);
+        updateTaxonomyValue();
+
+        loadGoals(topic);
+      } catch (e) {
+        console.error("Failed to create new goal", e);
+      }
     };
-
 
     /**
      * Handle edit goal click event
      * @param {event} e Clicked event
      */
-    const clickedEditGoal = (e) => {
+    const clickedEditGoal = async(e) => {
       e.preventDefault();
 
-      var topicId = $(e.currentTarget).data('topicid');
-      var goalId = $(e.currentTarget).data('goalid');
+      var topicid = $(e.currentTarget).data('topicid');
+      var goalid = $(e.currentTarget).data('goalid');
+      const topic = getTopicById(topicid);
+      const goal = getGoalById(goalid, topic);
+      if (!topic || !goal) {
+        return;
+      }
 
-      var topicTitle;
-      var goalTitle;
-      var goalShortname;
-      var goalUrl;
-      taxonomy.children.forEach((topic) => {
-        if (topic.topicid !== topicId) {
-          return;
-        }
-        topicTitle = topic.name;
-        topic.children.forEach((goal) => {
-          if (goal.goalid === goalId) {
-            goalTitle = goal.name;
-            goalShortname = goal.keyword;
-            goalUrl = goal.link;
-          }
-        });
-      });
+      const topicTitle = topic.name;
+      const goalTitle = goal.name;
 
       let strings = [
         {key: 'settings:topic', component: 'mod_learninggoalwidget'},
@@ -526,105 +455,76 @@ define(
         {key: 'settings:editgoal', component: 'mod_learninggoalwidget'},
         {key: 'settings:save', component: 'mod_learninggoalwidget'},
       ];
-      CoreStr.get_strings(strings)
-        .then((results) => {
-          const context = {
-            topiclabel: results[0],
-            topictitle: topicTitle,
-            title: results[1],
-            shortname: results[2],
-            weburl: results[3],
-            goaltitle: goalTitle,
-            goalshortname: goalShortname,
-            goalurl: goalUrl,
-          };
+      try {
+        const results = await CoreStr.get_strings(strings);
+        const context = {
+          topiclabel: results[0],
+          topictitle: topicTitle,
+          title: results[1],
+          shortname: results[2],
+          weburl: results[3],
+          goaltitle: goalTitle,
+          goalshortname: goalShortname,
+          goalurl: goalUrl,
+        };
 
-          return new Promise((resolve) => {
-            showModal(
-              context,
-              results[4],
-              TEMPLATES.GOAL_MODAL_VIEW,
-              results[5],
-              (modal, goalName, goalShortname, goalUrl) => {
-                resolve([modal, goalName, goalShortname, goalUrl]);
-              }
-            );
-          });
-        })
-        .then(([modal, goalName, goalShortname, goalUrl]) => {
-          // Make insert goal call
-          return Promise.all([modal, Controller.updateGoal({
-            instance: instance,
-            goalid: goalId,
-            goalname: goalName,
-            goalshortname: goalShortname,
-            goalurl: goalUrl,
-          })]);
-        })
-        .then(([modal, jsonTaxonomy]) => {
-          modal.hide();
-          taxonomy = JSON.parse(jsonTaxonomy);
-          $('#learninggoals-list').children().remove();
-          taxonomy.children.forEach((topic) => {
-            if (topic.topicid === topicId) {
-              loadGoals(topicId, topic.children);
-            }
-          });
-          return 0;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+        const [modal, goalName, goalShortname, goalUrl] = await showModal(
+          context,
+          results[4],
+          TEMPLATES.GOAL_MODAL_VIEW,
+          results[5],
+        );
+        modal.hide();
+
+        // Update goal
+        goal.name = goalName;
+        goal.keyword = goalShortname;
+        goal.link = goalUrl;
+        updateTaxonomyValue();
+
+        loadGoals(topic);
+      } catch (e) {
+        console.error("Failed to edit goal", e);
+      }
     };
 
     /**
      * Handle delete goal event
      * @param {event} e click event
      */
-    const clickedDeleteGoal = (e) => {
+    const clickedDeleteGoal = async(e) => {
       e.preventDefault();
 
-      const topicId = $(e.currentTarget).data('topicid');
-      const goalId = $(e.currentTarget).data('goalid');
+      const topicid = $(e.currentTarget).data('topicid');
+      const goalid = $(e.currentTarget).data('goalid');
+      const topic = getTopicById(topicid);
+      const goalToDelete = getGoalById(goalid, topic);
+      if (!topic || !goalToDelete) {
+        return;
+      }
 
       let strings = [
         {key: 'settings:deletegoal', component: 'mod_learninggoalwidget'},
         {key: 'settings:deletegoalmsg', component: 'mod_learninggoalwidget'},
         {key: 'settings:delete', component: 'mod_learninggoalwidget'},
       ];
-      CoreStr.get_strings(strings)
-        .then((results) => {
-          return new Promise((resolve) => {
-            showMessage(
-              results[0],
-              results[1],
-              results[2],
-              (modal) => resolve(modal)
-            );
-          });
-        })
-        .then((modal) => {
-          // Make delete topic call
-          return Promise.all([modal, Controller.deleteGoal({
-            instance: instance,
-            topicid: topicId,
-            goalid: goalId
-          })]);
-        })
-        .then(([modal, jsonTaxonomy]) => {
-          modal.hide();
-          taxonomy = JSON.parse(jsonTaxonomy);
-          $('#learninggoals-list').children().remove();
-          taxonomy.children.forEach((topic) => {
-            if (topic.topicid === topicId) {
-              loadGoals(topicId, topic.children);
-            }
-          });
-          return 0;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+      try {
+        const results = await CoreStr.get_strings(strings);
+        const modal = await showMessage(
+          results[0],
+          results[1],
+          results[2],
+        );
+        modal.hide();
+
+        // Mark goal as deleted
+        deleteLocalGoal(goalToDelete, topic, true);
+        updateTaxonomyValue();
+
+        loadGoals(topic);
+      } catch (e) {
+        console.error("Failed to delete goal", e);
+      }
     };
 
     /**
@@ -634,27 +534,28 @@ define(
     const clickedMoveupGoal = (e) => {
       e.preventDefault();
 
-      const topicId = $(e.currentTarget).data('topicid');
-      const goalId = $(e.currentTarget).data('goalid');
+      const topicid = $(e.currentTarget).data('topicid');
+      const goalid = $(e.currentTarget).data('goalid');
+      const topic = getTopicById(topicid);
+      const goalToMove = getGoalById(goalid, topic);
+      if (!topic || !goalToMove || goalToMove.ranking == 1) {
+        // No goal or is already first
+        return;
+      }
 
-      // Make move up goal call
-      Controller.moveUpGoal({
-        goalid: goalId
-      })
-        .then((jsonTaxonomy) => {
-          taxonomy = JSON.parse(jsonTaxonomy);
+      for (let goal of topic.children) {
+        // Only goal directly above is affected
+        if (goal.ranking === goalToMove.ranking - 1) {
+          goal.ranking++;
+          goal[EDIT_KEY] = true;
+          goalToMove.ranking--;
+          goalToMove[EDIT_KEY] = true;
+          break;
+        }
+      }
+      updateTaxonomyValue();
 
-          $('#learninggoals-list').children().remove();
-          taxonomy.children.forEach((topic) => {
-            if (topic.topicid === topicId) {
-              loadGoals(topicId, topic.children);
-            }
-          });
-          return;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+      loadGoals(topic);
     };
 
     /**
@@ -664,27 +565,28 @@ define(
     const clickedMovedownGoal = (e) => {
       e.preventDefault();
 
-      const topicId = $(e.currentTarget).data('topicid');
-      const goalId = $(e.currentTarget).data('goalid');
+      const topicid = $(e.currentTarget).data('topicid');
+      const goalid = $(e.currentTarget).data('goalid');
+      const topic = getTopicById(topicid);
+      const goalToMove = getGoalById(goalid, topic);
+      if (!topic || !goalToMove) {
+        // No goal or is already first
+        return;
+      }
 
-      // Make move down goal call
-      Controller.moveDownGoal({
-        goalid: goalId
-      })
-        .then((jsonTaxonomy) => {
-          taxonomy = JSON.parse(jsonTaxonomy);
+      for (let goal of topic.children) {
+        // Only goal directly below is affected
+        if (goal.ranking === goalToMove.ranking + 1) {
+          goal.ranking--;
+          goal[EDIT_KEY] = true;
+          goalToMove.ranking++;
+          goalToMove[EDIT_KEY] = true;
+          break;
+        }
+      }
+      updateTaxonomyValue();
 
-          $('#learninggoals-list').children().remove();
-          taxonomy.children.forEach((topic) => {
-            if (topic.topicid === topicId) {
-              loadGoals(topicId, topic.children);
-            }
-          });
-          return;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+      loadGoals(topic);
     };
 
 
@@ -696,71 +598,67 @@ define(
      * @param {string} btnSaveText The SAVE button text
      * @param {function} onSaveCallback Function callback when user clicks save
      */
-    const showModal = (context, title, templateName, btnSaveText, onSaveCallback) => {
+    const showModal = async(context, title, templateName, btnSaveText, onSaveCallback) => {
       let strings = [
         {key: 'validation:missingtitle', component: 'mod_learninggoalwidget'},
         {key: 'validation:invalidlink', component: 'mod_learninggoalwidget'},
       ];
-      CoreStr.get_strings(strings)
-        .then((results) => {
-          ModalFactory.create({
-            type: ModalFactory.types.SAVE_CANCEL,
-            title: title,
-            body: Templates.render(templateName, context)
-          })
-            .done((modal) => {
-              modal.setSaveButtonText(btnSaveText);
-              modal.getRoot().on(ModalEvents.save, (event) => {
-                var titleInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_TITLE_FIELD);
-                var shortnameInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_SHORTNAME_FIELD);
-                var urlInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_URL_FIELD);
+      const results = await CoreStr.get_strings(strings);
+      const modal = await ModalFactory.create({
+        type: ModalFactory.types.SAVE_CANCEL,
+        title: title,
+        body: Templates.render(templateName, context)
+      });
 
-                let titleValid = false;
-                let urlValid = false;
-                if (titleInputfield[0].value !== undefined && titleInputfield[0].value !== "") {
-                  titleValid = true;
-                }
-                if (isValidUrl(urlInputfield[0].value)) {
-                  urlValid = true;
-                }
-                if (titleValid && urlValid) {
-                  onSaveCallback(
-                    modal,
-                    titleInputfield[0].value,
-                    shortnameInputfield[0].value,
-                    urlInputfield[0].value
-                  );
-                } else {
-                  event.preventDefault();
-                  event.stopPropagation();
-                  if (titleValid === false) {
-                    modal.getRoot().find('[data-action="titlefeedback"]')
-                      .text(results[0]);
-                    modal.getRoot().find('[data-action="titlefeedback"]')
-                      .css("display", "inline");
-                  }
-                  if (urlValid === false) {
-                    modal.getRoot().find('[data-action="urlfeedback"]')
-                      .text(results[1]);
-                    modal.getRoot().find('[data-action="urlfeedback"]')
-                      .css("display", "inline");
-                  }
-                }
-              });
-              modal.show();
+      return new Promise((resolve, reject) => {
+        modal.setSaveButtonText(btnSaveText);
 
-              // Destroy when hidden.
-              modal.getRoot().on(ModalEvents.hidden, () => {
-                modal.destroy();
-              });
+        modal.getRoot().on(ModalEvents.save, (event) => {
+          var titleInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_TITLE_FIELD);
+          var shortnameInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_SHORTNAME_FIELD);
+          var urlInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_URL_FIELD);
 
-              return modal;
-            });
-          return 0;
-        })
-        .catch(() => {
-          // Do nothing
+          let titleValid = false;
+          let urlValid = false;
+          if (titleInputfield[0].value !== undefined && titleInputfield[0].value !== "") {
+            titleValid = true;
+          }
+          if (isValidUrl(urlInputfield[0].value)) {
+            urlValid = true;
+          }
+          if (titleValid && urlValid) {
+            resolve(
+              modal,
+              titleInputfield[0].value,
+              shortnameInputfield[0].value,
+              urlInputfield[0].value
+            );
+          } else {
+            event.preventDefault();
+            event.stopPropagation();
+            if (titleValid === false) {
+              modal.getRoot().find('[data-action="titlefeedback"]')
+                .text(results[0]);
+              modal.getRoot().find('[data-action="titlefeedback"]')
+                .css("display", "inline");
+              reject("Title invalid");
+            }
+            if (urlValid === false) {
+              modal.getRoot().find('[data-action="urlfeedback"]')
+                .text(results[1]);
+              modal.getRoot().find('[data-action="urlfeedback"]')
+                .css("display", "inline");
+              reject("Url invalid");
+            }
+          }
         });
+        modal.show();
+
+        // Destroy when hidden.
+        modal.getRoot().on(ModalEvents.hidden, () => {
+          modal.destroy();
+        });
+      });
     };
 
     /**
@@ -768,31 +666,22 @@ define(
      * @param {*} title The title bar of the modal
      * @param {*} text The message text
      * @param {*} btnSaveText The SAVE button text
-     * @param {*} onSaveCallback Function callback when user clicks save
      *
      * @returns {void}
      */
-    const showMessage = (title, text, btnSaveText, onSaveCallback) => {
-      ModalFactory.create({
+    const showMessage = async(title, text, btnSaveText) => {
+      const modal = await ModalFactory.create({
         type: ModalFactory.types.SAVE_CANCEL,
         title: title,
         body: text
-      })
-        .then((modal) => {
-          modal.setSaveButtonText(btnSaveText);
-          modal.getRoot().on(ModalEvents.save, async() => {
-            await onSaveCallback(modal);
-          });
-          // Destroy when hidden.
-          modal.getRoot().on(ModalEvents.hidden, () => {
-            modal.destroy();
-          });
-          modal.show();
-          return modal;
-        })
-        .catch(() => {
-          // Do nothing
-        });
+      });
+      modal.setSaveButtonText(btnSaveText);
+      // Destroy when hidden.
+      modal.getRoot().on(ModalEvents.hidden, () => {
+        modal.destroy();
+      });
+      modal.show();
+      return new Promise((resolve) => modal.getRoot().on(ModalEvents.save, () => resolve(modal)));
     };
 
     /**
@@ -959,45 +848,41 @@ ${isLast ? '\n\n' : '\n'}`;
           ];
           const results = await CoreStr.get_strings(strings);
           if (check.error) {
-            showMessage(
+            const modal = await showMessage(
               results[0],
               results[1] + ":<br/>" + check.msg,
               results[2],
-              (modal) => {
-                modal.hide();
-              }
             );
+            modal.hide();
             return;
           }
 
-          showMessage(
+          const modal = await showMessage(
             results[3],
             results[4] + "\n" + check.preview,
             results[5],
-            async(modal) => {
-              let jsonTaxonomy = {};
-              jsonTaxonomy = await new Promise((resolve, reject) => {
-                Controller.deleteTaxonomy({
-                  instance: instance,
-                })
-                  .then((jsonTaxonomy) => resolve(jsonTaxonomy))
-                  .catch((e) => reject(e));
-              });
-              $("#topics-list").children().remove();
-              $("#learninggoals-list").children().remove();
-              jsonTaxonomy = await new Promise((resolve, reject) => {
-                Controller.addTaxonomy({
-                  instance: instance,
-                  taxonomy: JSON.stringify(parsed),
-                })
-                  .then((jsonTaxonomy) => resolve(jsonTaxonomy))
-                  .catch((e) => reject(e));
-              });
-              taxonomy = JSON.parse(jsonTaxonomy);
-              loadTopics(taxonomy);
-              modal.hide();
-            });
+          );
+          modal.hide();
 
+          taxonomy.children.forEach((topic) => {
+            topic.children.forEach((goal) => {
+              deleteLocalGoal(goal, topic, false);
+            });
+            deleteLocalTopic(topic, false);
+          });
+
+          $("#topics-list").children().remove();
+          $("#learninggoals-list").children().remove();
+          parsed.children.forEach((topic) => {
+            const addedTopic = addLocalTopic(topic.name, topic.keyword, topic.link);
+            topic.children.forEach((goal) => {
+              addLocalGoal(addedTopic, goal.name, goal.keyword, goal.link);
+            });
+          });
+          updateTaxonomyValue();
+          console.log(parsed, taxonomy);
+
+          loadTopics();
         } catch (e) {
           // Do nothing
         }
@@ -1005,16 +890,13 @@ ${isLast ? '\n\n' : '\n'}`;
     };
 
     /**
-     * Download JSON Taxonomy
+     * Download current JSON Taxonomy
      */
     const clickedJSONDownload = async() => {
-      const jsonTaxonomy = await new Promise((resolve, reject) => {
-        Controller.getTaxonomy({
-          instance: instance,
-        })
-          .then((jsonTaxonomy) => resolve(JSON.parse(jsonTaxonomy)))
-          .catch((e) => reject(e));
-      });
+
+      const strTaxonomy = await Controller.getTaxonomy({instance: instance});
+      const jsonTaxonomy = JSON.parse(strTaxonomy);
+
       let newTaxonomy = {name: jsonTaxonomy.name, children: []};
       jsonTaxonomy.children.forEach((topic) => {
         let goals = [];
@@ -1058,6 +940,253 @@ ${isLast ? '\n\n' : '\n'}`;
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
+    };
+
+    /**
+     * Download JSON Taxonomy template
+     */
+    const clickedJSONDownloadTemplate = async() => {
+      const template = {
+        "name": "Learning Goal's taxonomy",
+        "children": [
+          {
+            "name": "Topic 1 Name",
+            "keyword": "Topic 1 Shortname",
+            "link": "https://example.com",
+            "children": [
+              {
+                "name": "Learning Goal 1 of Topic 1",
+                "keyword": "Goal 1 Shortname",
+                "link": "https://example.com"
+              },
+              {
+                "name": "Learning Goal 2 of Topic 1",
+                "keyword": "Goal 2 Shortname",
+                "link": "https://example.com"
+              }
+            ]
+          },
+          {
+            "name": "Topic 2 Name",
+            "keyword": "Topic 2 Shortname",
+            "link": "https://example.com",
+            "children": [
+              {
+                "name": "Learning Goal 1 of Topic 2",
+                "keyword": "Goal 1 Shortname",
+                "link": "https://example.com"
+              },
+              {
+                "name": "Learning Goal 2 of Topic 2",
+                "keyword": "Goal 2 Shortname",
+                "link": "https://example.com"
+              }
+            ]
+          }
+        ]
+      };
+      const filename = 'taxonomy.json';
+      const blob = new Blob([JSON.stringify(template, null, 2)], {type: 'text/csv'});
+      if (window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveBlob(blob, filename);
+      }
+      const element = document.createElement('a');
+      element.setAttribute('href', window.URL.createObjectURL(blob));
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    };
+
+    /**
+     * Returns the topic object by its id
+     *
+     * @param {number} topicid id of the topic
+     * @return {object | null} topic or null
+     */
+    const getTopicById = (topicid) => {
+      for (let topic of taxonomy.children) {
+        if (topic.topicid == topicid) {
+          return topic;
+        }
+      }
+      return null;
+    };
+
+    /**
+     * Returns the ranking that should be used next for the topics
+     * It is = max ranking + 1
+     *
+     * @return {number} ranking
+     */
+    const getNextTopicRanking = () => {
+      let ranking = 0;
+      taxonomy.children.forEach((topic) => {
+        ranking = Math.max(topic.ranking, ranking);
+      });
+      return ranking + 1;
+    };
+
+    /**
+     * Returns the next available topic id
+     *
+     * @return {number} id
+     */
+    const getNextTopicId = () => {
+      let id = 0;
+      taxonomy.children.forEach((topic) => {
+        id = Math.max(topic.topicid, id);
+      });
+      return id + 1;
+    };
+
+    /**
+     * Returns the goal object by its id
+     *
+     * @param {number} goalid id of the goal
+     * @param {object | undefined} topic to search
+     * @return {object | null} goal or null
+     */
+    const getGoalById = (goalid, topic = undefined) => {
+      if (topic) {
+        for (let goal of topic.children) {
+          if (goal.goalid == goalid) {
+            return goal;
+          }
+        }
+        return null;
+      }
+      for (let topic of taxonomy.children) {
+        for (let goal of topic.children) {
+          if (goal.goalid == goalid) {
+            return goal;
+          }
+        }
+      }
+      return null;
+    };
+
+    /**
+     * Returns the ranking that should be used next for the goals
+     * It is = max ranking + 1
+     *
+     * @param {object} topic Topic to check
+     * @return {number} ranking
+     */
+    const getNextGoalRanking = (topic) => {
+      let ranking = 0;
+      topic.children.forEach((goal) => {
+        ranking = Math.max(goal.ranking, ranking);
+      });
+      return ranking + 1;
+    };
+
+    /**
+     * Returns the next available goal id
+     *
+     * @return {number} id
+     */
+    const getNextGoalId = () => {
+      let id = 0;
+      taxonomy.children.forEach((topic) => {
+        topic.children.forEach((goal) => {
+          id = Math.max(goal.goalid, id);
+        });
+      });
+      return id + 1;
+    };
+
+    /**
+     * Add a new local topic
+     *
+     * @param {string} name Name of the new topic
+     * @param {string} shortname Shortname of the new topic
+     * @param {string} url Url of the new topic
+     * @returns {object} newly created topic
+     */
+    const addLocalTopic = (name, shortname, url) => {
+      let newTopic = {
+        name: name,
+        keyword: shortname,
+        link: url,
+        ranking: getNextTopicRanking(),
+        topicid: getNextTopicId(),
+        children: [],
+        type: 'topic',
+      };
+      newTopic[ADD_KEY] = true;
+      taxonomy.children.push(newTopic);
+
+      return newTopic;
+    };
+
+    /**
+     * Marks a local topic as deleted
+     * @param {object} topicToDelete Topic to delete
+     * @param {boolean} reorder Whether to reorder the rankings of the other topics
+     */
+    const deleteLocalTopic = (topicToDelete, reorder) => {
+      if (reorder) {
+        taxonomy.children.forEach((topic) => {
+          if (topic.ranking > topicToDelete.ranking) {
+            topic.ranking--;
+            topic[EDIT_KEY] = true;
+          }
+        });
+      }
+      topicToDelete[DELETE_KEY] = true;
+      topicToDelete.ranking = -1;
+    };
+
+    /**
+     * Add a new local goal
+     *
+     * @param {string} topic Parent topic to which the goal should be added
+     * @param {string} name Name of the new goal
+     * @param {string} shortname Shortname of the new goal
+     * @param {string} url Url of the new goal
+     * @returns {object} newly created goal
+     */
+    const addLocalGoal = (topic, name, shortname, url) => {
+      let newGoal = {
+        name: name,
+        keyword: shortname,
+        link: url,
+        ranking: getNextGoalRanking(topic),
+        goalid: getNextGoalId(),
+        type: 'goal',
+      };
+      newGoal[ADD_KEY] = true;
+      topic.children.push(newGoal);
+
+      return newGoal;
+    };
+
+    /**
+     * Marks a local goal as deleted
+     * @param {object} goalToDelete Goal to delete
+     * @param {object} topic Topic parent of goal
+     * @param {boolean} reorder Whether to reorder the rankings of the other goals
+     */
+    const deleteLocalGoal = (goalToDelete, topic, reorder) => {
+      if (reorder) {
+        topic.children.forEach((goal) => {
+          if (goal.ranking > goalToDelete.ranking) {
+            goal.ranking--;
+            goal[EDIT_KEY] = true;
+          }
+        });
+      }
+      goalToDelete[DELETE_KEY] = true;
+      goalToDelete.ranking = -1;
+    };
+
+    /**
+     * Updates the value of the taxonomy
+     */
+    const updateTaxonomyValue = () => {
+      document.querySelector("input[name='taxonomy']").value = JSON.stringify(taxonomy);
     };
 
     return {

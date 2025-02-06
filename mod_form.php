@@ -69,6 +69,9 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
 
         $jsontaxonomy = addslashes($taxonomy->get_taxonomy_as_json());
 
+        $mform->addElement('hidden', 'taxonomy', $jsontaxonomy);
+        $mform->setType('taxonomy', PARAM_RAW);
+
         $widgetrenderer = $PAGE->get_renderer('mod_learninggoalwidget', 'widget');
         $templatecontext = [
             'topicheader' => get_string('settings:topicheader', 'mod_learninggoalwidget'),
@@ -76,10 +79,11 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
             'btnnewtopic' => get_string('settings:btnnewtopic', 'mod_learninggoalwidget'),
             'btnnewgoal' => get_string('settings:btnnewgoal', 'mod_learninggoalwidget'),
             'jsonheader' => get_string('settings:jsonheader', 'mod_learninggoalwidget'),
+            'jsondownload' => get_string('settings:jsondownload', 'mod_learninggoalwidget'),
+            'jsonupload' => get_string('settings:jsonupload', 'mod_learninggoalwidget'),
             'btnjsonupload' => get_string('settings:btnjsonupload', 'mod_learninggoalwidget'),
             'btnjsondownload' => get_string('settings:btnjsondownload', 'mod_learninggoalwidget'),
-            'course' => $this->_course->id,
-            'coursemodule' => ($this->_cm !== null) ? $this->_cm->id : -1,
+            'btnjsondownloadtemplate' => get_string('settings:btnjsondownloadtemplate', 'mod_learninggoalwidget'),
             'instance' => ($this->_instance !== null && $this->_instance !== "") ? $this->_instance : -1,
             'taxonomy' => $jsontaxonomy,
             'notopicsmessage' => get_string('settings:notopicsmessage', 'mod_learninggoalwidget'),

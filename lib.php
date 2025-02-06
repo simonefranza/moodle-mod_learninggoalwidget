@@ -34,11 +34,20 @@
  */
 function learninggoalwidget_add_instance(stdClass $data): int {
     global $DB;
-    $data->course = $data->course;
-    $data->name = $data->name;
     $data->timecreated = time();
     $data->timemodified = $data->timecreated;
     $data->id = $DB->insert_record('learninggoalwidget', $data);
+
+    $taxonomy = json_decode($data->taxonomy);
+
+    // Validate rankings etc then add everything.
+    foreach ($taxonomy->children as $topic) {
+        var_dump($topic->name);
+
+        foreach ($topic->children as $goal) {
+            var_dump($goal->name);
+        }
+    }
 
     return $data->id;
 }

@@ -32,10 +32,11 @@
     * goalheader
     * btnnewgoal
     * jsonheader
+    * jsondownload
+    * jsonupload
     * btnjsonupload
     * btnjsondownload
-    * course
-    * coursemodule
+    * btnjsondownloadtemplate
     * instance
     * taxonomy
     * notopicsmessage
@@ -46,11 +47,12 @@
         "btnnewtopic": "Neuen Themenbereich erstellen",
         "goalheader": "Lernziele",
         "btnnewgoal": "Neues Lernziele erstellen",
-        "jsonheader": "JSON Format",
+        "jsonheader": "Taxonomy Management",
+        "jsondownload": "Download the current taxonomy or an example template of the taxonomy.",
+        "jsonupload": "Replace the current taxomy via a JSON file.",
         "btnjsonupload": "Upload",
-        "btnjsondownload": "Download",
-        "course": "1",
-        "coursemodule": "2",
+        "btnjsondownload": "Current taxonomy",
+        "btnjsondownloadtemplate": "Taxonomy template",
         "instance": "3",
         "taxonomy": "{}",
         "notopicsmessage": "Es sind noch keine Themenbereiche vorhanden"
@@ -95,11 +97,14 @@
             <h3 class="card-header" id="json-listing-title">{{jsonheader}}</h3>
             <div class="card-body">
                <div class="listing-actions mb-3">
+                  <p>{{jsonupload}}</p>
                   <input id="json-file" type="file">
                   <a class="btn btn-secondary" id="json-upload">{{btnjsonupload}}</a>
                </div>
                <div class="listing-actions mb-3">
+                  <p>{{jsondownload}}</p>
                   <a class="btn btn-secondary" id="json-download">{{btnjsondownload}}</a>
+                  <a class="btn btn-secondary" id="json-download-template">{{btnjsondownloadtemplate}}</a>
                </div>
             </div>
          </div>
@@ -117,6 +122,6 @@ function(
     $,
     FormSettings
 ) {
-    FormSettings.init({{course}}, {{coursemodule}}, {{instance}}, '{{{taxonomy}}}');
+    FormSettings.init({{instance}}, '{{{taxonomy}}}');
 });
 {{/js}}
