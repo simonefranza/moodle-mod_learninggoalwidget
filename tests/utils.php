@@ -105,7 +105,7 @@ trait utils {
      * @param [string] $topic2title
      * @param [string] $topic2shortname
      * @param [string] $topic2url
-     * @return array
+     * @return stdClass
      */
     protected function setup_course_with_topics($topic1title, $topic1shortname, $topic1url,
         $topic2title, $topic2shortname, $topic2url) {
@@ -114,29 +114,31 @@ trait utils {
         // Reset all changes automatically after this test.
         $this->resetAfterTest(true);
 
+        $return = new \stdClass;
+
         $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
+        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
+        $return->user = $this->getDataGenerator()->create_user();
+        $this->setUser($return->user);
 
         // Create topic 1 in course.
-        $topicrecord1 = $this->insert_topic($widgetinstance->id, $topic1title, $topic1shortname, $topic1url, 1);
+        $return->topic1 = $this->insert_topic($return->instance->id, $topic1title, $topic1shortname, $topic1url, 1);
 
         // Create topic 2 in course.
-        $topicrecord2 = $this->insert_topic($widgetinstance->id, $topic2title, $topic2shortname, $topic2url, 2);
+        $return->topic2 = $this->insert_topic($return->instance->id, $topic2title, $topic2shortname, $topic2url, 2);
 
-        return [$widgetinstance, $topicrecord1, $topicrecord2, $user1];
+        return $return;
     }
 
     /**
      * create course with topics and one learing goal
      *
-     * @return array
+     * @return stdClass
      */
     protected function setup_course_and_insert_goals() {
         global $DB;
 
-        $resultcourse = $this->setup_course_with_topics(
+        $course = $this->setup_course_with_topics(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
@@ -147,14 +149,14 @@ trait utils {
 
         // Insert goal under topic 1.
         // Insert in goal table.
-        $goalrecord = $this->insert_goal(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
+        $course->goal = $this->insert_goal(
+            $course->instance->id,
+            $course->topic1->id,
             "Goal under Topic 1 to be updated",
             "Goal 1 shortname to be updated",
             "http://goal1.updateme.at",
             1);
-        return [...$resultcourse, $goalrecord];
+        return $course;
     }
 
     /**
@@ -215,18 +217,19 @@ trait utils {
     /**
      * helper function creating an instance
      *
-     * @return array
+     * @return stdClass
      */
     protected function setup_widget() {
         global $DB;
         $this->setUp();
 
+        $return = new \stdClass;
         $course = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
+        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
+        $return->user = $this->getDataGenerator()->create_user();
+        $this->setUser($return->user);
 
-        return [$widgetinstance, $user];
+        return $return;
     }
 
     /**
@@ -235,22 +238,22 @@ trait utils {
      * @param [string] $topictitle
      * @param [string] $topicshortname
      * @param [string] $topicurl
-     * @return array
+     * @return stdClass
      */
     protected function setup_topic($topictitle, $topicshortname, $topicurl) {
         global $DB;
-        [$widgetinstance, $user] = $this->setup_widget();
+        $res = $this->setup_widget();
 
         // Create topic in course.
-        $topicrecord = $this->insert_topic(
-            $widgetinstance->id,
+        $res->topic = $this->insert_topic(
+            $res->instance->id,
             $topictitle,
             $topicshortname,
             $topicurl,
             1
         );
 
-        return [$widgetinstance, $topicrecord];
+        return $res;
     }
 
     /**
@@ -328,7 +331,7 @@ trait utils {
         $topic = $this->check_topic_properties($parsed);
 
         $this->assertEquals($expectedtitle, $topic->name);
-        $this->assertEquals($expectedshortname, $topic->keyworn);
+        $this->assertEquals($expectedshortname, $topic->keyword);
         $this->assertEquals($expectedurl, $topic->link);
         $this->assertEquals($expectedranking, $topic->ranking);
         return $topic->children;
@@ -452,12 +455,12 @@ trait utils {
         $this->assertEquals(2, count($parsed->children));
 
         foreach ($parsed->children as $topic) {
-            $ranking = $topic[0];
-            $topicid = $topic[1];
-            $topicname = $topic[2];
-            $shortname = $topic[3];
-            $url = $topic[4];
-            $goals = $topic[5];
+            $ranking = $topic->ranking;
+            $topicid = $topic->topicid;
+            $topicname = $topic->name;
+            $shortname = $topic->keyword;
+            $url = $topic->link;
+            $goals = $topic->children;
             if ($topicname === "Artificial Intelligence Basics Part 1") {
                 $this->assertEquals(2, $ranking);
                 $this->assertEquals($topicrecord1->id, $topicid);

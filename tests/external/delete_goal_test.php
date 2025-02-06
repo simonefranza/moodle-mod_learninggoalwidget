@@ -58,32 +58,28 @@ final class delete_goal_test extends externallib_advanced_testcase {
         global $DB;
         $this->setUp();
 
-        [$resultcourse, $goalrecord, $goalinstancerecord] = $this->setup_course_and_insert_goals();
+        $res = $this->setup_course_and_insert_goals();
 
         // Update goal under topic 1.
         $result = delete_goal::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
-            $goalrecord->id
+            $res->instance->id,
+            $res->topic1->id,
+            $res->goal->id
         );
 
         $result = external_api::clean_returnvalue(delete_goal::execute_returns(), $result);
 
-        $resulttopic = $this->check_topic(
+        $goals = $this->check_topic(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
             $result
         );
 
-        $this->assertIsArray($resulttopic[0]);
-        $this->assertEquals(0, count($resulttopic[0]));
+        $this->assertIsArray($goals);
+        $this->assertEquals(0, count($goals));
 
-        $this->assertTrue($DB->record_exists('learninggoalwidget_topic', ['id' => $resultcourse[3]->id]));
-        $this->assertTrue($DB->record_exists('learninggoalwidget_i_topics', ['id' => $resultcourse[5]->id]));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_goal', ['id' => $goalrecord->id]));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_i_goals', ['id' => $goalinstancerecord->id]));
+        $this->assertTrue($DB->record_exists('learninggoalwidget_topics', ['id' => $res->topic1->id]));
+        $this->assertFalse($DB->record_exists('learninggoalwidget_goals', ['id' => $res->goal->id]));
     }
 }

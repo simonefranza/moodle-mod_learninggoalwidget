@@ -67,16 +67,11 @@ final class movedown_topic_test extends externallib_advanced_testcase {
         );
 
         // Move topic 1 behind topic 2.
-        $result = movedown_topic::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id
-        );
+        $result = movedown_topic::execute($resultcourse->topic1->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(movedown_topic::execute_returns(), $result);
 
-        $this->check_course_with_topics($result, $resultcourse[3], $resultcourse[4]);
+        $this->check_course_with_topics($result, $resultcourse->topic1, $resultcourse->topic2);
     }
 }

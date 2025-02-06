@@ -55,7 +55,7 @@ final class update_topic_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\update_topic::execute_parameters
      */
     public function test_update_topic(): void {
-        $result1 = $this->setup_topic(
+        $result = $this->setup_topic(
             "Artificial Intelligence Basics",
             "AIBasics",
             "http://aibasics.at"
@@ -66,15 +66,15 @@ final class update_topic_test extends externallib_advanced_testcase {
         $newurl = "http://new.at";
 
         // Update topic.
-        $result = update_topic::execute(
-            $result1[0]->id,
-            $result1[1]->id,
+        $update = update_topic::execute(
+            $result->instance->id,
+            $result->topic->id,
             $newtitle,
             $newshorttitle,
             $newurl
         );
 
-        $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1, $result);
+        $goals = $this->check_topic($newtitle, $newshorttitle, $newurl, 1, $update);
 
         $result = external_api::clean_returnvalue(update_topic::execute_returns(), $result);
         $this->assertEquals([], $goals);

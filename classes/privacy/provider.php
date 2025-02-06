@@ -169,7 +169,7 @@ class provider implements
             RIGHT JOIN {learninggoalwidget_topics} lgwtopic
                     ON lgwup.topicid = lgwtopic.id
             RIGHT JOIN {learninggoalwidget_goals} lgwgoal
-                    ON lgwup.goalid = lgwgoal.id AND lgwup.topicid = lgwgoal.topic
+                    ON lgwup.goalid = lgwgoal.id AND lgwup.topicid = lgwgoal.topicid
                  WHERE c.id {$contextsql}";
 
         $params = [

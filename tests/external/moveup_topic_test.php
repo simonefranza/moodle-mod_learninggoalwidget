@@ -66,15 +66,10 @@ final class moveup_topic_test extends externallib_advanced_testcase {
         );
 
         // Move topic 2 up.
-        $result = moveup_topic::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[4]->id
-        );
+        $result = moveup_topic::execute($resultcourse->topic2->id);
 
         $result = external_api::clean_returnvalue(moveup_topic::execute_returns(), $result);
 
-        $this->check_course_with_topics($result, $resultcourse[3], $resultcourse[4]);
+        $this->check_course_with_topics($result, $resultcourse->topic1, $resultcourse->topic2);
     }
 }

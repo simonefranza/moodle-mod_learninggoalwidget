@@ -55,14 +55,14 @@ final class insert_topic_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\insert_topic::execute_parameters
      */
     public function test_insert_topic(): void {
-        [$widgetinstance, $user] = $this->setup_widget();
+        $res = $this->setup_widget();
 
         $title = "Artificial Intelligence Basics";
         $shorttitle = "AIBasics";
         $url = "http://aibasics.at";
 
         $result = insert_topic::execute(
-            $widgetinstance->id,
+            $res->instance->id,
             $title,
             $shorttitle,
             $url

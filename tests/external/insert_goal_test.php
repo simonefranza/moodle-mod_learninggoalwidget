@@ -68,10 +68,8 @@ final class insert_goal_test extends externallib_advanced_testcase {
 
         // Insert goal under topic 1.
         $result = insert_goal::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
+            $resultcourse->instance->id,
+            $resultcourse->topic->id,
             "Knowing theoretical foundations of AI",
             "TheoreticalFoundationsAI",
             "http://aibasics.goal1.at"
@@ -97,19 +95,13 @@ final class insert_goal_test extends externallib_advanced_testcase {
 
         $this->assertIsArray($goals);
         $this->assertEquals(1, count($goals));
-        $this->assertEquals(5, count($goals[0]));
 
-        $goalranking = $goals[0][0];
-        $goalid = $goals[0][1];
-        $goalname = $goals[0][2];
-        $goalshortname = $goals[0][3];
-        $goalurl = $goals[0][4];
-
-        $this->assertEquals(1, $goalranking);
-        $this->assertIsNumeric($goalid);
-        $this->assertTrue($goalid > 0);
-        $this->assertEquals("Knowing theoretical foundations of AI", $goalname);
-        $this->assertEquals("TheoreticalFoundationsAI", $goalshortname);
-        $this->assertEquals("http://aibasics.goal1.at", $goalurl);
+        $goal = $goals[0];
+        $this->assertIsNumeric($goal->id);
+        $this->assertTrue($goal->id > 0);
+        $this->assertEquals("Knowing theoretical foundations of AI", $goal->name);
+        $this->assertEquals("TheoreticalFoundationsAI", $goal->keyword);
+        $this->assertEquals("http://aibasics.goal1.at", $goal->link);
+        $this->assertEquals(1, $goal->ranking);
     }
 }

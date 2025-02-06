@@ -54,19 +54,14 @@ final class taxonomy_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\local\taxonomy
      */
     public function test_emptytaxonomy(): void {
-        $this->setUp();
-
-        $course1 = $this->getDataGenerator()->create_course();
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course1->id]);
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
+        $res = $this->setup_widget();
 
         $emptytaxonomy = new \stdClass;
         $emptytaxonomy->name = "Learning Goal's taxonomy";
         $emptytaxonomy->children = [];
         $jsonemptytaxonomy = json_encode($emptytaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
-        $taxonomy = new taxonomy($widgetinstance->id);
+        $taxonomy = new taxonomy($res->instance->id);
         $this->assertNotNull($taxonomy);
         $json = $taxonomy->get_taxonomy_as_json();
         $this->assertNotNull($json);

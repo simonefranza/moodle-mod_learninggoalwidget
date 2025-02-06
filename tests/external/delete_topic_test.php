@@ -58,26 +58,21 @@ final class delete_topic_test extends externallib_advanced_testcase {
         global $DB;
         $this->setUp();
 
-        $result1 = $this->setup_topic(
+        $result = $this->setup_topic(
             "Artificial Intelligence Basics",
             "AIBasics",
             "http://aibasics.at"
         );
 
         // Delete topic.
-        $result = delete_topic::execute(
-            $result1[0]->id,
-            $result1[1]->id,
-            $result1[2]->id,
-            $result1[3]->id
-        );
+        $deleted = delete_topic::execute($result->topic->id);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(delete_topic::execute_returns(), $result);
+        $deleted = external_api::clean_returnvalue(delete_topic::execute_returns(), $deleted);
 
-        $this->assertNotNull($result);
-        $this->assertNotEmpty($result);
-        $parsed = json_decode($result);
+        $this->assertNotNull($deleted);
+        $this->assertNotEmpty($deleted);
+        $parsed = json_decode($deleted);
 
         $this->assertNotNull($parsed);
 
@@ -89,7 +84,6 @@ final class delete_topic_test extends externallib_advanced_testcase {
         $this->assertIsArray($parsed->children);
         $this->assertEquals(0, count($parsed->children));
 
-        $this->assertFalse($DB->record_exists('learninggoalwidget_topic', ['id' => $result1[3]->id]));
-        $this->assertFalse($DB->record_exists('learninggoalwidget_i_topics', ['id' => $result1[4]->id]));
+        $this->assertFalse($DB->record_exists('learninggoalwidget_topics', ['id' => $result->topic->id]));
     }
 }

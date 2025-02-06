@@ -56,15 +56,12 @@ final class update_goal_test extends externallib_advanced_testcase {
      */
     public function test_update_goal(): void {
         $this->setUp();
-        [$resultcourse, $goalrecord, ] = $this->setup_course_and_insert_goals();
+        $res = $this->setup_course_and_insert_goals();
 
         // Update goal under topic 1.
         $result = update_goal::execute(
-            $resultcourse[0]->id,
-            $resultcourse[1]->id,
-            $resultcourse[2]->id,
-            $resultcourse[3]->id,
-            $goalrecord->id,
+            $res->instance->id,
+            $res->goal->id,
             "Updated Goalname",
             "Updated Goal Shortname",
             "http://goal1.updated.at"
@@ -73,27 +70,20 @@ final class update_goal_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_goal::execute_returns(), $result);
 
-        $resulttopic = $this->check_topic(
+        $goals = $this->check_topic(
             "Artificial Intelligence Basics Part 1",
             "AIBasics 1",
             "http://aibasics1.at",
             $result
         );
 
-        $this->assertEquals(1, count($resulttopic[0]));
-        $this->assertEquals(5, count($resulttopic[0][0]));
-
-        $goalranking = $resulttopic[0][0][0];
-        $goalid = $resulttopic[0][0][1];
-        $goalname = $resulttopic[0][0][2];
-        $goalshortname = $resulttopic[0][0][3];
-        $goalurl = $resulttopic[0][0][4];
-
-        $this->assertEquals(1, $goalranking);
-        $this->assertIsNumeric($goalid);
-        $this->assertEquals($goalrecord->id, $goalid);
-        $this->assertEquals("Updated Goalname", $goalname);
-        $this->assertEquals("Updated Goal Shortname", $goalshortname);
-        $this->assertEquals("http://goal1.updated.at", $goalurl);
+        $this->assertEquals(1, count($goals[0]));
+        $goal = $goals[0];
+        $this->assertIsNumeric($goal->goalid);
+        $this->assertEquals($result->goal->id, $goal->goalid);
+        $this->assertEquals("Updated Goalname", $goal->name);
+        $this->assertEquals("Updated Goal Shortname", $goal->keyword);
+        $this->assertEquals("http://goal1.updated.at", $goal->link);
+        $this->assertEquals(1, $goal->ranking);
     }
 }
