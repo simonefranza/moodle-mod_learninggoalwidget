@@ -94,7 +94,7 @@ class movedown_topic extends \core_external\external_api {
 
         if (!$recordresult || $topicmovedown->ranking === $recordresult->maxranking) {
             // No need to update, as it's already highest rank.
-            return self::get_taxonomy($topicmovedown->learninggoalwidgetid);
+            return get_taxonomy::execute($topicmovedown->learninggoalwidgetid);
         }
         $topicmoveup = topic::get_db_entry_by_ranking($topicmovedown->learninggoalwidgetid, $topicmovedown->ranking + 1);
 

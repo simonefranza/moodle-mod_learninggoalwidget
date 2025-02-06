@@ -94,7 +94,7 @@ class movedown_goal extends \core_external\external_api {
 
         if (!$recordresult || $goalmovedown->ranking === $recordresult->maxranking) {
             // No need to update, as it's already highest rank.
-            return self::get_taxonomy($goalmovedown->learninggoalwidgetid);
+            return get_taxonomy::execute($goalmovedown->learninggoalwidgetid);
         }
         $goalmoveup = goal::get_db_entry_by_ranking(
             $goalmovedown->learninggoalwidgetid,
@@ -105,6 +105,6 @@ class movedown_goal extends \core_external\external_api {
         $DB->update_record('learninggoalwidget_goals', $goalmovedown);
         $DB->update_record('learninggoalwidget_goals', $goalmoveup);
 
-        return self::get_taxonomy($goalmovedown->learninggoalwidgetid);
+        return get_taxonomy::execute($goalmovedown->learninggoalwidgetid);
     }
 }

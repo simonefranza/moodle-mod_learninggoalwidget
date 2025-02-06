@@ -82,7 +82,7 @@ class moveup_goal extends \core_external\external_api {
 
         if ($goalmoveup->ranking == '1') {
             // No need to update, as it's already lowest rank.
-            return self::get_taxonomy($goalmoveup->learninggoalwidgetid);
+            return get_taxonomy::execute($goalmoveup->learninggoalwidgetid);
         }
         $goalmovedown = goal::get_db_entry_by_ranking(
             $goalmoveup->learninggoalwidgetid,

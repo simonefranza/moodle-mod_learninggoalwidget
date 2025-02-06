@@ -82,7 +82,7 @@ class moveup_topic extends \core_external\external_api {
 
         if ($topicmoveup->ranking == '1') {
             // No need to update, as it's already lowest rank.
-            return self::get_taxonomy($topicmoveup->learninggoalwidgetid);
+            return get_taxonomy::execute($topicmoveup->learninggoalwidgetid);
         }
         $topicmovedown = topic::get_db_entry_by_ranking($topicmoveup->learninggoalwidgetid, $topicmoveup->ranking - 1);
 
