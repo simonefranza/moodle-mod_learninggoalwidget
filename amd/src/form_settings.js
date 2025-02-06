@@ -234,8 +234,6 @@ define(
         })
         .then(([modal, id]) => {
           return Promise.all([modal, id, Controller.getTaxonomy({
-            course: course,
-            coursemodule: coursemodule,
             instance: instance,
           })]);
         })
@@ -471,8 +469,6 @@ define(
         })
         .then(([modal, id]) => {
           return Promise.all([modal, id, Controller.getTaxonomy({
-            course: course,
-            coursemodule: coursemodule,
             instance: instance,
           })]);
         })
@@ -1014,8 +1010,6 @@ ${isLast ? '\n\n' : '\n'}`;
     const clickedJSONDownload = async() => {
       const jsonTaxonomy = await new Promise((resolve, reject) => {
         Controller.getTaxonomy({
-          course: course,
-          coursemodule: coursemodule,
           instance: instance,
         })
           .then((jsonTaxonomy) => resolve(JSON.parse(jsonTaxonomy)))
