@@ -32,31 +32,30 @@ namespace mod_learninggoalwidget\local;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait shared {
-  /**
-   * Check that a child obj has the properties
-   * - name (str)
-   * - keyword (str)
-   * - link (str)
-   * - ranking (int)
-   *
-   * @param stdClass child Child to check
-   * @returns is child valid
-   */
-  public static function validate_children_properties(&$child) {
-      // Ensure required properties exist and have correct types.
-      $is_valid = true;
-      if (!(isset($child->name) && is_string($child->name))) {
-          $is_valid = false;
-      } else if (!(isset($child->keyword) && is_string($child->keyword))) {
-          $is_valid = false;
-      } else if (!(isset($child->link) && is_string($child->link))) {
-          $is_valid = false;
-      } else if (!(isset($child->ranking) && is_int($child->ranking))) {
-          $is_valid = false;
-      }
+    /**
+     * Check that a child obj has the properties
+     * - name (str)
+     * - keyword (str)
+     * - link (str)
+     * - ranking (int)
+     *
+     * @param stdClass child Child to check
+     * @return is child valid
+     */
+    public static function validate_children_properties(&$child) {
+        // Ensure required properties exist and have correct types.
+        $isvalid = true;
+        if (!(isset($child->name) && is_string($child->name))) {
+            $isvalid = false;
+        } else if (!(isset($child->keyword) && is_string($child->keyword))) {
+            $isvalid = false;
+        } else if (!(isset($child->link) && is_string($child->link))) {
+            $isvalid = false;
+        } else if (!(isset($child->ranking) && is_int($child->ranking))) {
+            $isvalid = false;
+        }
 
-      $child->valid = $is_valid;
-      return $child->valid;
-  }
-
+        $child->valid = $isvalid;
+        return $child->valid;
+    }
 }

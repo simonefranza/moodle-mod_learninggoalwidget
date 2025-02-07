@@ -39,7 +39,7 @@ final class goal {
      * Check that a goal is valid, i.e. it is a valid child and has goalid (int)
      *
      * @param stdClass goal Goal to check
-     * @returns is goal valid
+     * @return is goal valid
      */
     public static function validate_goal(&$goal) {
         self::validate_children_properties($goal);
@@ -55,7 +55,7 @@ final class goal {
      * @param int lgwid ID of the LGW instance
      * @param int topicid ID of the parent topic
      * @param stdClass goal Goal to insert into the DB
-     * @returns id of the updated goal or -1
+     * @return id of the updated goal or -1
      */
     public static function update_goal($lgwid, $topicid, $goal) {
         global $DB;
@@ -85,10 +85,10 @@ final class goal {
         ];
 
         if ($goalnew) {
-          $newgoal->id = $DB->insert_record('learninggoalwidget_goals', $newgoal);
-          return $newgoal->id;
+            $newgoal->id = $DB->insert_record('learninggoalwidget_goals', $newgoal);
+            return $newgoal->id;
         }
-        // Goal should exist already, check if id exists
+        // Goal should exist already, check if id exists.
         $params = [
             'id' => $goal->goalid,
             'topicid' => $topicid,
@@ -97,9 +97,9 @@ final class goal {
         if (!$DB->record_exists('learninggoalwidget_goals', $params)) {
             return -1;
         }
-        if ($goaledit)  {
-          $newgoal->id = $goal->goalid;
-          $DB->update_record('learninggoalwidget_goals', $newgoal);
+        if ($goaledit) {
+            $newgoal->id = $goal->goalid;
+            $DB->update_record('learninggoalwidget_goals', $newgoal);
         }
         return $goal->goalid;
     }
@@ -114,7 +114,7 @@ final class goal {
      */
     public static function delete_goal($lgwid, $topicid, $goalid): bool {
         global $DB;
-        // Make sure it is valid goal
+        // Make sure it is valid goal.
         $params = [
             'id' => $goalid,
             'topicid' => $topicid,
@@ -125,13 +125,13 @@ final class goal {
         }
 
         // Delete all related information.
-        $goals_params = [
+        $goalsparams = [
             'goalid' => $goalid,
             'topicid' => $topicid,
             'learninggoalwidgetid' => $lgwid,
         ];
 
-        $DB->delete_records('learninggoalwidget_progs', $goals_params);
+        $DB->delete_records('learninggoalwidget_progs', $goalsparams);
         $DB->delete_records('learninggoalwidget_goals', $params);
         return true;
     }

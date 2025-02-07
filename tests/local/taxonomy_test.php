@@ -54,18 +54,19 @@ final class taxonomy_test extends \advanced_testcase {
     public function test_sort_by_ranking(): void {
         $data = [];
         for ($i = 0; $i < 100; $i++) {
-            $obj = new stdClass();
+            $obj = new \stdClass();
             $obj->ranking = (rand(0, 1) === 0) ? -1 : rand(1, 100);
             $data[] = $obj;
         }
         taxonomy::sort_by_ranking($data);
-        $current_value = -1;
-        // Check that rankings are sorted ascending
+        $currentvalue = -1;
+        // Check that rankings are sorted ascending.
         foreach ($data as $el) {
-            $this->assertTrue($el->ranking >= $current_value);
-            $current_value = $el->ranking;
+            $this->assertTrue($el->ranking >= $currentvalue);
+            $currentvalue = $el->ranking;
         }
     }
+
     /**
      * testing method taxonomy::reassign_rankings
      * @return void
@@ -75,16 +76,28 @@ final class taxonomy_test extends \advanced_testcase {
     public function test_reassign_rankings(): void {
         $data = [];
         for ($i = 0; $i < 101; $i++) {
-            $obj = new stdClass();
+            $obj = new \stdClass();
             $obj->ranking = rand(1, 100);
             $data[] = $obj;
         }
         $data[50]->ranking = -1;
         taxonomy::sort_by_ranking($data);
         $this->assertTrue($data[0]->ranking == -1);
-        // Check that rankings are reassigned from 1 to 100
+        // Check that rankings are reassigned from 1 to 100.
         for ($i = 1; $i < 101; $i++) {
             $this->assertTrue($data[$i]->ranking == $i);
         }
+    }
+
+    /**
+     * testing method taxonomy::get_taxonomy_as_json
+     * @return void
+     *
+     * @covers \mod_learninggoalwidget\local\taxonomy::get_taxonomy_as_json
+     */
+    public function test_get_taxonomy_as_json(): void {
+        $this->assertSame(taxonomy::get_taxonomy_as_json(-1), "{}");
+
+        
     }
 }

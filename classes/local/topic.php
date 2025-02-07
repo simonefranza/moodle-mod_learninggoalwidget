@@ -41,7 +41,7 @@ final class topic {
      * Check that a topic is valid, i.e. it is a valid child and has topicid (int)
      *
      * @param stdClass topic Topic to check
-     * @returns is topic valid
+     * @return is topic valid
      */
     public static function validate_topic(&$topic) {
         self::validate_children_properties($topic);
@@ -58,7 +58,7 @@ final class topic {
      *
      * @param int lgwid ID of the LGW instance
      * @param stdClass topic Topic to insert into the DB
-     * @returns id of the updated topic or -1
+     * @return id of the updated topic or -1
      */
     public static function update_topic($lgwid, $topic) {
         global $DB;
@@ -86,10 +86,10 @@ final class topic {
         ];
 
         if ($topicnew) {
-          $newtopic->id = $DB->insert_record('learninggoalwidget_topics', $newtopic);
-          return $newtopic->id;
+            $newtopic->id = $DB->insert_record('learninggoalwidget_topics', $newtopic);
+            return $newtopic->id;
         }
-        // Topic should exist already, check if id exists
+        // Topic should exist already, check if id exists.
         $params = [
             'id' => $topic->topicid,
             'learninggoalwidgetid' => $lgwid,
@@ -97,9 +97,9 @@ final class topic {
         if (!$DB->record_exists('learninggoalwidget_topics', $params)) {
             return -1;
         }
-        if ($topicedit)  {
-          $newtopic->id = $topic->topicid;
-          $DB->update_record('learninggoalwidget_topics', $newtopic);
+        if ($topicedit) {
+            $newtopic->id = $topic->topicid;
+            $DB->update_record('learninggoalwidget_topics', $newtopic);
         }
         return $topic->topicid;
     }
@@ -112,7 +112,7 @@ final class topic {
      */
     public static function delete_topic($lgwid, $topicid) {
         global $DB;
-        // Make sure it is valid topic
+        // Make sure it is valid topic.
         $params = [
             'id' => $topicid,
             'learninggoalwidgetid' => $lgwid,
@@ -122,13 +122,13 @@ final class topic {
         }
 
         // Delete all related information.
-        $goals_params = [
+        $goalsparams = [
             'topicid' => $topicid,
             'learninggoalwidgetid' => $lgwid,
         ];
 
-        $DB->delete_records('learninggoalwidget_progs', $goals_params);
-        $DB->delete_records('learninggoalwidget_goals', $goals_params);
+        $DB->delete_records('learninggoalwidget_progs', $goalsparams);
+        $DB->delete_records('learninggoalwidget_goals', $goalsparams);
         $DB->delete_records('learninggoalwidget_topics', $params);
 
         return true;

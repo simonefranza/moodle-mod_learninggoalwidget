@@ -92,11 +92,11 @@ final class goal_test extends \advanced_testcase {
         $goal->goalid = 'test';
         $this->validate_and_reset_goal($goal, false);
 
-        // Valid goal
+        // Valid goal.
         $goal->goalid = 1;
         $this->validate_and_reset_goal($goal, true);
 
-        // Valid goal
+        // Valid goal.
         $goal->deleted = false;
         $goal->new = true;
         $goal->edit = true;

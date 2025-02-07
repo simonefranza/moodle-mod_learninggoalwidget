@@ -21,12 +21,15 @@
  * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/taxonomy.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/topic.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/goal.php');
-use \mod_learninggoalwidget\local\taxonomy;
-use \mod_learninggoalwidget\local\topic;
-use \mod_learninggoalwidget\local\goal;
+use mod_learninggoalwidget\local\taxonomy;
+use mod_learninggoalwidget\local\topic;
+use mod_learninggoalwidget\local\goal;
 
 /**
  * Saves a new instance of the mod_learninggoalwidget into the database.

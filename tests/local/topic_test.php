@@ -130,7 +130,7 @@ final class topic_test extends \advanced_testcase {
 
         // Invalid topic.
         $newtopic = (object) [
-          'name' => 'T1'
+          'name' => 'T1',
         ];
         $this->assertFalse(goal::validate_goal($newtopic));
         unset($newtopic->valid);
@@ -190,12 +190,12 @@ final class topic_test extends \advanced_testcase {
 
         // Check delete_topic.
         // Invalid lgwid.
-        $this->assertFalse(topic::delete_topic($lgwid + 1, $addedtopic->id));
+        $this->assertFalse(topic::delete_topic($lgwid + 1, $addedtopic->topicid));
         // Invalid topicid.
-        $this->assertFalse(topic::delete_topic($lgwid, $addedtopic->id + 1));
+        $this->assertFalse(topic::delete_topic($lgwid, $addedtopic->topicid + 1));
 
         // Valid delete.
-        $this->assertTrue(topic::delete_topic($lgwid, $addedtopic->id));
+        $this->assertTrue(topic::delete_topic($lgwid, $addedtopic->topicid));
 
         // Check topic is deleted.
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));

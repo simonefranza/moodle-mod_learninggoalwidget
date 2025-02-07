@@ -138,13 +138,13 @@ class taxonomy {
      * @param array array Array with the elements to reassing the rankings to
      */
     public static function reassign_rankings(&$array) {
-      // Start ranking from 1.
-      $ranking = 1;
-      foreach ($array as &$child) {
-          if ($child->ranking !== -1) {
-              $child->ranking = $ranking++;
-          }
-      }
+        // Start ranking from 1.
+        $ranking = 1;
+        foreach ($array as &$child) {
+            if ($child->ranking !== -1) {
+                $child->ranking = $ranking++;
+            }
+        }
     }
 
     /**
@@ -194,7 +194,7 @@ class taxonomy {
 
         // Add all topics and goals to db.
         foreach ($taxonomy->children as $topic) {
-            // Check if topic is deleted or added
+            // Check if topic is deleted or added.
             $topicdeleted = isset($topic->deleted) && $topic->deleted;
             $topicnew = isset($topic->new) && $topic->new;
 
@@ -211,7 +211,7 @@ class taxonomy {
             $topic->id = topic::update_topic($lgwid, $topic);
 
             foreach ($topic->children as $goal) {
-                // Check if goal is deleted or added
+                // Check if goal is deleted or added.
                 $goaldeleted = isset($goal->deleted) && $goal->deleted;
                 $goalnew = isset($goal->new) && $goal->new;
 
