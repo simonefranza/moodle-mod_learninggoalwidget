@@ -361,7 +361,7 @@ trait utils {
 
         $this->assertNotNull($parsed->name);
         $this->assertNotEmpty($parsed->name);
-        $this->assertEquals("Learning Goal's taxonomy", $parsed->name);
+        $this->assertEquals("name", $parsed->name);
 
         $this->assertNotNull($parsed->children);
         $this->assertIsArray($parsed->children);

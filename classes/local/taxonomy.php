@@ -45,6 +45,7 @@ class taxonomy {
      * @return string
      */
     public static function get_taxonomy_as_json($lgwid): string {
+        global $DB;
         $instance = $DB->get_record('learninggoalwidget', ['id' => $lgwid]);
         if (!$instance) {
             return "{}";

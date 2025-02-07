@@ -38,58 +38,37 @@ use mod_learninggoalwidget\local\topic;
  */
 class userTaxonomy {
     /**
-     * the instance id related with the taxonomy
-     *
-     * @var int
-     */
-    private $instanceid;
-
-    /**
-     * user id
-     *
-     * @var int
-     */
-    private $userid;
-
-    /**
-     * c'tor of taxonomy (for a specific instance in a course)
-     *
-     * @param int $instanceid
-     * @param int $userid
-     */
-    public function __construct($instanceid, $userid) {
-        $this->instanceid = $instanceid;
-        $this->userid = $userid;
-    }
-
-    /**
      * return json represenation of the taxonomy
      *
+     * @param int lgwid id of the instance
+     * @param int userid id of the user
      * @return string
      */
-    public function get_taxonomy_as_json(): string {
+    public function get_taxonomy_as_json($lgwid, $userid): string {
         global $DB;
-        if ($this->instanceid === null) {
+        if ($lgwid === null) {
             return "{}";
         }
-        $instance = $DB->get_record('learninggoalwidget', ['id' => $this->instanceid]);
+        $instance = $DB->get_record('learninggoalwidget', ['id' => $lgwid]);
         if (!$instance) {
             return "{}";
         }
 
         $usertaxonomy = new stdClass;
         $usertaxonomy->name = $instance->name;
-        $usertaxonomy->children = $this->get_topics();
+        $usertaxonomy->children = self::get_topics($lgwid, $userid);
         return json_encode($usertaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     }
 
     /**
      * return the topics of the taxonomy
      *
+     * @param int lgwid id of the instance
+     * @param int userid id of the user
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
-    private function get_topics() {
-        if ($this->instanceid === null) {
+    private function get_topics($lgwid, $userid) {
+        if ($lgwid == null) {
             return [];
         }
         $topics = [];
@@ -107,11 +86,11 @@ class userTaxonomy {
                         ON t.id = g.topicid
                  LEFT JOIN {learninggoalwidget_progs} p
                         ON g.id = p.goalid AND p.userid = :userid
-                     WHERE t.learninggoalwidgetid = :instanceid
+                     WHERE t.learninggoalwidgetid = :lgwid
                   ORDER BY tranking, granking";
         $params = [
-            'instanceid' => $this->instanceid,
-            'userid' => $this->userid,
+            'lgwid' => $lgwid,
+            'userid' => $userid,
         ];
         $topicrecords = $DB->get_records_sql($sqlstmt, $params);
         $numrecords = count($topicrecords);

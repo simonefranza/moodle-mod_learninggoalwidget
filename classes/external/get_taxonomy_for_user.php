@@ -82,6 +82,6 @@ class get_taxonomy_for_user extends \core_external\external_api {
 
         self::validate_context(\context_user::instance($USER->id));
 
-        return (new userTaxonomy($instanceid, $userid))->get_taxonomy_as_json();
+        return userTaxonomy::get_taxonomy_as_json($instanceid, $userid);
     }
 }
