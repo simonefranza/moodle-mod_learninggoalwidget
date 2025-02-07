@@ -173,6 +173,16 @@ final class taxonomy_test extends \advanced_testcase {
         $numtopics = 10;
         $numgoals = 10;
         $taxonomy->children = $this->create_taxonomy($numtopics, $numgoals);
+        // Change ranking of topics 1 and 8
+        $taxonomy->children[1]->ranking = 100;
+        $taxonomy->children[8]->ranking = 2;
+        // Change rankings of goals of topic 3
+        $taxonomy->children[3]->children[2]->ranking = 100;
+        $taxonomy->children[3]->children[4]->ranking = 3;
+        // Remove name from topic 5 -> invalid -> should be removed
+        unset($taxonomy->children[5]->name);
+        // Remove name from goal 0 of topic 7 -> invalid -> should be removed
+        unset($taxonomy->children[7]->children[0]->name);
     }
 
     /**
@@ -184,7 +194,7 @@ final class taxonomy_test extends \advanced_testcase {
      */
     private function create_taxonomy($numtopics, $numgoals): array {
         // Create $numtopics topics with $numgoals goals each.
-        $topics = []
+        $topics = [];
         for ($i = 0; $i < $numtopics; $i++) {
             $goals = [];
             for ($ii = 0; $ii < $numgoals; $ii++) {
