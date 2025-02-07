@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_learninggoalwidget\local;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -97,11 +99,11 @@ final class topic_test extends \advanced_testcase {
         $topic->children = 1;
         $this->validate_and_reset_topic($topic, false);
 
-        // Valid topic
+        // Valid topic.
         $topic->children = [];
         $this->validate_and_reset_topic($topic, true);
 
-        // Valid topic
+        // Valid topic.
         $topic->deleted = false;
         $topic->new = true;
         $topic->edit = true;
@@ -126,13 +128,13 @@ final class topic_test extends \advanced_testcase {
         $this->assertNotNull($taxonomy);
         $this->assertTrue(count($taxonomy->children) == 0);
 
-        // Invalid topic
+        // Invalid topic.
         $newtopic = (object) [
           'name' => 'T1'
         ];
         $this->assertFalse(goal::validate_goal($newtopic));
         unset($newtopic->valid);
-        $this->assertSame(topic::update_topic($lgwid, $newtopic, -2);
+        $this->assertSame(topic::update_topic($lgwid, $newtopic), -2);
 
         $newtopic = (object) [
             'name' => 'T1',
@@ -172,10 +174,10 @@ final class topic_test extends \advanced_testcase {
         $newtopic->ranking = 2;
         $newtopic->topicid = $addedtopic->topicid + 1;
 
-        // Topic to update has invalid topicid
+        // Topic to update has invalid topicid.
         $this->assertSame(goal::update_goal($lgwid, $newtopic), -1);
 
-        // Fix goalid
+        // Fix goalid.
         $newtopic->topicid = $addedtopic->topicid;
         $this->assertSame(topic::update_topic($lgwid, $newtopic), $addedtopic->topicid);
 
@@ -186,16 +188,16 @@ final class topic_test extends \advanced_testcase {
         $addedtopic = $taxonomy->children[0];
         $this->compare_two_topics($addedtopic, $newtopic);
 
-        // Check delete_topic
-        // Invalid lgwid
+        // Check delete_topic.
+        // Invalid lgwid.
         $this->assertFalse(topic::delete_topic($lgwid + 1, $addedtopic->id));
-        // Invalid topicid
+        // Invalid topicid.
         $this->assertFalse(topic::delete_topic($lgwid, $addedtopic->id + 1));
 
-        // Valid delete
+        // Valid delete.
         $this->assertTrue(topic::delete_topic($lgwid, $addedtopic->id));
 
-        // Check topic is deleted
+        // Check topic is deleted.
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $this->assertNotNull($taxonomy);
         $this->assertTrue(count($taxonomy->children) == 0);
