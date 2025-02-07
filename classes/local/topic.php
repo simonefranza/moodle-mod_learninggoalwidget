@@ -67,6 +67,14 @@ final class topic {
             return -2;
         }
 
+        // Ensure lgw instance exists.
+        $params = [
+            'id' => $lgwid,
+        ];
+        if (!$DB->record_exists('learninggoalwidget', $params)) {
+            return -1;
+        }
+
         $topicnew = isset($topic->new) && $topic->new;
         $topicedit = isset($topic->edit) && $topic->edit;
         $newtopic = (object) [
@@ -110,7 +118,7 @@ final class topic {
             'learninggoalwidgetid' => $lgwid,
         ];
         if (!$DB->record_exists('learninggoalwidget_topics', $params)) {
-            return;
+            return false;
         }
 
         // Delete all related information.
@@ -122,5 +130,7 @@ final class topic {
         $DB->delete_records('learninggoalwidget_progs', $goals_params);
         $DB->delete_records('learninggoalwidget_goals', $goals_params);
         $DB->delete_records('learninggoalwidget_topics', $params);
+
+        return true;
     }
 }

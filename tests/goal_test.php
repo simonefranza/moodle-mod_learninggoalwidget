@@ -167,7 +167,7 @@ final class goal_test extends \advanced_testcase {
         $addedgoal = $taxonomy->children[0]->children[0];
         $this->compare_two_goals($addedgoal, $newgoal);
 
-        // Update goal
+        // Update goal.
         unset($newgoal->new);
         $newgoal->edit = true;
         $newgoal->name = 'G2';
@@ -176,10 +176,10 @@ final class goal_test extends \advanced_testcase {
         $newgoal->ranking = 2;
         $newgoal->goalid = $addedgoal->goalid + 1;
 
-        // Goal to update has invalid goalid
+        // Goal to update has invalid goalid.
         $this->assertSame(goal::update_goal($lgwid, $topicid, $newgoal), -1);
 
-        // Fix goalid
+        // Fix goalid.
         $newgoal->goalid = $addedgoal->goalid;
         $this->assertSame(goal::update_goal($lgwid, $topicid, $newgoal), $addedgoal->goalid);
 
@@ -191,18 +191,18 @@ final class goal_test extends \advanced_testcase {
         $addedgoal = $taxonomy->children[0]->children[0];
         $this->compare_two_goals($addedgoal, $newgoal);
 
-        // Check delete_goal
-        // Invalid lgwid
+        // Check delete_goal.
+        // Invalid lgwid.
         $this->assertFalse(goal::delete_goal($lgwid + 1, $topicid, $addedgoal->goalid));
-        // Invalid topicid
+        // Invalid topicid.
         $this->assertFalse(goal::delete_goal($lgwid, $topicid + 1, $addedgoal->goalid));
-        // Invalid goalid
+        // Invalid goalid.
         $this->assertFalse(goal::delete_goal($lgwid, $topicid, $addedgoal->goalid + 1));
 
-        // Valid delete
-        $this->assertFalse(goal::delete_goal($lgwid, $topicid, $addedgoal->goalid));
+        // Valid delete.
+        $this->assertTrue(goal::delete_goal($lgwid, $topicid, $addedgoal->goalid));
 
-        // Check goal is deleted
+        // Check goal is deleted.
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $this->assertNotNull($taxonomy);
         $this->assertTrue(count($taxonomy->children) == 1);
@@ -221,6 +221,12 @@ final class goal_test extends \advanced_testcase {
         unset($goal->valid);
     }
 
+    /**
+     * Helper function to check that two goals are equivalent
+     *
+     * @param stdClass goal1 goal1 to check
+     * @param stdClass goal2 goal2 to check
+     */
     private function compare_two_goals($goal1, $goal2): void {
         $this->assertSame($goal1->goalid, $goal2->goalid);
         $this->assertSame($goal1->name, $goal2->name);
