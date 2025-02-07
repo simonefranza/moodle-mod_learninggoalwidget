@@ -43,7 +43,7 @@ use mod_learninggoalwidget\local\goal;
  *
  * @runTestsInSeparateProcesses
  */
-final class goal_test extends \advanced_testcase {
+final class taxonomy_test extends \advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
      * testing method taxonomy::sort_by_ranking
