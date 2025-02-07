@@ -133,29 +133,7 @@ final class taxonomy_test extends \advanced_testcase {
         $this->assertTrue(count($taxonomy->children) == $numtopics);
         for ($i = 0; $i < $numtopics; $i++) {
             $topic = $taxonomy->children[$i];
-            $this->assertTrue(isset($topic->name) && is_string($topic->name));
-            $this->assertSame($topic->name, 'T' . $i);
-            $this->assertTrue(isset($topic->keyword) && is_string($topic->keyword));
-            $this->assertSame($topic->keyword, 'T' . $i);
-            $this->assertTrue(isset($topic->link) && is_string($topic->link));
-            $this->assertSame($topic->link, 'http://topic' . $i . '.com');
-            $this->assertTrue(isset($topic->ranking) && is_int($topic->ranking));
-            $this->assertSame($topic->ranking, $i + 1);
-            $this->assertTrue(isset($topic->topicid) && is_int($topic->topicid));
-            $this->assertTrue(isset($topic->children) && is_array($topic->children));
-            $this->assertTrue(count($topic->children) == $numgoals);
-            for ($ii = 0; $ii < $numgoals; $ii++) {
-                $goal = $topic->children[$ii];
-                $this->assertTrue(isset($goal->name) && is_string($goal->name));
-                $this->assertSame($goal->name, 'T' . $i . 'G' . $ii);
-                $this->assertTrue(isset($goal->keyword) && is_string($goal->keyword));
-                $this->assertSame($goal->keyword, 'T' . $i . 'G' . $ii);
-                $this->assertTrue(isset($goal->link) && is_string($goal->link));
-                $this->assertSame($goal->link, 'http://topic' . $i . 'goal' . $ii . '.com');
-                $this->assertTrue(isset($goal->ranking) && is_int($goal->ranking));
-                $this->assertSame($goal->ranking, $ii + 1);
-                $this->assertTrue(isset($goal->goalid) && is_int($topic->goalid));
-            }
+            $this->check_topic($topic, $i, $numgoals, true);
         }
     }
 
@@ -183,6 +161,29 @@ final class taxonomy_test extends \advanced_testcase {
         unset($taxonomy->children[5]->name);
         // Remove name from goal 0 of topic 7 -> invalid -> should be removed
         unset($taxonomy->children[7]->children[0]->name);
+
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertSame(count($taxonomy->children), $numtopics - 1);
+
+        $originalindex = [0, 8, 2, 3, 4, 6, 7, 8, 1];
+
+        for ($i = 0; $i <= 2; $i++)  {
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $numgoals, true);
+        }
+
+        // Need to check children manually.
+        $this->check_topic($taxonomy->children[3], $originalindex[3], $numgoals, false);
+
+        for ($i = 4; $i <= 5; $i++)  {
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $numgoals, true);
+        }
+
+        // Need to check children manually.
+        $this->check_topic($taxonomy->children[6], $originalindex[6], $numgoals, false);
+
+        for ($i = 7; $i <= 8; $i++)  {
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $numgoals, true);
+        }
     }
 
     /**
@@ -220,5 +221,52 @@ final class taxonomy_test extends \advanced_testcase {
             $topics[] = $newtopic;
         }
         return $topics;
+    }
+
+    /**
+     * Helper function to check that a topic contains the expected data
+     * The data must be generated with create_taxonomy
+     *
+     * @param stdClass topic Topic to check
+     * @param number i Value to use for the check
+     * @param number numgoals Number of goals that the topic should contain
+     */
+    private function check_topic($topic, $i, $numgoals, $checkgoals) {
+        $this->assertTrue(isset($topic->name) && is_string($topic->name));
+        $this->assertSame($topic->name, 'T' . $i);
+        $this->assertTrue(isset($topic->keyword) && is_string($topic->keyword));
+        $this->assertSame($topic->keyword, 'T' . $i);
+        $this->assertTrue(isset($topic->link) && is_string($topic->link));
+        $this->assertSame($topic->link, 'http://topic' . $i . '.com');
+        $this->assertTrue(isset($topic->ranking) && is_int($topic->ranking));
+        $this->assertSame($topic->ranking, $i + 1);
+        $this->assertTrue(isset($topic->topicid) && is_int($topic->topicid));
+        $this->assertTrue(isset($topic->children) && is_array($topic->children));
+        $this->assertTrue(count($topic->children) == $numgoals);
+        if (!checkgoals) {
+            return;
+        }
+        for ($ii = 0; $ii < $numgoals; $ii++) {
+            $this->check_goal($topic->children[$ii], $i, $ii);
+        }
+    }
+
+    /**
+     * Helper function to check that a goal contains the expected data
+     * The data must be generated with create_taxonomy
+     *
+     * @param stdClass goal Goal to check
+     * @param number i Value to use for the check
+     */
+    private function check_goal($goal, $i, $ii) {
+        $this->assertTrue(isset($goal->name) && is_string($goal->name));
+        $this->assertSame($goal->name, 'T' . $i . 'G' . $ii);
+        $this->assertTrue(isset($goal->keyword) && is_string($goal->keyword));
+        $this->assertSame($goal->keyword, 'T' . $i . 'G' . $ii);
+        $this->assertTrue(isset($goal->link) && is_string($goal->link));
+        $this->assertSame($goal->link, 'http://topic' . $i . 'goal' . $ii . '.com');
+        $this->assertTrue(isset($goal->ranking) && is_int($goal->ranking));
+        $this->assertSame($goal->ranking, $ii + 1);
+        $this->assertTrue(isset($goal->goalid) && is_int($goal->goalid));
     }
 }
