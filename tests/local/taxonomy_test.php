@@ -100,7 +100,7 @@ final class taxonomy_test extends \advanced_testcase {
     public function test_get_taxonomy_as_json(): void {
         $this->assertSame(taxonomy::get_taxonomy_as_json(-1), "{}");
 
-        // Create instance
+        // Create instance.
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
@@ -112,11 +112,11 @@ final class taxonomy_test extends \advanced_testcase {
         $numtopics = 50;
         $numgoals = 10;
         $topics = [];
-        // Create 50 topics with 10 goals each
+        // Create 50 topics with 10 goals each.
         for ($i = 0; $i < $numtopics; $i++) {
             $goals = [];
             for ($ii = 0; $ii < $numgoals; $ii++) {
-                $newgoal= (object) [
+                $newgoal = (object) [
                     'name' => 'T' . $i . 'G' . $ii,
                     'keyword' => 'T' . $i . 'G' . $ii,
                     'link' => 'http://topic' . $i . 'goal' . $ii . '.com',
@@ -128,7 +128,7 @@ final class taxonomy_test extends \advanced_testcase {
             }
             $newtopic = (object) [
                 'name' => 'T' . $i,
-                'keyword' => 'T' $i,
+                'keyword' => 'T' . $i,
                 'link' => 'http://topic' . $i . '.com',
                 'ranking' => $i + 1,
                 'topicid' => $i,
@@ -149,7 +149,7 @@ final class taxonomy_test extends \advanced_testcase {
             }
         }
 
-        // Check that everything was added correctly
+        // Check that everything was added correctly.
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $this->assertNotNull($taxonomy);
         $this->assertTrue(isset($taxonomy->name) && is_string($taxonomy->name));
@@ -182,5 +182,18 @@ final class taxonomy_test extends \advanced_testcase {
                 $this->assertTrue(isset($goal->goalid) && is_int($topic->goalid));
             }
         }
+    }
+
+    /**
+     * testing method taxonomy::validate_taxonomy
+     * @return void
+     *
+     * @covers \mod_learninggoalwidget\local\taxonomy::validate_taxonomy
+     */
+    public function test_validate_taxonomy(): void {
+        $taxonomy = new \stdClass;
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertTrue(isset($taxonomy->children) && is_array($taxonomy->children));
+        $this->assertTrue(count($taxonomy->children) == 0);
     }
 }
