@@ -184,6 +184,7 @@ final class taxonomy_test extends \advanced_testcase {
      */
     private function create_taxonomy($numtopics, $numgoals): array {
         // Create $numtopics topics with $numgoals goals each.
+        $topics = []
         for ($i = 0; $i < $numtopics; $i++) {
             $goals = [];
             for ($ii = 0; $ii < $numgoals; $ii++) {
@@ -208,5 +209,6 @@ final class taxonomy_test extends \advanced_testcase {
             ];
             $topics[] = $newtopic;
         }
+        return $topics;
     }
 }
