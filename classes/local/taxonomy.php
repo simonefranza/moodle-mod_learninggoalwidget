@@ -137,7 +137,7 @@ class taxonomy {
      *
      * @param array array Array with the elements to reassing the rankings to
      */
-    public static function rassign_rankings(&$array) {
+    public static function reassign_rankings(&$array) {
       // Start ranking from 1.
       $ranking = 1;
       foreach ($array as &$child) {
@@ -177,10 +177,10 @@ class taxonomy {
                 }
             }
             self::sort_by_ranking($topic->children);
-            self::rassign_rankings($topic->children);
+            self::reassign_rankings($topic->children);
         }
         self::sort_by_ranking($taxonomy->children);
-        self::rassign_rankings($taxonomy->children);
+        self::reassign_rankings($taxonomy->children);
     }
 
     /**

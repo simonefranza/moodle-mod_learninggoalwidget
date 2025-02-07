@@ -175,7 +175,7 @@ final class topic_test extends \advanced_testcase {
         $newtopic->topicid = $addedtopic->topicid + 1;
 
         // Topic to update has invalid topicid.
-        $this->assertSame(goal::update_goal($lgwid, $newtopic), -1);
+        $this->assertSame(topic::update_topic($lgwid, $newtopic), -1);
 
         // Fix goalid.
         $newtopic->topicid = $addedtopic->topicid;
