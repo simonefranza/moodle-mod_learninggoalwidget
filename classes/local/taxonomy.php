@@ -26,6 +26,7 @@ namespace mod_learninggoalwidget\local;
 
 use stdClass;
 use mod_learninggoalwidget\local\topic;
+use mod_learninggoalwidget\local\goal;
 
 /**
  * Class taxonomy
@@ -126,5 +127,116 @@ class taxonomy {
             $topic->children[] = $goal;
         }
         return $topics;
+    }
+
+    /**
+     * Sorts an array by ranking
+     *
+     * @param stdClass array Array to sort
+     */
+    public static function sort_by_ranking(&$array) {
+        usort($array, function ($a, $b) {
+            return $a->ranking <=> $b->ranking;
+        });
+    }
+
+    /**
+     * Reassigns rankings to the elements in the array making sure they start from 1
+     * and are contiguous
+     *
+     * @param array array Array with the elements to reassing the rankings to
+     */
+    public static function rassign_rankings(&$array) {
+      // Start ranking from 1.
+      $ranking = 1;
+      foreach ($array as &$child) {
+          if ($child->ranking !== -1) {
+              $child->ranking = $ranking++;
+          }
+      }
+    }
+
+    /**
+     * Validates the taxonomy, by checking that all topics and goals are valid
+     * and removing those that are not. It also reassings the rankings to make sure
+     * they are contiguous
+     *
+     * @param stdClass taxonomy Taxonomy to validate
+     */
+    public static function validate_taxonomy(&$taxonomy) {
+        if (!property_exists($taxonomy, 'children') || !is_array($taxonomy->children)) {
+            $taxonomy->children = [];
+        }
+
+        for ($i = count($taxonomy->children) - 1; $i >= 0; $i--) {
+            $topic = &$taxonomy->children[$i];
+            // Validate topic.
+            if (!topic::validate_topic($topic)) {
+                // Topic is not valid. Remove and skip.
+                array_splice($taxonomy->children, $i, 1);
+                continue;
+            }
+
+            for ($ii = count($topic->children) - 1; $ii >= 0; $ii--) {
+                $goal = &$topic->children[$ii];
+                // Validate goals.
+                if (!goal::validate_goal($goal)) {
+                    // Goal is not valid, remove.
+                    array_splice($topic->children, $ii, 1);
+                }
+            }
+            self::sort_by_ranking($topic->children);
+            self::rassign_rankings($topic->children);
+        }
+        self::sort_by_ranking($taxonomy->children);
+        self::rassign_rankings($taxonomy->children);
+    }
+
+    /**
+     * Updates the taxonomy in the DB given an ID and a new taxonomy
+     *
+     * @param number lgwid Instance id to update
+     * @param stdClass taxonomy New taxonomy
+     */
+    public static function update_taxonomy($lgwid, &$taxonomy) {
+        self::validate_taxonomy($taxonomy);
+
+        // Add all topics and goals to db.
+        foreach ($taxonomy->children as $topic) {
+            // Check if topic is deleted or added
+            $topicdeleted = isset($topic->deleted) && $topic->deleted;
+            $topicnew = isset($topic->new) && $topic->new;
+
+            // New + deleted = was never in the DB -> ignore.
+            if ($topicdeleted && $topicnew) {
+                continue;
+            }
+            if ($topicdeleted) {
+                topic::delete_topic($lgwid, $topic->topicid);
+                continue;
+            }
+
+            // Add/update topic.
+            $topic->id = topic::update_topic($lgwid, $topic);
+
+            foreach ($topic->children as $goal) {
+                // Check if goal is deleted or added
+                $goaldeleted = isset($goal->deleted) && $goal->deleted;
+                $goalnew = isset($goal->new) && $goal->new;
+
+                // New + deleted = was never in the DB -> ignore.
+                if ($goaldeleted && $goalnew) {
+                    continue;
+                }
+                if ($goaldeleted) {
+                    goal::delete_goal($lgwid, $topic->id, $goal->goalid);
+                    continue;
+                }
+
+                // Add goal to db.
+                $goal->id = goal::update_goal($lgwid, $topic->id, $goal);
+            }
+        }
+
     }
 }

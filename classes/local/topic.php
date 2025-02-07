@@ -35,8 +35,8 @@ use mod_learninggoalwidget\local\goal;
  * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class topic {
-
+final class topic {
+    use \mod_learninggoalwidget\local\shared;
     /**
      * title of the topic
      *
@@ -151,5 +151,92 @@ class topic {
             'ranking' => $ranking,
         ];
         return $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
+    }
+
+    /**
+     * Check that a topic is valid, i.e. it is a valid child and has topicid (int)
+     *
+     * @param stdClass topic Topic to check
+     * @returns is topic valid
+     */
+    public static function validate_topic(&$topic) {
+        self::validate_children_properties($topic);
+        if (!(isset($topic->topicid) && is_int($topic->topicid))) {
+            $topic->valid = false;
+        } else if (!(isset($topic->children) && is_array($topic->children))) {
+            $topic->valid = false;
+        }
+        return $topic->valid;
+    }
+
+    /**
+     * Updates or inserts a topic into learninggoalwidget_topics
+     *
+     * @param int lgwid ID of the LGW instance
+     * @param stdClass topic Topic to insert into the DB
+     * @returns id of the updated topic or -1
+     */
+    public static function update_topic($lgwid, $topic) {
+        global $DB;
+        if (!self::validate_topic($topic)) {
+            print_error("Topic is invalid");
+            return -1;
+        }
+
+        $topicnew = isset($topic->new) && $topic->new;
+        $topicedit = isset($topic->edit) && $topic->edit;
+        $newtopic = (object) [
+            'learninggoalwidgetid' => $lgwid,
+            'title' => $topic->name,
+            'shortname' => $topic->keyword,
+            'url' => $topic->link,
+            'ranking' => $topic->ranking,
+        ];
+
+        if ($topicnew) {
+          $newtopic->id = $DB->insert_record('learninggoalwidget_topics', $newtopic);
+          return $newtopic->id;
+        }
+        // Topic should exist already, check if id exists
+        $params = [
+            'id' => $topic->topicid,
+            'learninggoalwidgetid' => $lgwid,
+        ];
+        if (!$DB->record_exists('learninggoalwidget_topics', $params)) {
+            return -1;
+        }
+        if ($topicedit)  {
+          $newtopic->id = $topic->topicid;
+          $DB->update_record('learninggoalwidget_topics', $newtopic);
+        }
+        return $topic->topicid;
+    }
+
+    /**
+     * Deletes a topic and all the goals and progress from the DB
+     *
+     * @param number lgwid ID of the LGW instance
+     * @param number topicid ID of the topic to delete
+     */
+    public static function delete_topic($lgwid, $topicid) {
+        global $DB;
+        // Make sure it is valid topic
+        $params = [
+            'id' => $topicid,
+            'learninggoalwidgetid' => $lgwid,
+        ];
+        if (!$DB->record_exists('learninggoalwidget_topics', $params)) {
+            return;
+        }
+
+        // Delete all related information.
+        $goals_params = [
+            'topicid' => $topicid,
+            'learninggoalwidgetid' => $lgwid,
+        ];
+
+        $DB->delete_records('learninggoalwidget_progs', $goals_params);
+        $DB->delete_records('learninggoalwidget_goals', $goals_params);
+        $DB->delete_records('learninggoalwidget_topics', $params);
     }
 }

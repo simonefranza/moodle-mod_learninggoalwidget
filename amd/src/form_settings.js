@@ -91,7 +91,7 @@ define(
     /**
      * Render the topics of the learning goal taxonomy
      */
-    const loadTopics = async() => {
+    const loadTopics = async () => {
       $("#topics-list").children().remove();
       taxonomy.children.sort((a, b) => a.ranking - b.ranking);
       console.log("taxonomy", taxonomy);
@@ -136,7 +136,7 @@ define(
      * Render the goals of the learning goal taxonomy
      * @param {*} topic The topic
      */
-    const loadGoals = async(topic) => {
+    const loadGoals = async (topic) => {
       $('#learninggoals-list').children().remove();
       topic.children.sort((a, b) => a.ranking - b.ranking);
       if (!topic.children.length) {
@@ -198,13 +198,13 @@ define(
     /**
      * Show 'New Topic' Modal
      */
-    const clickedNewTopic = async() => {
+    const clickedNewTopic = async () => {
       let strings = [
-        {key: 'settings:topic', component: 'mod_learninggoalwidget'},
-        {key: 'settings:description', component: 'mod_learninggoalwidget'},
-        {key: 'settings:addtopic', component: 'mod_learninggoalwidget'},
-        {key: 'settings:link', component: 'mod_learninggoalwidget'},
-        {key: 'settings:save', component: 'mod_learninggoalwidget'},
+        { key: 'settings:topic', component: 'mod_learninggoalwidget' },
+        { key: 'settings:description', component: 'mod_learninggoalwidget' },
+        { key: 'settings:addtopic', component: 'mod_learninggoalwidget' },
+        { key: 'settings:link', component: 'mod_learninggoalwidget' },
+        { key: 'settings:save', component: 'mod_learninggoalwidget' },
       ];
       try {
         const results = await CoreStr.get_strings(strings);
@@ -236,7 +236,7 @@ define(
      * Handle edit topic click event
      * @param {event} e Clicked event
      */
-    const clickedEditTopic = async(e) => {
+    const clickedEditTopic = async (e) => {
       e.preventDefault();
 
       var topicid = $(e.currentTarget).data('topicid');
@@ -250,11 +250,11 @@ define(
       const oldTopicUrl = topic.link;
 
       let strings = [
-        {key: 'settings:topic', component: 'mod_learninggoalwidget'},
-        {key: 'settings:description', component: 'mod_learninggoalwidget'},
-        {key: 'settings:edittopic', component: 'mod_learninggoalwidget'},
-        {key: 'settings:link', component: 'mod_learninggoalwidget'},
-        {key: 'settings:save', component: 'mod_learninggoalwidget'},
+        { key: 'settings:topic', component: 'mod_learninggoalwidget' },
+        { key: 'settings:description', component: 'mod_learninggoalwidget' },
+        { key: 'settings:edittopic', component: 'mod_learninggoalwidget' },
+        { key: 'settings:link', component: 'mod_learninggoalwidget' },
+        { key: 'settings:save', component: 'mod_learninggoalwidget' },
       ];
       try {
         const results = await CoreStr.get_strings(strings);
@@ -275,10 +275,12 @@ define(
         modal.hide();
 
         // Update topic
-        topic.name = topicName;
-        topic.keywork = topicShortname;
-        topic.link = topicUrl;
-        topic[EDIT_KEY] = true;
+        const update = {
+          name: topicName,
+          keyword: topicShortname,
+          link: topicUrl,
+        };
+        updateLocalTopic(topic, update);
         updateTaxonomyValue();
 
         loadTopics();
@@ -291,7 +293,7 @@ define(
      * Handle delete topic event
      * @param {event} e click event
      */
-    const clickedDeleteTopic = async(e) => {
+    const clickedDeleteTopic = async (e) => {
       e.preventDefault();
 
       const topicid = $(e.currentTarget).data('topicid');
@@ -301,9 +303,9 @@ define(
       }
 
       let strings = [
-        {key: 'settings:deletetopic', component: 'mod_learninggoalwidget'},
-        {key: 'settings:deletetopicmsg', component: 'mod_learninggoalwidget'},
-        {key: 'settings:delete', component: 'mod_learninggoalwidget'},
+        { key: 'settings:deletetopic', component: 'mod_learninggoalwidget' },
+        { key: 'settings:deletetopicmsg', component: 'mod_learninggoalwidget' },
+        { key: 'settings:delete', component: 'mod_learninggoalwidget' },
       ];
       try {
         const results = await CoreStr.get_strings(strings);
@@ -340,10 +342,8 @@ define(
       for (let topic of taxonomy.children) {
         // Only topic directly above is affected
         if (topic.ranking === topicToMove.ranking - 1) {
-          topic.ranking++;
-          topic[EDIT_KEY] = true;
-          topicToMove.ranking--;
-          topicToMove[EDIT_KEY] = true;
+          updateLocalTopic(topic, {ranking: topic.ranking + 1});
+          updateLocalTopic(topicToMove, {ranking: topicToMove.ranking - 1});
           break;
         }
       }
@@ -367,10 +367,8 @@ define(
       for (let topic of taxonomy.children) {
         // Only topic directly below (aka ranking + 1) is affected
         if (topic.ranking === topicToMove.ranking + 1) {
-          topic.ranking--;
-          topic[EDIT_KEY] = true;
-          topicToMove.ranking++;
-          topicToMove[EDIT_KEY] = true;
+          updateLocalTopic(topic, {ranking: topic.ranking - 1});
+          updateLocalTopic(topicToMove, {ranking: topicToMove.ranking + 1});
           break;
         }
       }
@@ -382,7 +380,7 @@ define(
     /**
      * Show 'New Goal' Modal
      */
-    const clickedNewGoal = async() => {
+    const clickedNewGoal = async () => {
       if (selectedTopic === null) {
         return;
       }
@@ -394,12 +392,12 @@ define(
       const topicTitle = topic.name;
 
       let strings = [
-        {key: 'settings:topic', component: 'mod_learninggoalwidget'},
-        {key: 'settings:goal', component: 'mod_learninggoalwidget'},
-        {key: 'settings:description', component: 'mod_learninggoalwidget'},
-        {key: 'settings:link', component: 'mod_learninggoalwidget'},
-        {key: 'settings:addgoal', component: 'mod_learninggoalwidget'},
-        {key: 'settings:save', component: 'mod_learninggoalwidget'},
+        { key: 'settings:topic', component: 'mod_learninggoalwidget' },
+        { key: 'settings:goal', component: 'mod_learninggoalwidget' },
+        { key: 'settings:description', component: 'mod_learninggoalwidget' },
+        { key: 'settings:link', component: 'mod_learninggoalwidget' },
+        { key: 'settings:addgoal', component: 'mod_learninggoalwidget' },
+        { key: 'settings:save', component: 'mod_learninggoalwidget' },
       ];
       try {
         const results = await CoreStr.get_strings(strings);
@@ -433,7 +431,7 @@ define(
      * Handle edit goal click event
      * @param {event} e Clicked event
      */
-    const clickedEditGoal = async(e) => {
+    const clickedEditGoal = async (e) => {
       e.preventDefault();
 
       var topicid = $(e.currentTarget).data('topicid');
@@ -445,7 +443,9 @@ define(
       }
 
       const topicTitle = topic.name;
-      const goalTitle = goal.name;
+      const oldGoalTitle = goal.name;
+      const oldGoalShortname = goal.keyword;
+      const oldGoalUrl = goal.link;
 
       let strings = [
         {key: 'settings:topic', component: 'mod_learninggoalwidget'},
@@ -463,9 +463,9 @@ define(
           title: results[1],
           shortname: results[2],
           weburl: results[3],
-          goaltitle: goalTitle,
-          goalshortname: goalShortname,
-          goalurl: goalUrl,
+          goaltitle: oldGoalTitle,
+          goalshortname: oldGoalShortname,
+          goalurl: oldGoalUrl,
         };
 
         const [modal, goalName, goalShortname, goalUrl] = await showModal(
@@ -477,9 +477,12 @@ define(
         modal.hide();
 
         // Update goal
-        goal.name = goalName;
-        goal.keyword = goalShortname;
-        goal.link = goalUrl;
+        const update = {
+          name: goalName,
+          keyword: goalShortname,
+          link: goalUrl,
+        };
+        updateLocalGoal(goal, update);
         updateTaxonomyValue();
 
         loadGoals(topic);
@@ -492,7 +495,7 @@ define(
      * Handle delete goal event
      * @param {event} e click event
      */
-    const clickedDeleteGoal = async(e) => {
+    const clickedDeleteGoal = async (e) => {
       e.preventDefault();
 
       const topicid = $(e.currentTarget).data('topicid');
@@ -504,9 +507,9 @@ define(
       }
 
       let strings = [
-        {key: 'settings:deletegoal', component: 'mod_learninggoalwidget'},
-        {key: 'settings:deletegoalmsg', component: 'mod_learninggoalwidget'},
-        {key: 'settings:delete', component: 'mod_learninggoalwidget'},
+        { key: 'settings:deletegoal', component: 'mod_learninggoalwidget' },
+        { key: 'settings:deletegoalmsg', component: 'mod_learninggoalwidget' },
+        { key: 'settings:delete', component: 'mod_learninggoalwidget' },
       ];
       try {
         const results = await CoreStr.get_strings(strings);
@@ -546,10 +549,8 @@ define(
       for (let goal of topic.children) {
         // Only goal directly above is affected
         if (goal.ranking === goalToMove.ranking - 1) {
-          goal.ranking++;
-          goal[EDIT_KEY] = true;
-          goalToMove.ranking--;
-          goalToMove[EDIT_KEY] = true;
+          updateLocalGoal(goal, {ranking: goal.ranking + 1});
+          updateLocalGoal(goalToMove, {ranking: goalToMove.ranking - 1});
           break;
         }
       }
@@ -577,10 +578,8 @@ define(
       for (let goal of topic.children) {
         // Only goal directly below is affected
         if (goal.ranking === goalToMove.ranking + 1) {
-          goal.ranking--;
-          goal[EDIT_KEY] = true;
-          goalToMove.ranking++;
-          goalToMove[EDIT_KEY] = true;
+          updateLocalGoal(goal, {ranking: goal.ranking - 1});
+          updateLocalGoal(goalToMove, {ranking: goalToMove.ranking + 1});
           break;
         }
       }
@@ -596,12 +595,11 @@ define(
      * @param {string} title The title bar of the modal
      * @param {string} templateName The template name to render
      * @param {string} btnSaveText The SAVE button text
-     * @param {function} onSaveCallback Function callback when user clicks save
      */
-    const showModal = async(context, title, templateName, btnSaveText, onSaveCallback) => {
+    const showModal = async (context, title, templateName, btnSaveText) => {
       let strings = [
-        {key: 'validation:missingtitle', component: 'mod_learninggoalwidget'},
-        {key: 'validation:invalidlink', component: 'mod_learninggoalwidget'},
+        { key: 'validation:missingtitle', component: 'mod_learninggoalwidget' },
+        { key: 'validation:invalidlink', component: 'mod_learninggoalwidget' },
       ];
       const results = await CoreStr.get_strings(strings);
       const modal = await ModalFactory.create({
@@ -609,10 +607,16 @@ define(
         title: title,
         body: Templates.render(templateName, context)
       });
+      modal.setSaveButtonText(btnSaveText);
 
-      return new Promise((resolve, reject) => {
-        modal.setSaveButtonText(btnSaveText);
+      modal.show();
 
+      // Destroy when hidden.
+      modal.getRoot().on(ModalEvents.hidden, () => {
+        modal.destroy();
+      });
+
+      return new Promise((resolve, reject) =>
         modal.getRoot().on(ModalEvents.save, (event) => {
           var titleInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_TITLE_FIELD);
           var shortnameInputfield = modal.getRoot().find(MODAL_ITEM_SELECTORS.ITEM_SHORTNAME_FIELD);
@@ -627,12 +631,12 @@ define(
             urlValid = true;
           }
           if (titleValid && urlValid) {
-            resolve(
+            resolve([
               modal,
               titleInputfield[0].value,
               shortnameInputfield[0].value,
               urlInputfield[0].value
-            );
+            ]);
           } else {
             event.preventDefault();
             event.stopPropagation();
@@ -651,14 +655,8 @@ define(
               reject("Url invalid");
             }
           }
-        });
-        modal.show();
-
-        // Destroy when hidden.
-        modal.getRoot().on(ModalEvents.hidden, () => {
-          modal.destroy();
-        });
-      });
+        })
+      );
     };
 
     /**
@@ -669,7 +667,7 @@ define(
      *
      * @returns {void}
      */
-    const showMessage = async(title, text, btnSaveText) => {
+    const showMessage = async (title, text, btnSaveText) => {
       const modal = await ModalFactory.create({
         type: ModalFactory.types.SAVE_CANCEL,
         title: title,
@@ -712,15 +710,15 @@ define(
      */
     const isValidTopLevelJSON = (json) => {
       if (!('name' in json) || json.name === null || json.name === undefined) {
-        return {error: true, code: "validation:jsontop1"};
+        return { error: true, code: "validation:jsontop1" };
       } else if (!('children' in json) || json.children === null || json.children === undefined) {
-        return {error: true, code: "validation:jsontop2"};
+        return { error: true, code: "validation:jsontop2" };
       } else if (!Array.isArray(json.children)) {
-        return {error: true, code: "validation:jsontop3"};
+        return { error: true, code: "validation:jsontop3" };
       } else if (json.children.length === 0) {
-        return {error: true, code: "validation:jsontop4"};
+        return { error: true, code: "validation:jsontop4" };
       }
-      return {error: false};
+      return { error: false };
     };
 
     /**
@@ -732,23 +730,23 @@ define(
      */
     const isValidTopicJSON = (topic) => {
       if (!('name' in topic) || topic.name === null || topic.name === undefined) {
-        return {error: true, code: "validation:jsontopic1", codeParam: undefined};
+        return { error: true, code: "validation:jsontopic1", codeParam: undefined };
       } else if (typeof (topic.name) !== 'string') {
-        return {error: true, code: "validation:jsontopic2", codeParam: topic.name};
+        return { error: true, code: "validation:jsontopic2", codeParam: topic.name };
       } else if ('link' in topic) {
         if (typeof (topic.link) !== 'string') {
-          return {error: true, code: "validation:jsontopic3", codeParam: topic.name};
+          return { error: true, code: "validation:jsontopic3", codeParam: topic.name };
         } else if (!isValidUrl(topic.link)) {
-          return {error: true, code: "validation:jsontopic4", codeParam: topic.name};
+          return { error: true, code: "validation:jsontopic4", codeParam: topic.name };
         }
       } else if ('keyword' in topic && typeof (topic.keyword) !== 'string') {
-        return {error: true, code: "validation:jsontopic5", codeParam: topic.name};
+        return { error: true, code: "validation:jsontopic5", codeParam: topic.name };
       } else if (!('children' in topic) || topic.children === null || topic.children === undefined) {
-        return {error: false};
+        return { error: false };
       } else if (!Array.isArray(topic.children)) {
-        return {error: true, code: "validation:jsontopic6", codeParam: topic.name};
+        return { error: true, code: "validation:jsontopic6", codeParam: topic.name };
       }
-      return {error: false};
+      return { error: false };
     };
 
     /**
@@ -761,19 +759,19 @@ define(
      */
     const isValidGoalJSON = (topicName, goal) => {
       if (!('name' in goal) || goal.name === null || goal.name === undefined) {
-        return {error: true, code: "validation:jsongoal1", codeParam: topicName};
+        return { error: true, code: "validation:jsongoal1", codeParam: topicName };
       } else if (typeof (goal.name) !== 'string') {
-        return {error: true, code: "validation:jsongoal2", codeParam: topicName};
+        return { error: true, code: "validation:jsongoal2", codeParam: topicName };
       } else if ('link' in goal) {
         if (typeof (goal.link) !== 'string') {
-          return {error: true, code: "validation:jsongoal3", codeParam: goal.name};
+          return { error: true, code: "validation:jsongoal3", codeParam: goal.name };
         } else if (!isValidUrl(goal.link)) {
-          return {error: true, code: "validation:jsongoal4", codeParam: goal.name};
+          return { error: true, code: "validation:jsongoal4", codeParam: goal.name };
         }
       } else if ('keyword' in goal && typeof (goal.keyword) !== 'string') {
-        return {error: true, code: "validation:jsongoal5", codeParam: goal.name};
+        return { error: true, code: "validation:jsongoal5", codeParam: goal.name };
       }
-      return {error: false};
+      return { error: false };
     };
 
     /**
@@ -786,7 +784,7 @@ define(
      * @param {string} json The json to be parsed
      * @returns {Object} //{error: boolean, preview ?:string, msg?: string}
      */
-    const parseJSON = async(json) => {
+    const parseJSON = async (json) => {
       const res = isValidTopLevelJSON(json);
       if (res.error) {
         res.msg = await CoreStr.get_string(res.code, 'mod_learninggoalwidget');
@@ -818,7 +816,7 @@ ${isLast ? '\n\n' : '\n'}`;
         }
       }
       preview += '</pre>';
-      return {error: false, preview};
+      return { error: false, preview };
     };
 
     /**
@@ -831,7 +829,7 @@ ${isLast ? '\n\n' : '\n'}`;
       }
       const reader = new FileReader();
       reader.readAsText(fileInput.files[0], "UTF-8");
-      reader.onload = async(evt) => {
+      reader.onload = async (evt) => {
         if (evt.target === null) {
           return;
         }
@@ -839,12 +837,12 @@ ${isLast ? '\n\n' : '\n'}`;
           const parsed = JSON.parse(reader.result);
           const check = await parseJSON(parsed);
           let strings = [
-            {key: 'validation:invalid', component: 'mod_learninggoalwidget'},
-            {key: 'validation:invalidfile', component: 'mod_learninggoalwidget'},
-            {key: 'validation:close', component: 'mod_learninggoalwidget'},
-            {key: 'settings:newtaxonomyheader', component: 'mod_learninggoalwidget'},
-            {key: 'settings:newtaxonomymsg', component: 'mod_learninggoalwidget'},
-            {key: 'settings:replace', component: 'mod_learninggoalwidget'},
+            { key: 'validation:invalid', component: 'mod_learninggoalwidget' },
+            { key: 'validation:invalidfile', component: 'mod_learninggoalwidget' },
+            { key: 'validation:close', component: 'mod_learninggoalwidget' },
+            { key: 'settings:newtaxonomyheader', component: 'mod_learninggoalwidget' },
+            { key: 'settings:newtaxonomymsg', component: 'mod_learninggoalwidget' },
+            { key: 'settings:replace', component: 'mod_learninggoalwidget' },
           ];
           const results = await CoreStr.get_strings(strings);
           if (check.error) {
@@ -892,12 +890,12 @@ ${isLast ? '\n\n' : '\n'}`;
     /**
      * Download current JSON Taxonomy
      */
-    const clickedJSONDownload = async() => {
+    const clickedJSONDownload = async () => {
 
-      const strTaxonomy = await Controller.getTaxonomy({instance: instance});
+      const strTaxonomy = await Controller.getTaxonomy({ instance: instance });
       const jsonTaxonomy = JSON.parse(strTaxonomy);
 
-      let newTaxonomy = {name: jsonTaxonomy.name, children: []};
+      let newTaxonomy = { name: jsonTaxonomy.name, children: [] };
       jsonTaxonomy.children.forEach((topic) => {
         let goals = [];
         let topicObj = {};
@@ -905,7 +903,7 @@ ${isLast ? '\n\n' : '\n'}`;
           topicObj.name = topic.name;
         }
         if ('keyword' in topic) {
-          topicObj.keyword= topic.keyword;
+          topicObj.keyword = topic.keyword;
         }
         if ('link' in topic) {
           topicObj.link = topic.link;
@@ -929,7 +927,7 @@ ${isLast ? '\n\n' : '\n'}`;
         newTaxonomy.children.push(topicObj);
       });
       const filename = 'taxonomy.json';
-      const blob = new Blob([JSON.stringify(newTaxonomy, null, 2)], {type: 'text/csv'});
+      const blob = new Blob([JSON.stringify(newTaxonomy, null, 2)], { type: 'text/csv' });
       if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveBlob(blob, filename);
       }
@@ -945,7 +943,7 @@ ${isLast ? '\n\n' : '\n'}`;
     /**
      * Download JSON Taxonomy template
      */
-    const clickedJSONDownloadTemplate = async() => {
+    const clickedJSONDownloadTemplate = async () => {
       const template = {
         "name": "Learning Goal's taxonomy",
         "children": [
@@ -986,7 +984,7 @@ ${isLast ? '\n\n' : '\n'}`;
         ]
       };
       const filename = 'taxonomy.json';
-      const blob = new Blob([JSON.stringify(template, null, 2)], {type: 'text/csv'});
+      const blob = new Blob([JSON.stringify(template, null, 2)], { type: 'text/csv' });
       if (window.navigator.msSaveOrOpenBlob) {
         window.navigator.msSaveBlob(blob, filename);
       }
@@ -1122,6 +1120,19 @@ ${isLast ? '\n\n' : '\n'}`;
     };
 
     /**
+     * Update a local topic
+     *
+     * @param {object} topic Topic to update
+     * @param {object} update Update to apply
+     */
+    const updateLocalTopic = (topic, update) => {
+      Object.keys(update).forEach((key) => {
+        topic[key] = update[key];
+      });
+      topic[EDIT_KEY] = true;
+    };
+
+    /**
      * Marks a local topic as deleted
      * @param {object} topicToDelete Topic to delete
      * @param {boolean} reorder Whether to reorder the rankings of the other topics
@@ -1161,6 +1172,19 @@ ${isLast ? '\n\n' : '\n'}`;
       topic.children.push(newGoal);
 
       return newGoal;
+    };
+
+    /**
+     * Update a local goal
+     *
+     * @param {object} goal Goal to update
+     * @param {object} update Update to apply
+     */
+    const updateLocalGoal = (goal, update) => {
+      Object.keys(update).forEach((key) => {
+        goal[key] = update[key];
+      });
+      goal[EDIT_KEY] = true;
     };
 
     /**

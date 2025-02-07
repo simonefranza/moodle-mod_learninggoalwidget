@@ -33,8 +33,8 @@ namespace mod_learninggoalwidget\local;
  * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class goal {
-
+final class goal {
+    use \mod_learninggoalwidget\local\shared;
     /**
      * goal title (mandatory)
      *
@@ -134,5 +134,104 @@ class goal {
             'ranking' => $ranking,
         ];
         return $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
+    }
+
+    /**
+     * Check that a goal is valid, i.e. it is a valid child and has goalid (int)
+     *
+     * @param stdClass goal Goal to check
+     * @returns is goal valid
+     */
+    public static function validate_goal(&$goal) {
+        self::validate_children_properties($goal);
+        if (!(isset($goal->goalid) && is_int($goal->goalid))) {
+            $goal->valid = false;
+        }
+        return $goal->valid;
+    }
+
+    /**
+     * Updates or inserts a goal into learninggoalwidget_goals
+     *
+     * @param int lgwid ID of the LGW instance
+     * @param int topicid ID of the parent topic
+     * @param stdClass goal Goal to insert into the DB
+     * @returns id of the updated goal or -1
+     */
+    public static function update_goal($lgwid, $topicid, $goal) {
+        global $DB;
+        if (!self::validate_goal($goal)) {
+            print_error("Goal is invalid");
+            return -1;
+        }
+
+        // Ensure parent topic exists.
+        $params = [
+            'id' => $topicid,
+            'learninggoalwidgetid' => $lgwid,
+        ];
+        if (!$DB->record_exists('learninggoalwidget_topics', $params)) {
+            return -1;
+        }
+
+        $goalnew = isset($goal->new) && $goal->new;
+        $goaledit = isset($goal->edit) && $goal->edit;
+        $newgoal = (object) [
+            'learninggoalwidgetid' => $lgwid,
+            'topicid' => $topicid,
+            'title' => $goal->name,
+            'shortname' => $goal->keyword,
+            'url' => $goal->link,
+            'ranking' => $goal->ranking,
+        ];
+
+        if ($goalnew) {
+          $newgoal->id = $DB->insert_record('learninggoalwidget_goals', $newgoal);
+          return $newgoal->id;
+        }
+        // Goal should exist already, check if id exists
+        $params = [
+            'id' => $goal->goalid,
+            'topicid' => $topicid,
+            'learninggoalwidgetid' => $lgwid,
+        ];
+        if (!$DB->record_exists('learninggoalwidget_goals', $params)) {
+            return -1;
+        }
+        if ($goaledit)  {
+          $newgoal->id = $goal->goalid;
+          $DB->update_record('learninggoalwidget_goals', $newgoal);
+        }
+        return $goal->goalid;
+    }
+
+    /**
+     * Deletes a goal and all the progresses from the DB
+     *
+     * @param number lgwid ID of the LGW instance
+     * @param number topicid ID of the topic to delete
+     * @param number goald ID of the goal to delete
+     */
+    public static function delete_goal($lgwid, $topicid, $goalid) {
+        global $DB;
+        // Make sure it is valid goal
+        $params = [
+            'id' => $goalid,
+            'topicid' => $topicid,
+            'learninggoalwidgetid' => $lgwid,
+        ];
+        if (!$DB->record_exists('learninggoalwidget_goals', $params)) {
+            return;
+        }
+
+        // Delete all related information.
+        $goals_params = [
+            'goalid' => $goalid,
+            'topicid' => $topicid,
+            'learninggoalwidgetid' => $lgwid,
+        ];
+
+        $DB->delete_records('learninggoalwidget_progs', $goals_params);
+        $DB->delete_records('learninggoalwidget_goals', $params);
     }
 }

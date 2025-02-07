@@ -21,6 +21,12 @@
  * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/taxonomy.php');
+require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/topic.php');
+require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/goal.php');
+use \mod_learninggoalwidget\local\taxonomy;
+use \mod_learninggoalwidget\local\topic;
+use \mod_learninggoalwidget\local\goal;
 
 /**
  * Saves a new instance of the mod_learninggoalwidget into the database.
@@ -37,17 +43,9 @@ function learninggoalwidget_add_instance(stdClass $data): int {
     $data->timecreated = time();
     $data->timemodified = $data->timecreated;
     $data->id = $DB->insert_record('learninggoalwidget', $data);
-
     $taxonomy = json_decode($data->taxonomy);
 
-    // Validate rankings etc then add everything.
-    foreach ($taxonomy->children as $topic) {
-        var_dump($topic->name);
-
-        foreach ($topic->children as $goal) {
-            var_dump($goal->name);
-        }
-    }
+    taxonomy::update_taxonomy($data->id, $taxonomy);
 
     return $data->id;
 }
@@ -66,10 +64,15 @@ function learninggoalwidget_update_instance(stdClass $data): bool {
 
     $data->timemodified = time();
     $data->id = $data->instance;
-    $data->name = $data->name;
-    $data->intro = $data->intro;
+    if (!$DB->update_record('learninggoalwidget', $data)) {
+        return false;
+    }
 
-    return $DB->update_record('learninggoalwidget', $data);
+    $taxonomy = json_decode($data->taxonomy);
+
+    taxonomy::update_taxonomy($data->id, $taxonomy);
+
+    return true;
 }
 
 /**
