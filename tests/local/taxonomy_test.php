@@ -82,10 +82,11 @@ final class taxonomy_test extends \advanced_testcase {
         }
         $data[50]->ranking = -1;
         taxonomy::sort_by_ranking($data);
-        $this->assertTrue($data[0]->ranking == -1);
+        $this->assertSame($data[0]->ranking, -1);
+        taxonomy::reassign_rankings($data);
         // Check that rankings are reassigned from 1 to 100.
         for ($i = 1; $i < 101; $i++) {
-            $this->assertTrue($data[$i]->ranking == $i);
+            $this->assertSame($data[$i]->ranking, $i);
         }
     }
 
@@ -94,10 +95,19 @@ final class taxonomy_test extends \advanced_testcase {
      * @return void
      *
      * @covers \mod_learninggoalwidget\local\taxonomy::get_taxonomy_as_json
+     * @covers \mod_learninggoalwidget\local\taxonomy::get_topics
      */
     public function test_get_taxonomy_as_json(): void {
         $this->assertSame(taxonomy::get_taxonomy_as_json(-1), "{}");
 
-        
+        // Create instance
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $this->assertNotNull($taxonomy);
+        $this->assertTrue(isset($taxonomy->name) && is_string($taxonomy->name));
+        $this->assertSame($taxonomy->name, "name");
+        $this->assertTrue(isset($taxonomy->children) && is_array($taxonomy->children));
+        $this->assertTrue(count($taxonomy->children) == 0);
     }
 }
