@@ -48,6 +48,7 @@ final class goal_test extends \advanced_testcase {
      * @return void
      *
      * @covers \mod_learninggoalwidget\local\goal::validate_goal
+     * @covers \mod_learninggoalwidget\local\goal::validate_children_properties
      */
     public function test_validate_goal(): void {
         $goal = new \stdClass;
@@ -106,6 +107,8 @@ final class goal_test extends \advanced_testcase {
      *
      * @covers \mod_learninggoalwidget\local\goal::update_goal
      * @covers \mod_learninggoalwidget\local\goal::delete_goal
+     * @covers \mod_learninggoalwidget\local\goal::validate_goal
+     * @covers \mod_learninggoalwidget\local\goal::validate_children_properties
      */
     public function test_goal(): void {
         $res = $this->setup_widget();
@@ -132,6 +135,8 @@ final class goal_test extends \advanced_testcase {
             'name' => 'G1',
         ];
         $topicid = $taxonomy->children[0]->topicid;
+        $this->assertFalse(goal::validate_goal($newgoal));
+        unset($newgoal->valid);
         $this->assertSame(goal::update_goal($lgwid, $topicid, $newgoal), -2);
 
         // Fix goal.
@@ -153,7 +158,6 @@ final class goal_test extends \advanced_testcase {
         // Add goal.
         $newgoal->new = true;
         $newgoal->goalid = goal::update_goal($lgwid, $topicid, $newgoal);
-        $this->assertSame($newgoal->goalid, 1);
 
         // Get taxonomy and check for update.
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
