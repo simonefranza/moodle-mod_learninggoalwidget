@@ -36,107 +36,6 @@ namespace mod_learninggoalwidget\local;
 final class goal {
     use \mod_learninggoalwidget\local\shared;
     /**
-     * goal title (mandatory)
-     *
-     * @var string
-     */
-    private $title;
-
-    /**
-     * goal shortname (optional)
-     *
-     * @var string
-     */
-    private $shortname;
-
-    /**
-     * goal url (optional)
-     *
-     * @var [type]
-     */
-    private $url;
-
-     /**
-      * ctor of class goal
-      *
-      * @param [type] $title
-      * @param [type] $shortname
-      * @param [type] $url
-      */
-    public function __construct($title, $shortname, $url) {
-        $this->title = $title;
-        $this->shortname = $shortname;
-        $this->url = $url;
-    }
-
-    /**
-     * get the goal's title
-     *
-     * @return string
-     */
-    public function get_title() {
-        return $this->title;
-    }
-
-    /**
-     * get the goal's shortname
-     *
-     * @return string
-     */
-    public function get_shortname() {
-        return $this->shortname;
-    }
-
-    /**
-     * get the goal's url
-     *
-     * @return string
-     */
-    public function get_url() {
-        return $this->url;
-    }
-
-     /**
-      * returns the goal DB entry given an id
-      *
-      * @param int $id
-      * @return dbentry
-      */
-    public static function get_db_entry_by_id($id) {
-        global $DB;
-        $sqlstmt = "SELECT *
-                      FROM {learninggoalwidget_goals}
-                     WHERE id = :id";
-        $params = [
-            'id' => $id,
-        ];
-        return $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
-    }
-
-    /**
-     * returns the goal DB entry given the learninggoalwidgetid, topicid and ranking
-     *
-     * @param int $learninggoalwidgetid
-     * @param int $topicid
-     * @param int $ranking
-     * @return dbentry
-     */
-    public static function get_db_entry_by_ranking($learninggoalwidgetid, $topicid, $ranking) {
-        global $DB;
-        $sqlstmt = "SELECT *
-                      FROM {learninggoalwidget_goals}
-                     WHERE learninggoalwidgetid = :instance
-                       AND topicid = :topicid
-                       AND ranking = :ranking";
-        $params = [
-            'instance' => $learninggoalwidgetid,
-            'topicid' => $topicid,
-            'ranking' => $ranking,
-        ];
-        return $DB->get_record_sql($sqlstmt, $params, MUST_EXIST);
-    }
-
-    /**
      * Check that a goal is valid, i.e. it is a valid child and has goalid (int)
      *
      * @param stdClass goal Goal to check
@@ -211,8 +110,9 @@ final class goal {
      * @param number lgwid ID of the LGW instance
      * @param number topicid ID of the topic to delete
      * @param number goald ID of the goal to delete
+     * @return bool whether deletion was successful or not
      */
-    public static function delete_goal($lgwid, $topicid, $goalid) {
+    public static function delete_goal($lgwid, $topicid, $goalid): bool {
         global $DB;
         // Make sure it is valid goal
         $params = [
@@ -221,7 +121,7 @@ final class goal {
             'learninggoalwidgetid' => $lgwid,
         ];
         if (!$DB->record_exists('learninggoalwidget_goals', $params)) {
-            return;
+            return false;
         }
 
         // Delete all related information.
@@ -233,5 +133,6 @@ final class goal {
 
         $DB->delete_records('learninggoalwidget_progs', $goals_params);
         $DB->delete_records('learninggoalwidget_goals', $params);
+        return true;
     }
 }

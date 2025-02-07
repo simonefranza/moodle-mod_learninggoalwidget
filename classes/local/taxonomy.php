@@ -39,40 +39,30 @@ use mod_learninggoalwidget\local\goal;
  */
 class taxonomy {
     /**
-     * the instance id related with the taxonomy
-     *
-     * @var int
-     */
-    private $instanceid;
-
-    /**
-     * c'tor of taxonomy (for a specific instance in a course)
-     *
-     * @param int $instanceid
-     */
-    public function __construct($instanceid) {
-        $this->instanceid = $instanceid;
-    }
-
-    /**
      * return json represenation of the taxonomy
      *
+     * @param int lgwid id of the instance
      * @return string
      */
-    public function get_taxonomy_as_json(): string {
+    public static function get_taxonomy_as_json($lgwid): string {
+        $instance = $DB->get_record('learninggoalwidget', ['id' => $lgwid]);
+        if (!$instance) {
+            return "{}";
+        }
         $taxonomy = new stdClass;
-        $taxonomy->name = get_string('title', 'mod_learninggoalwidget');
-        $taxonomy->children = $this->get_topics();
+        $taxonomy->name = $instance->name;
+        $taxonomy->children = self::get_topics($lgwid);
         return json_encode($taxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     }
 
     /**
      * return the topics of the taxonomy
      *
+     * @param int lgwid id of the lgw instance
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
-    private function get_topics() {
-        if ($this->instanceid === null) {
+    private static function get_topics($lgwid) {
+        if ($lgwid === null) {
             return [];
         }
         $topics = [];
@@ -87,10 +77,10 @@ class taxonomy {
                       FROM {learninggoalwidget_topics} t
                  LEFT JOIN {learninggoalwidget_goals} g
                         ON t.id = g.topicid
-                     WHERE t.learninggoalwidgetid = :instanceid
+                     WHERE t.learninggoalwidgetid = :lgwid
                   ORDER BY tranking, granking";
         $params = [
-            'instanceid' => $this->instanceid,
+            'lgwid' => $lgwid,
         ];
         $topicrecords = $DB->get_records_sql($sqlstmt, $params);
         $numrecords = count($topicrecords);

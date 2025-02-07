@@ -68,8 +68,17 @@ class userTaxonomy {
      * @return string
      */
     public function get_taxonomy_as_json(): string {
+        global $DB;
+        if ($this->instanceid === null) {
+            return "{}";
+        }
+        $instance = $DB->get_record('learninggoalwidget', ['id' => $this->instanceid]);
+        if (!$instance) {
+            return "{}";
+        }
+
         $usertaxonomy = new stdClass;
-        $usertaxonomy->name = get_string('title', 'mod_learninggoalwidget');
+        $usertaxonomy->name = $instance->name;
         $usertaxonomy->children = $this->get_topics();
         return json_encode($usertaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     }

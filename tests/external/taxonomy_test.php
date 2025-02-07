@@ -61,9 +61,7 @@ final class taxonomy_test extends externallib_advanced_testcase {
         $emptytaxonomy->children = [];
         $jsonemptytaxonomy = json_encode($emptytaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
-        $taxonomy = new taxonomy($res->instance->id);
-        $this->assertNotNull($taxonomy);
-        $json = $taxonomy->get_taxonomy_as_json();
+        $json = taxonomy::get_taxonomy_as_json($res->instance->id);
         $this->assertNotNull($json);
         $this->assertNotEmpty($json);
         $this->assertEquals($jsonemptytaxonomy, $json);
