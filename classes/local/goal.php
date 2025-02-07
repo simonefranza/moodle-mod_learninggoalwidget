@@ -60,7 +60,7 @@ final class goal {
     public static function update_goal($lgwid, $topicid, $goal) {
         global $DB;
         if (!self::validate_goal($goal)) {
-            print_error("Goal is invalid");
+            error_log("Goal is invalid");
             return -1;
         }
 

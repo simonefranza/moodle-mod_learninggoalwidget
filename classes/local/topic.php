@@ -63,7 +63,7 @@ final class topic {
     public static function update_topic($lgwid, $topic) {
         global $DB;
         if (!self::validate_topic($topic)) {
-            print_error("Topic is invalid");
+            error_log("Topic is invalid");
             return -1;
         }
 

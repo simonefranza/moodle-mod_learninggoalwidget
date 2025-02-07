@@ -57,7 +57,7 @@ final class taxonomy_test extends externallib_advanced_testcase {
         $res = $this->setup_widget();
 
         $emptytaxonomy = new \stdClass;
-        $emptytaxonomy->name = "Learning Goal's taxonomy";
+        $emptytaxonomy->name = "name";
         $emptytaxonomy->children = [];
         $jsonemptytaxonomy = json_encode($emptytaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
