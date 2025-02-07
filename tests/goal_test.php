@@ -29,6 +29,7 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 
 use mod_learninggoalwidget\local\taxonomy;
+use mod_learninggoalwidget\local\topic;
 use mod_learninggoalwidget\local\goal;
 
 /**

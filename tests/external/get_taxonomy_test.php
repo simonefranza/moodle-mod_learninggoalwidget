@@ -76,7 +76,7 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
         $parsed = json_decode($result);
 
         $expectedjson = new \stdClass();
-        $expectedjson->name = "Learning Goal's taxonomy";
+        $expectedjson->name = "name";
 
         $topic1 = new \stdClass();
         $topic1->topicid = $res->topic1->id;

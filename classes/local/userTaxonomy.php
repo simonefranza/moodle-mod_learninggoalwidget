@@ -44,7 +44,7 @@ class userTaxonomy {
      * @param int userid id of the user
      * @return string
      */
-    public function get_taxonomy_as_json($lgwid, $userid): string {
+    public static function get_taxonomy_as_json($lgwid, $userid): string {
         global $DB;
         if ($lgwid === null) {
             return "{}";
@@ -67,7 +67,7 @@ class userTaxonomy {
      * @param int userid id of the user
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
-    private function get_topics($lgwid, $userid) {
+    private static function get_topics($lgwid, $userid) {
         if ($lgwid == null) {
             return [];
         }
