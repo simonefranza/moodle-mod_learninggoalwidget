@@ -65,7 +65,7 @@ class mod_learninggoalwidget_generator extends testing_module_generator {
             'maxattempts' => -1,
             'markingworkflow' => 0,
             'markingallocation' => 0,
-            'taxonomy' => $taxonomy,
+            'taxonomy' => json_encode($taxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK),
         ];
 
         foreach ($defaultsettings as $name => $value) {
