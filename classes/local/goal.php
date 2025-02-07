@@ -60,8 +60,8 @@ final class goal {
     public static function update_goal($lgwid, $topicid, $goal) {
         global $DB;
         if (!self::validate_goal($goal)) {
-            error_log("Goal is invalid");
-            return -1;
+            // Goal is invalid.
+            return -2;
         }
 
         // Ensure parent topic exists.

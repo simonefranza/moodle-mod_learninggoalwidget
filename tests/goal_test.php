@@ -132,7 +132,7 @@ final class goal_test extends \advanced_testcase {
             'name' => 'G1',
         ];
         $topicid = $taxonomy->children[0]->topicid;
-        $this->assertSame(goal::update_goal($lgwid, $topicid, $newgoal), -1);
+        $this->assertSame(goal::update_goal($lgwid, $topicid, $newgoal), -2);
 
         // Fix goal.
         $newgoal->keyword = 'G1';
