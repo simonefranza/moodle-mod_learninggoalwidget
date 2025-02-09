@@ -74,11 +74,10 @@ final class widget_renderable_test extends \advanced_testcase {
 
         $cm = get_coursemodule_from_id('learninggoalwidget', $res->instance->id);
 
-        $renderable = new widget_renderable($data);
 
         // Create a mock renderer (since export_for_template requires renderer_base)
         $mockrenderer = $this->createMock(renderer_base::class);
-        $widget = new widget_renderable(
+        $renderable = new widget_renderable(
             $res->course->id,
             $res->user->id,
             0,
