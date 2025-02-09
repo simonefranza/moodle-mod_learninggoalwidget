@@ -73,11 +73,12 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
         $taxonomy->children = $this->create_taxonomy($numtopics, $numgoals);
         $taxonomy->children[1]->children[0]->deleted = true;
         $taxonomy->children[1]->children[1]->deleted = true;
-        taxonomy::update_taxonomy($taxonomy);
+        taxonomy::update_taxonomy($lgwid, $taxonomy);
         $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
         $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
         $this->check_topic($taxonomy->children[1], 1, 2, 0, true);
 
+        // Update progress.
         $topic0 = $taxonomy->children[0];
         $goal0 = $topic0->children[0];
         $goal1 = $topic0->children[1];

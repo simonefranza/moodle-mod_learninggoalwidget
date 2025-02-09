@@ -46,8 +46,6 @@ final class mod_form_test extends externallib_advanced_testcase {
     /**
      * testing class mod_learninggoalwidget_mod_form
      * @return void
-     *
-     * @covers \mod_learninggoalwidget\mod_learninggoalwidget_mod_form
      */
     public function test_definition(): void {
         global $COURSE;
