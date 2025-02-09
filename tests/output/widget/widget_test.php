@@ -66,7 +66,7 @@ final class widget_renderable_test extends \advanced_testcase {
             $cm->id,
             $res->instance->id
         );
-        $widgt->export_for_template($output);
+        $widget->export_for_template($output);
     }
 
     /**
