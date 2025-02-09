@@ -38,6 +38,7 @@ use mod_learninggoalwidget\local\userTaxonomy;
 use mod_learninggoalwidget\local\taxonomy;
 use mod_learninggoalwidget\local\topic;
 use mod_learninggoalwidget\local\goal;
+use mod_learninggoalwidget\external\update_user_progress;
 
 /**
  * Learning Goal Taxonomy UserTaxonomy Test
