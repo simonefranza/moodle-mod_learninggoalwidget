@@ -133,8 +133,30 @@ final class taxonomy_test extends \advanced_testcase {
         $this->assertTrue(count($taxonomy->children) == $numtopics);
         for ($i = 0; $i < $numtopics; $i++) {
             $topic = $taxonomy->children[$i];
-            $this->check_topic($topic, $i, $numgoals, true);
+            $this->check_topic($topic, $i, $i + 1, $numgoals, true);
         }
+    }
+
+    /**
+     * testing basics of method taxonomy::validate_taxonomy
+     * @return void
+     *
+     * @covers \mod_learninggoalwidget\local\taxonomy::validate_taxonomy
+     */
+    public function test_basic_validate_taxonomy(): void {
+        $taxonomy = new \stdClass;
+
+        // Taxonomy with no children prop
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertTrue(isset($taxonomy->children) && is_array($taxonomy->children));
+        $this->assertTrue(count($taxonomy->children) == 0);
+
+        $taxonomy->children = $this->create_taxonomy(1, 0);
+        $this->assertTrue(count($taxonomy->children) == 1);
+        // Make topic invalid -> has to be removed
+        unset($taxonomy->children[0]->name);
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertTrue(count($taxonomy->children) == 1);
     }
 
     /**
@@ -145,9 +167,6 @@ final class taxonomy_test extends \advanced_testcase {
      */
     public function test_validate_taxonomy(): void {
         $taxonomy = new \stdClass;
-        taxonomy::validate_taxonomy($taxonomy);
-        $this->assertTrue(isset($taxonomy->children) && is_array($taxonomy->children));
-        $this->assertTrue(count($taxonomy->children) == 0);
         $numtopics = 10;
         $numgoals = 10;
         $taxonomy->children = $this->create_taxonomy($numtopics, $numgoals);
@@ -167,7 +186,7 @@ final class taxonomy_test extends \advanced_testcase {
 
         $originalindex = [0, 8, 2, 3, 4, 6, 7, 9, 1];
 
-        for ($i = 0; $i <= 2; $i++)  {
+        for ($i = 0; $i <= 2; $i++) {
             $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
         }
 
@@ -178,7 +197,7 @@ final class taxonomy_test extends \advanced_testcase {
             $this->check_goal($taxonomy->children[3]->children[$ii], $originalindex[3], $originalgoalsindex[$ii]);
         }
 
-        for ($i = 4; $i <= 5; $i++)  {
+        for ($i = 4; $i <= 5; $i++) {
             $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
         }
 
@@ -189,7 +208,7 @@ final class taxonomy_test extends \advanced_testcase {
             $this->check_goal($taxonomy->children[6]->children[$ii], $originalindex[6], $originalgoalsindex[$ii]);
         }
 
-        for ($i = 7; $i <= 8; $i++)  {
+        for ($i = 7; $i <= 8; $i++) {
             $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
         }
     }
