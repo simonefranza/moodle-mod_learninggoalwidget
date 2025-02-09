@@ -53,10 +53,10 @@ final class widget_renderable_test extends \advanced_testcase {
      * @covers \mod_learninggoalwidget\output\widget\widget_renderable::__construct
      * @covers \mod_learninggoalwidget\output\widget\widget_renderable::export_for_template
      */
-    public function test_render_widget() {
+    public function test_render_widget(): void {
         $res = $this->setup_widget();
         $renderer = $this->get_renderer();
-        // Create a mock of the renderable object
+        // Create a mock of the renderable object.
         $mockrenderable = $this->createMock(widget_renderable::class);
         $data = [
             'courseid' => 0,
@@ -64,7 +64,7 @@ final class widget_renderable_test extends \advanced_testcase {
             'instanceid' => 0,
         ];
 
-        // Mock the export_for_template method to return expected data
+        // Mock the export_for_template method to return expected data.
         $mockrenderable->method('export_for_template')->willReturn($data);
         $output = $renderer->render_widget($mockrenderable);
 
@@ -72,10 +72,7 @@ final class widget_renderable_test extends \advanced_testcase {
         $this->assertNotEmpty($output);
         $this->assertStringContainsString('learninggoals-widget-', $output);
 
-        $cm = get_coursemodule_from_id('learninggoalwidget', $res->instance->id);
-
-
-        // Create a mock renderer (since export_for_template requires renderer_base)
+        // Create a mock renderer (since export_for_template requires renderer_base).
         $mockrenderer = $this->createMock(renderer_base::class);
         $renderable = new widget_renderable(
             $res->course->id,
