@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 
 use mod_learninggoalwidget\output\widget\renderer;
 use mod_learninggoalwidget\output\widget\widget_renderable;
+use core_renderer;
 
 /**
  * Learning Goal Taxonomy Widget Renderable Test
@@ -54,11 +55,21 @@ final class widget_renderable_test extends \advanced_testcase {
     public function test_render_widget() {
         $this->setup_widget();
         $renderer = $this->get_renderer();
-        $output = $renderer->render_widget(); // Call the function that renders
+        // Create a mock of the renderable object
+        $mockrenderable = $this->createMock(widget_renderable::class);
+
+        // Mock the export_for_template method to return expected data
+        $mockrenderable->method('export_for_template')->willReturn([
+            'title' => 'Test Widget Title',
+            'content' => 'This is test widget content.'
+        ]);
+        $output = $renderer->render_widget($mockrenderable);
 
         $this->assertIsString($output);
         $this->assertNotEmpty($output);
-        $this->assertStringContainsString('<div', $output); // Example check for HTML structure
+        $this->assertStringContainsString('Test Widget Title', $output);
+        $this->assertStringContainsString('This is test widget content.', $output);
+
         $cm = get_coursemodule_from_id('learninggoalwidget', $res->instance->id);
         $widget = new widget_renderable(
             $res->course->id,
