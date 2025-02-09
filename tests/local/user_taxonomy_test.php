@@ -58,8 +58,8 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\local\userTaxonomy::get_topics
      */
     public function test_update_taxonomy(): void {
-        $this->assertSame(userTaxonomy::get_taxonomy_as_json(null), '{}');
-        $this->assertSame(userTaxonomy::get_taxonomy_as_json(-1), '{}');
+        $this->assertSame(userTaxonomy::get_taxonomy_as_json(null, 1), '{}');
+        $this->assertSame(userTaxonomy::get_taxonomy_as_json(-1, 1), '{}');
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
         $userid = $res->user->id;
