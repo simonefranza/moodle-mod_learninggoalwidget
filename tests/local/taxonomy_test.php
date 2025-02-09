@@ -180,7 +180,7 @@ final class taxonomy_test extends \advanced_testcase {
             $this->check_topic($taxonomy->children[$i], 1 - $i, $i + 1, 0, true);
         }
 
-        // make 1 topics w/ 1 goal and remove prop from goal -> has to delete goal.
+        // Create 1 topics w/ 1 goal and remove prop from goal -> has to delete goal.
         $taxonomy->children = $this->create_taxonomy(1, 1);
         $this->assertSame(count($taxonomy->children), 1);
         $this->assertSame(count($taxonomy->children[0]->children), 1);
@@ -190,7 +190,7 @@ final class taxonomy_test extends \advanced_testcase {
         $this->assertSame(count($taxonomy->children[0]->children), 0);
         $this->check_topic($taxonomy->children[0], 0, 1, 0, true);
 
-        // make 1 topics w/ 2 goal and change ranking of goal -> has to reassign_rankings.
+        // Create 1 topics w/ 2 goal and change ranking of goal -> has to reassign_rankings.
         $taxonomy->children = $this->create_taxonomy(1, 2);
         $this->assertSame(count($taxonomy->children), 1);
         $this->assertSame(count($taxonomy->children[0]->children), 2);
@@ -200,7 +200,7 @@ final class taxonomy_test extends \advanced_testcase {
         $this->assertSame(count($taxonomy->children), 1);
         $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
 
-        // make 1 topics w/ 2 goal and invert ranking of goals -> has to reassign_rankings and re-sort.
+        // Create 1 topics w/ 2 goal and invert ranking of goals -> has to reassign_rankings and re-sort.
         $taxonomy->children = $this->create_taxonomy(1, 2);
         $this->assertSame(count($taxonomy->children), 1);
         $this->assertSame(count($taxonomy->children[0]->children), 2);
@@ -225,15 +225,15 @@ final class taxonomy_test extends \advanced_testcase {
         $numtopics = 10;
         $numgoals = 10;
         $taxonomy->children = $this->create_taxonomy($numtopics, $numgoals);
-        // Change ranking of topics 1 and 8
+        // Change ranking of topics 1 and 8.
         $taxonomy->children[1]->ranking = 100;
         $taxonomy->children[8]->ranking = 2;
-        // Change rankings of goals of topic 3
+        // Change rankings of goals of topic 3.
         $taxonomy->children[3]->children[2]->ranking = 100;
         $taxonomy->children[3]->children[4]->ranking = 3;
-        // Remove name from topic 5 -> invalid -> should be removed
+        // Remove name from topic 5 -> invalid -> should be removed.
         unset($taxonomy->children[5]->name);
-        // Remove name from goal 0 of topic 7 -> invalid -> should be removed
+        // Remove name from goal 0 of topic 7 -> invalid -> should be removed.
         unset($taxonomy->children[7]->children[0]->name);
 
         taxonomy::validate_taxonomy($taxonomy);

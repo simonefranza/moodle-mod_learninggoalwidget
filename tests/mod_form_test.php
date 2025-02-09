@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_learninggoalwidget;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -46,6 +48,8 @@ final class mod_form_test extends externallib_advanced_testcase {
     /**
      * testing class mod_learninggoalwidget_mod_form
      * @return void
+     *
+     * @covers \mod_learninggoalwidget\mod_learninggoalwidget_mod_form::definition
      */
     public function test_definition(): void {
         global $COURSE;

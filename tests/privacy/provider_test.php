@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_learninggoalwidget\privacy;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -61,6 +63,8 @@ final class provider_test extends provider_testcase {
     /**
      * testing privacy provider: get metadata
      * @return void
+     *
+     * @covers \mod_learninggoalwidget\privacy\provider::get_metadata
      */
     public function test_get_metadata(): void {
         // Reset all changes automatically after this test.
@@ -86,6 +90,8 @@ final class provider_test extends provider_testcase {
      * testing privacy provider: get contexts for userid
      *
      * @return void
+     *
+     * @covers \mod_learninggoalwidget\privacy\provider::get_contexts_for_userid
      */
     public function test_get_contexts_for_userid(): void {
         // Reset all changes automatically after this test.
@@ -113,6 +119,8 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test returning a list of user IDs related to a context (assign).
+     *
+     * @covers \mod_learninggoalwidget\privacy\provider::get_users_in_context
      */
     public function test_get_users_in_context(): void {
         // Reset all changes automatically after this test.
@@ -154,6 +162,8 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test exporting data with empty contextlist
+     *
+     * @covers \mod_learninggoalwidget\privacy\provider::export_user_data
      */
     public function test_empty_export_user_data_student(): void {
         $this->setUp();
@@ -164,6 +174,8 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test exporting data
+     *
+     * @covers \mod_learninggoalwidget\privacy\provider::export_user_data
      */
     public function test_export_user_data_student(): void {
         // Reset all changes automatically after this test.
@@ -199,6 +211,8 @@ final class provider_test extends provider_testcase {
 
     /**
      * Test delete all users data wrt training amplifier widget
+     *
+     * @covers \mod_learninggoalwidget\privacy\provider::delete_data_for_all_users_in_context
      */
     public function test_delete_data_for_all_users_in_context(): void {
         $this->setUp();
@@ -227,6 +241,8 @@ final class provider_test extends provider_testcase {
 
     /**
      * A test for deleting all user data for one user.
+     *
+     * @covers \mod_learninggoalwidget\privacy\provider::delete_data_for_user
      */
     public function test_delete_data_for_user(): void {
         global $DB;
@@ -257,6 +273,8 @@ final class provider_test extends provider_testcase {
 
     /**
      * A test for deleting all user data for a bunch of users.
+     *
+     * @covers \mod_learninggoalwidget\privacy\provider::delete_data_for_users
      */
     public function test_delete_data_for_users(): void {
         global $DB;

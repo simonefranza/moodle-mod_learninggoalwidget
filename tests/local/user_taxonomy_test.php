@@ -28,15 +28,16 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
+
+use externallib_advanced_testcase;
+use core_external\external_api;
 
 use mod_learninggoalwidget\local\userTaxonomy;
 use mod_learninggoalwidget\local\taxonomy;
 use mod_learninggoalwidget\local\topic;
 use mod_learninggoalwidget\local\goal;
-
-use externallib_advanced_testcase;
-use core_external\external_api;
 
 /**
  * Learning Goal Taxonomy UserTaxonomy Test
