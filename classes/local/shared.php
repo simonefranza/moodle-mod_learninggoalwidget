@@ -39,7 +39,7 @@ trait shared {
      * - link (str)
      * - ranking (int)
      *
-     * @param stdClass child Child to check
+     * @param stdClass $child Child to check
      * @return is child valid
      */
     public static function validate_children_properties(&$child) {

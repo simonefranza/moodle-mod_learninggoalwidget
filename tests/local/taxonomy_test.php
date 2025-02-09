@@ -182,32 +182,32 @@ final class taxonomy_test extends \advanced_testcase {
 
         // make 1 topics w/ 1 goal and remove prop from goal -> has to delete goal.
         $taxonomy->children = $this->create_taxonomy(1, 1);
-        $this->assertsame(count($taxonomy->children), 1);
-        $this->assertsame(count($taxonomy->children[0]->children), 1);
+        $this->assertSame(count($taxonomy->children), 1);
+        $this->assertSame(count($taxonomy->children[0]->children), 1);
         unset($taxonomy->children[0]->children[0]->name);
         taxonomy::validate_taxonomy($taxonomy);
-        $this->assertsame(count($taxonomy->children), 1);
-        $this->assertsame(count($taxonomy->children[0]->children), 0);
+        $this->assertSame(count($taxonomy->children), 1);
+        $this->assertSame(count($taxonomy->children[0]->children), 0);
         $this->check_topic($taxonomy->children[0], 0, 1, 0, true);
 
         // make 1 topics w/ 2 goal and change ranking of goal -> has to reassign_rankings.
         $taxonomy->children = $this->create_taxonomy(1, 2);
-        $this->assertsame(count($taxonomy->children), 1);
-        $this->assertsame(count($taxonomy->children[0]->children), 2);
+        $this->assertSame(count($taxonomy->children), 1);
+        $this->assertSame(count($taxonomy->children[0]->children), 2);
         $taxonomy->children[0]->children[0]->ranking = 100;
         $taxonomy->children[0]->children[1]->ranking = 200;
         taxonomy::validate_taxonomy($taxonomy);
-        $this->assertsame(count($taxonomy->children), 1);
+        $this->assertSame(count($taxonomy->children), 1);
         $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
 
         // make 1 topics w/ 2 goal and invert ranking of goals -> has to reassign_rankings and re-sort.
         $taxonomy->children = $this->create_taxonomy(1, 2);
-        $this->assertsame(count($taxonomy->children), 1);
-        $this->assertsame(count($taxonomy->children[0]->children), 2);
+        $this->assertSame(count($taxonomy->children), 1);
+        $this->assertSame(count($taxonomy->children[0]->children), 2);
         $taxonomy->children[0]->children[0]->ranking = 50;
         $taxonomy->children[0]->children[1]->ranking = 25;
         taxonomy::validate_taxonomy($taxonomy);
-        $this->assertsame(count($taxonomy->children), 1);
+        $this->assertSame(count($taxonomy->children), 1);
         $this->check_topic($taxonomy->children[0], 0, 1, 2, false);
         for ($i = 0; $i < 2; $i++) {
             $this->check_goal($taxonomy->children[0]->children[$i], 0, 1 - $i, $i + 1);
@@ -266,6 +266,52 @@ final class taxonomy_test extends \advanced_testcase {
         for ($i = 7; $i <= 8; $i++) {
             $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
         }
+    }
+
+    /**
+     * testing method taxonomy::update_taxonomy
+     * @return void
+     *
+     * @covers \mod_learninggoalwidget\local\taxonomy::update_taxonomy
+     * @covers \mod_learninggoalwidget\local\taxonomy::get_taxonomy_as_json
+     * @covers \mod_learninggoalwidget\local\taxonomy::get_topics
+     */
+    public function test_update_taxonomy(): void {
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+
+        $taxonomy = new \stdClass;
+        $taxonomy->name = 'name';
+        $taxonomy->children = $this->create_taxonomy(1, 0);
+
+        // Add + delete = no changes.
+        $taxonomy->children[0]->deleted = true;
+        taxonomy::update_taxonomy($lgwid, $taxonomy);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $this->assertSame(count($taxonomy->children), 0);
+
+        // Add one topic with one deleted and one valid goal.
+        $taxonomy->children = $this->create_taxonomy(1, 2);
+        $taxonomy->children[0]->children[1]->deleted = true;
+        taxonomy::update_taxonomy($lgwid, $taxonomy);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $this->assertSame(count($taxonomy->children), 1);
+        $this->assertSame(count($taxonomy->children[0]->children), 1);
+        $this->check_topic($taxonomy->children[0], 0, 1, 1, true);
+
+        // Delete goal.
+        $taxonomy->children[0]->children[0]->deleted = true;
+        taxonomy::update_taxonomy($lgwid, $taxonomy);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $this->assertSame(count($taxonomy->children), 1);
+        $this->assertSame(count($taxonomy->children[0]->children), 0);
+        $this->check_topic($taxonomy->children[0], 0, 1, 0, true);
+
+        // Delete topic.
+        $taxonomy->children[0]->deleted = true;
+        taxonomy::update_taxonomy($lgwid, $taxonomy);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $this->assertSame(count($taxonomy->children), 0);
     }
 
     /**

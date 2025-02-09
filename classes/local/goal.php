@@ -109,7 +109,7 @@ final class goal {
      *
      * @param number $lgwid ID of the LGW instance
      * @param number $topicid ID of the topic to delete
-     * @param number $goald ID of the goal to delete
+     * @param number $goalid ID of the goal to delete
      * @return bool whether deletion was successful or not
      */
     public static function delete_goal($lgwid, $topicid, $goalid): bool {
