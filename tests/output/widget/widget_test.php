@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 
 use mod_learninggoalwidget\output\widget\renderer;
 use mod_learninggoalwidget\output\widget\widget_renderable;
+use renderer_base;
 use core_renderer;
 
 /**
@@ -57,13 +58,14 @@ final class widget_renderable_test extends \advanced_testcase {
         $renderer = $this->get_renderer();
         // Create a mock of the renderable object
         $mockrenderable = $this->createMock(widget_renderable::class);
-
-        // Mock the export_for_template method to return expected data
-        $mockrenderable->method('export_for_template')->willReturn([
+        $data = [
             'courseid' => 0,
             'coursemoduleid' => 0,
             'instanceid' => 0,
-        ]);
+        ];
+
+        // Mock the export_for_template method to return expected data
+        $mockrenderable->method('export_for_template')->willReturn($data);
         $output = $renderer->render_widget($mockrenderable);
 
         $this->assertIsString($output);
@@ -71,13 +73,23 @@ final class widget_renderable_test extends \advanced_testcase {
         $this->assertStringContainsString('learninggoals-widget-', $output);
 
         $cm = get_coursemodule_from_id('learninggoalwidget', $res->instance->id);
+
+        $renderable = new widget_renderable($data);
+
+        // Create a mock renderer (since export_for_template requires renderer_base)
+        $mockrenderer = $this->createMock(renderer_base::class);
         $widget = new widget_renderable(
             $res->course->id,
             $res->user->id,
             0,
             $res->instance->id
         );
-        $widget->export_for_template($output);
+        $exporteddata = $widget->export_for_template($mockrenderer);
+        $this->assertIsArray($exporteddata);
+        $this->assertArrayHasKey('courseid', $exporteddata);
+        $this->assertArrayHasKey('userid', $exporteddata);
+        $this->assertEquals($res->course->id, $exporteddata['courseid']);
+        $this->assertEquals($res->user->id, $exporteddata['userid']);
     }
 
     /**
