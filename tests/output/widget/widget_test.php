@@ -60,15 +60,15 @@ final class widget_renderable_test extends \advanced_testcase {
 
         // Mock the export_for_template method to return expected data
         $mockrenderable->method('export_for_template')->willReturn([
-            'title' => 'Test Widget Title',
-            'content' => 'This is test widget content.'
+            'courseid' => 0,
+            'coursemoduleid' => 0,
+            'instanceid' => 0,
         ]);
         $output = $renderer->render_widget($mockrenderable);
 
         $this->assertIsString($output);
         $this->assertNotEmpty($output);
-        $this->assertStringContainsString('Test Widget Title', $output);
-        $this->assertStringContainsString('This is test widget content.', $output);
+        $this->assertStringContainsString('learninggoals-widget-', $output);
 
         $cm = get_coursemodule_from_id('learninggoalwidget', $res->instance->id);
         $widget = new widget_renderable(
