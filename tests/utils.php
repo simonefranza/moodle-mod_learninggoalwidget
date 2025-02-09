@@ -291,57 +291,6 @@ trait utils {
     /**
      * helper function testing a course with topics
      *
-     * @param [string] $expectedtitle
-     * @param [string] $expectedshortname
-     * @param [string] $expectedurl
-     * @param [number] $expectedranking
-     * @param string $taxonomy
-     * @return array
-     */
-    protected function check_topic($expectedtitle, $expectedshortname, $expectedurl, $expectedranking, $taxonomy) {
-        $this->assertNotNull($taxonomy);
-        $this->assertNotEmpty($taxonomy);
-        $parsed = json_decode($taxonomy);
-
-        $topic = $this->check_topic_properties($parsed);
-
-        $this->assertEquals($expectedtitle, $topic->name);
-        $this->assertEquals($expectedshortname, $topic->keyword);
-        $this->assertEquals($expectedurl, $topic->link);
-        $this->assertEquals($expectedranking, $topic->ranking);
-        return $topic->children;
-    }
-
-    /**
-     * helper function, check some topic properties
-     *
-     * @param object $taxonomy
-     * @return array
-     */
-    protected function check_topic_properties($taxonomy) {
-        $this->assertNotNull($taxonomy);
-
-        $this->assertNotNull($taxonomy->name);
-        $this->assertNotEmpty($taxonomy->name);
-        $this->assertEquals("Learning Goal's taxonomy", $taxonomy->name);
-
-        $this->assertNotNull($taxonomy->children);
-        $this->assertIsArray($taxonomy->children);
-        $this->assertTrue(count($taxonomy->children) > 0);
-
-        $topic = $taxonomy->children[0];
-
-        $this->assertIsNumeric($topic->topicid);
-        $this->assertTrue($topic->topicid > 0);
-        $this->assertIsNumeric($topic->ranking);
-        $this->assertEquals(1, $topic->ranking);
-
-        return $topic;
-    }
-
-    /**
-     * helper function testing a course with topics
-     *
      * @param string $expectedtitle
      * @param string $expectedshortname
      * @param string $expectedurl
@@ -453,44 +402,95 @@ trait utils {
         }
     }
 
+
     /**
-     * helper function, check learning goals
+     * Helper function to create the children of a taxonomy
      *
-     * @param string $topicjson
-     * @param object $goalrecord1
-     * @param object $goalrecord2
-     * @return void
+     * @param int $numtopics Number of topics to create
+     * @param int $numgoals Number of goals per topic to create
+     * @return array of topics with goals in the children prop
      */
-    protected function check_goal($topicjson, $goalrecord1, $goalrecord2) {
-        $goals = $this->check_topic(
-            "Artificial Intelligence Basics Part 1",
-            "AIBasics 1",
-            "http://aibasics1.at",
-            1,
-            $topicjson
-        );
-
-        $this->assertEquals(2, count($goals));
-
-        foreach ($goals as $goal) {
-            $ranking = $goal->ranking;
-            $goalid = $goal->goalid;
-            $goalname = $goal->name;
-            $goalshortname = $goal->keyword;
-            $goalurl = $goal->link;
-
-            if ($goalname === "Goal 1 under Topic 1") {
-                $this->assertEquals(2, $ranking);
-                $this->assertEquals($goalrecord1->id, $goalid);
-                $this->assertEquals("Goal 1 shortname", $goalshortname);
-                $this->assertEquals("http://goal1.at", $goalurl);
+    private function create_taxonomy($numtopics, $numgoals): array {
+        // Create $numtopics topics with $numgoals goals each.
+        $topics = [];
+        for ($i = 0; $i < $numtopics; $i++) {
+            $goals = [];
+            for ($ii = 0; $ii < $numgoals; $ii++) {
+                $newgoal = (object) [
+                    'name' => 'T' . $i . 'G' . $ii,
+                    'keyword' => 'T' . $i . 'G' . $ii,
+                    'link' => 'http://topic' . $i . 'goal' . $ii . '.com',
+                    'ranking' => $ii + 1,
+                    'goalid' => $i * $numtopics + $ii,
+                    'new' => true,
+                ];
+                $goals[] = $newgoal;
             }
-            if ($goalname === "Goal 2 under Topic 1") {
-                $this->assertEquals(1, $ranking);
-                $this->assertEquals($goalrecord2->id, $goalid);
-                $this->assertEquals("Goal 2 shortname", $goalshortname);
-                $this->assertEquals("http://goal2.at", $goalurl);
-            }
+            $newtopic = (object) [
+                'name' => 'T' . $i,
+                'keyword' => 'T' . $i,
+                'link' => 'http://topic' . $i . '.com',
+                'ranking' => $i + 1,
+                'topicid' => $i,
+                'children' => $goals,
+                'new' => true,
+            ];
+            $topics[] = $newtopic;
         }
+        return $topics;
+    }
+
+    /**
+     * Helper function to check that a topic contains the expected data
+     * The data must be generated with create_taxonomy
+     *
+     * @param stdClass $topic Topic to check
+     * @param number $i Value to use for the check
+     * @param number $newranking New ranking of the topic
+     * @param number $numgoals Number of goals that the topic should contain
+     * @param bool $checkgoals Whether to check the goals of the topic or not
+     */
+    private function check_topic($topic, $i, $newranking, $numgoals, $checkgoals) {
+        $this->assertTrue(isset($topic->name) && is_string($topic->name));
+        $this->assertSame($topic->name, 'T' . $i);
+        $this->assertTrue(isset($topic->keyword) && is_string($topic->keyword));
+        $this->assertSame($topic->keyword, 'T' . $i);
+        $this->assertTrue(isset($topic->link) && is_string($topic->link));
+        $this->assertSame($topic->link, 'http://topic' . $i . '.com');
+        $this->assertTrue(isset($topic->ranking) && is_int($topic->ranking));
+        $this->assertSame($topic->ranking, $newranking);
+        $this->assertTrue(isset($topic->topicid) && is_int($topic->topicid));
+        $this->assertTrue(isset($topic->children) && is_array($topic->children));
+        $this->assertTrue(count($topic->children) == $numgoals);
+        if (!$checkgoals) {
+            return;
+        }
+        for ($ii = 0; $ii < $numgoals; $ii++) {
+            $this->check_goal($topic->children[$ii], $i, $ii);
+        }
+    }
+
+    /**
+     * Helper function to check that a goal contains the expected data
+     * The data must be generated with create_taxonomy
+     *
+     * @param stdClass $goal Goal to check
+     * @param number $i Topic-value to use for the check
+     * @param number $ii Goal-value to use for the check
+     * @param number $newranking New ranking
+     */
+    private function check_goal($goal, $i, $ii, $newranking = -2) {
+        if ($newranking == -2) {
+            $newranking = $ii + 1;
+        }
+        $this->assertTrue(isset($goal->name) && is_string($goal->name));
+        $this->assertSame($goal->name, 'T' . $i . 'G' . $ii);
+        $this->assertTrue(isset($goal->keyword) && is_string($goal->keyword));
+        $this->assertSame($goal->keyword, 'T' . $i . 'G' . $ii);
+        $this->assertTrue(isset($goal->link) && is_string($goal->link));
+        $this->assertSame($goal->link, 'http://topic' . $i . 'goal' . $ii . '.com');
+        $this->assertTrue(isset($goal->ranking) && is_int($goal->ranking));
+        $this->assertSame($goal->ranking, $newranking);
+        $this->assertTrue(isset($goal->goalid) && is_int($goal->goalid));
     }
 }

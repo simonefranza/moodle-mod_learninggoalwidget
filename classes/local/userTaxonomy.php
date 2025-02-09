@@ -68,9 +68,6 @@ class userTaxonomy {
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
     private static function get_topics($lgwid, $userid) {
-        if ($lgwid == null) {
-            return [];
-        }
         $topics = [];
         global $DB;
         // CONCAT to create unique column.

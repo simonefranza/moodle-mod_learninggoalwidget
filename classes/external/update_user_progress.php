@@ -89,19 +89,13 @@ class update_user_progress extends \core_external\external_api {
 
         self::validate_context(\context_user::instance($USER->id));
 
-        $sqlstmt = "SELECT id
-                      FROM {learninggoalwidget_progs}
-                     WHERE learninggoalwidgetid = :instanceid
-                       AND userid = :userid
-                       AND topicid = :topicid
-                       AND goalid = :goalid";
         $params = [
-            'instanceid' => $instanceid,
+            'learninggoalwidgetid' => $instanceid,
             'userid' => $userid,
             'topicid' => $topicid,
             'goalid' => $goalid,
         ];
-        $userprogressrecord = $DB->get_record_sql($sqlstmt, $params);
+        $userprogressrecord = $DB->get_record('learninggoalwidget_progs', $params);
 
         $userprogress = new \stdClass;
         $userprogress->progress = $progress;
