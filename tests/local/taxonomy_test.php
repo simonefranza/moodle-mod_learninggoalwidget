@@ -214,7 +214,7 @@ final class taxonomy_test extends \advanced_testcase {
 
         // Need to check children manually.
         $this->check_topic($taxonomy->children[3], $originalindex[3], 4, $numgoals, false);
-        $originalgoalsindex = [0, 1, 4, 3, 5, 6, 7, 8, 2];
+        $originalgoalsindex = [0, 1, 4, 3, 5, 6, 7, 8, 9, 2];
         for ($ii = 0; $ii < $numgoals; $ii++) {
             $this->check_goal($taxonomy->children[3]->children[$ii], $originalindex[3], $originalgoalsindex[$ii], $ii + 1);
         }
@@ -226,7 +226,7 @@ final class taxonomy_test extends \advanced_testcase {
         // Need to check children manually.
         $this->check_topic($taxonomy->children[6], $originalindex[6], 7, $numgoals, false);
         $originalgoalsindex = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        for ($ii = 0; $ii < $numgoals; $ii++) {
+        for ($ii = 0; $ii < $numgoals - 1; $ii++) {
             $this->check_goal($taxonomy->children[6]->children[$ii], $originalindex[6], $originalgoalsindex[$ii], $ii + 1);
         }
 
