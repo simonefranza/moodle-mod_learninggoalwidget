@@ -220,7 +220,7 @@ trait utils {
 
         $return = new \stdClass;
         $return->course = $this->getDataGenerator()->create_course();
-        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $res->course->id]);
+        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $return->course->id]);
         $return->user = $this->getDataGenerator()->create_user();
         $this->setUser($return->user);
 
