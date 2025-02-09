@@ -219,8 +219,8 @@ trait utils {
         $this->setUp();
 
         $return = new \stdClass;
-        $course = $this->getDataGenerator()->create_course();
-        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
+        $return->course = $this->getDataGenerator()->create_course();
+        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $res->course->id]);
         $return->user = $this->getDataGenerator()->create_user();
         $this->setUser($return->user);
 
