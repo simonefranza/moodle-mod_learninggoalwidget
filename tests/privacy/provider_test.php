@@ -166,6 +166,7 @@ final class provider_test extends provider_testcase {
      * @covers \mod_learninggoalwidget\privacy\provider::export_user_data
      */
     public function test_empty_export_user_data_student(): void {
+        $this->assertEquals(provider::export_user_data([]), null);
         $this->setUp();
         $user = $this->getDataGenerator()->create_user();
         $approvedlist = new approved_contextlist($user, '', []);
@@ -237,6 +238,8 @@ final class provider_test extends provider_testcase {
         // Check all relevant tables.
         $records = $DB->get_records('learninggoalwidget_progs');
         $this->assertEmpty($records);
+        $cmcontext->contextlevel = CONTEXT_MODULE + 1;
+        $this->assertSame(provider::delete_data_for_all_users_in_context($cmcontext), null);
     }
 
     /**

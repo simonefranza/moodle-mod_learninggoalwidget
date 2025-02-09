@@ -64,7 +64,7 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
         $lgwid = $res->instance->id;
         $userid = $res->user->id;
 
-        $taxonomy = userTaxonomy::get_taxonomy_as_json($lgwid, $userid);
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
         $this->assertSame(count($taxonomy->children), 0);
 
         $taxonomy = new \stdClass;
@@ -74,7 +74,7 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
         $taxonomy->children[1]->children[0]->deleted = true;
         $taxonomy->children[1]->children[1]->deleted = true;
         taxonomy::update_taxonomy($taxonomy);
-        $taxonomy = userTaxonomy::get_taxonomy_as_json($lgwid, $userid);
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
         $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
         $this->check_topic($taxonomy->children[1], 1, 2, 0, true);
 
@@ -106,7 +106,7 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $taxonomy = userTaxonomy::get_taxonomy_as_json($lgwid, $userid);
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
         $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
         $this->check_topic($taxonomy->children[1], 1, 2, 0, true);
         $this->assertSame($taxonomy->children[0]->children[0]->pro, 50);
