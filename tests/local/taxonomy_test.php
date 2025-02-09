@@ -179,6 +179,39 @@ final class taxonomy_test extends \advanced_testcase {
         for ($i = 0; $i < 2; $i++) {
             $this->check_topic($taxonomy->children[$i], 1 - $i, $i + 1, 0, true);
         }
+
+        // make 1 topics w/ 1 goal and remove prop from goal -> has to delete goal.
+        $taxonomy->children = $this->create_taxonomy(1, 1);
+        $this->assertsame(count($taxonomy->children), 1);
+        $this->assertsame(count($taxonomy->children[0]->children), 1);
+        unset($taxonomy->children[0]->children[0]->name);
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertsame(count($taxonomy->children), 1);
+        $this->assertsame(count($taxonomy->children[0]->children), 0);
+        $this->check_topic($taxonomy->children[0], 0, 1, 0, true);
+
+        // make 1 topics w/ 2 goal and change ranking of goal -> has to reassign_rankings.
+        $taxonomy->children = $this->create_taxonomy(1, 2);
+        $this->assertsame(count($taxonomy->children), 1);
+        $this->assertsame(count($taxonomy->children[0]->children), 2);
+        $taxonomy->children[0]->children[0]->ranking = 100;
+        $taxonomy->children[0]->children[1]->ranking = 200;
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertsame(count($taxonomy->children), 1);
+        $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
+
+        // make 1 topics w/ 2 goal and invert ranking of goals -> has to reassign_rankings and re-sort.
+        $taxonomy->children = $this->create_taxonomy(1, 2);
+        $this->assertsame(count($taxonomy->children), 1);
+        $this->assertsame(count($taxonomy->children[0]->children), 2);
+        $taxonomy->children[0]->children[0]->ranking = 50;
+        $taxonomy->children[0]->children[1]->ranking = 25;
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertsame(count($taxonomy->children), 1);
+        $this->check_topic($taxonomy->children[0], 0, 1, 2, false);
+        for ($i = 0; $i < 2; $i++) {
+            $this->check_goal($taxonomy->children[0]->childeren[$i], 0, 1 - $i, $i + 1);
+        }
     }
 
     /**
@@ -224,7 +257,7 @@ final class taxonomy_test extends \advanced_testcase {
         }
 
         // Need to check children manually.
-        $this->check_topic($taxonomy->children[6], $originalindex[6], 7, $numgoals, false);
+        $this->check_topic($taxonomy->children[6], $originalindex[6], 7, $numgoals - 1, false);
         $originalgoalsindex = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         for ($ii = 0; $ii < $numgoals - 1; $ii++) {
             $this->check_goal($taxonomy->children[6]->children[$ii], $originalindex[6], $originalgoalsindex[$ii], $ii + 1);
