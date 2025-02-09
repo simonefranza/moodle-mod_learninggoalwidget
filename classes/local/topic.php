@@ -40,7 +40,7 @@ final class topic {
     /**
      * Check that a topic is valid, i.e. it is a valid child and has topicid (int)
      *
-     * @param stdClass topic Topic to check
+     * @param stdClass $topic Topic to check
      * @return is topic valid
      */
     public static function validate_topic(&$topic) {
@@ -56,8 +56,8 @@ final class topic {
     /**
      * Updates or inserts a topic into learninggoalwidget_topics
      *
-     * @param int lgwid ID of the LGW instance
-     * @param stdClass topic Topic to insert into the DB
+     * @param int $lgwid ID of the LGW instance
+     * @param stdClass $topic Topic to insert into the DB
      * @return id of the updated topic or -1
      */
     public static function update_topic($lgwid, $topic) {
@@ -107,8 +107,8 @@ final class topic {
     /**
      * Deletes a topic and all the goals and progress from the DB
      *
-     * @param number lgwid ID of the LGW instance
-     * @param number topicid ID of the topic to delete
+     * @param number $lgwid ID of the LGW instance
+     * @param number $topicid ID of the topic to delete
      */
     public static function delete_topic($lgwid, $topicid) {
         global $DB;

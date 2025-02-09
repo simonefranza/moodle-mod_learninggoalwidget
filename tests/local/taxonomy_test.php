@@ -210,7 +210,7 @@ final class taxonomy_test extends \advanced_testcase {
         $this->assertsame(count($taxonomy->children), 1);
         $this->check_topic($taxonomy->children[0], 0, 1, 2, false);
         for ($i = 0; $i < 2; $i++) {
-            $this->check_goal($taxonomy->children[0]->childeren[$i], 0, 1 - $i, $i + 1);
+            $this->check_goal($taxonomy->children[0]->children[$i], 0, 1 - $i, $i + 1);
         }
     }
 
@@ -271,8 +271,8 @@ final class taxonomy_test extends \advanced_testcase {
     /**
      * Helper function to create the children of a taxonomy
      *
-     * @param int numtopics Number of topics to create
-     * @param int numgoal Number of goals per topic to create
+     * @param int $numtopics Number of topics to create
+     * @param int $numgoals Number of goals per topic to create
      * @return array of topics with goals in the children prop
      */
     private function create_taxonomy($numtopics, $numgoals): array {
@@ -309,11 +309,11 @@ final class taxonomy_test extends \advanced_testcase {
      * Helper function to check that a topic contains the expected data
      * The data must be generated with create_taxonomy
      *
-     * @param stdClass topic Topic to check
-     * @param number i Value to use for the check
-     * @param number newranking New ranking of the topic
-     * @param number numgoals Number of goals that the topic should contain
-     * @param bool checkgoals Whether to check the goals of the topic or not
+     * @param stdClass $topic Topic to check
+     * @param number $i Value to use for the check
+     * @param number $newranking New ranking of the topic
+     * @param number $numgoals Number of goals that the topic should contain
+     * @param bool $checkgoals Whether to check the goals of the topic or not
      */
     private function check_topic($topic, $i, $newranking, $numgoals, $checkgoals) {
         $this->assertTrue(isset($topic->name) && is_string($topic->name));
@@ -339,10 +339,10 @@ final class taxonomy_test extends \advanced_testcase {
      * Helper function to check that a goal contains the expected data
      * The data must be generated with create_taxonomy
      *
-     * @param stdClass goal Goal to check
-     * @param number i Topic-value to use for the check
-     * @param number ii Goal-value to use for the check
-     * @param number newranking New ranking
+     * @param stdClass $goal Goal to check
+     * @param number $i Topic-value to use for the check
+     * @param number $ii Goal-value to use for the check
+     * @param number $newranking New ranking
      */
     private function check_goal($goal, $i, $ii, $newranking = -2) {
         if ($newranking == -2) {

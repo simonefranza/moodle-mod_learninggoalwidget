@@ -206,8 +206,8 @@ final class topic_test extends \advanced_testcase {
     /**
      * Helper function to check topic validation
      *
-     * @param stdClass topic topic to check
-     * @param bool expected expected outcome
+     * @param stdClass $topic topic to check
+     * @param bool $expected expected outcome
      */
     private function validate_and_reset_topic($topic, $expected): void {
         $this->assertSame(topic::validate_topic($topic), $expected);
@@ -218,8 +218,8 @@ final class topic_test extends \advanced_testcase {
     /**
      * Helper function to check that two topics are equivalent
      *
-     * @param stdClass topic1 topic1 to check
-     * @param stdClass topic2 topic2 to check
+     * @param stdClass $topic1 topic1 to check
+     * @param stdClass $topic2 topic2 to check
      */
     private function compare_two_topics($topic1, $topic2): void {
         $this->assertSame($topic1->topicid, $topic2->topicid);

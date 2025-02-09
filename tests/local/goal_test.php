@@ -214,8 +214,8 @@ final class goal_test extends \advanced_testcase {
     /**
      * Helper function to check goal validation
      *
-     * @param stdClass goal Goal to check
-     * @param bool expected expected outcome
+     * @param stdClass $goal Goal to check
+     * @param bool $expected expected outcome
      */
     private function validate_and_reset_goal($goal, $expected): void {
         $this->assertSame(goal::validate_goal($goal), $expected);
@@ -226,8 +226,8 @@ final class goal_test extends \advanced_testcase {
     /**
      * Helper function to check that two goals are equivalent
      *
-     * @param stdClass goal1 goal1 to check
-     * @param stdClass goal2 goal2 to check
+     * @param stdClass $goal1 goal1 to check
+     * @param stdClass $goal2 goal2 to check
      */
     private function compare_two_goals($goal1, $goal2): void {
         $this->assertSame($goal1->goalid, $goal2->goalid);

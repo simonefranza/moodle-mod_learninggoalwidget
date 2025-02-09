@@ -40,8 +40,8 @@ class userTaxonomy {
     /**
      * return json represenation of the taxonomy
      *
-     * @param int lgwid id of the instance
-     * @param int userid id of the user
+     * @param int $lgwid id of the instance
+     * @param int $userid id of the user
      * @return string
      */
     public static function get_taxonomy_as_json($lgwid, $userid): string {
@@ -63,8 +63,8 @@ class userTaxonomy {
     /**
      * return the topics of the taxonomy
      *
-     * @param int lgwid id of the instance
-     * @param int userid id of the user
+     * @param int $lgwid id of the instance
+     * @param int $userid id of the user
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
     private static function get_topics($lgwid, $userid) {

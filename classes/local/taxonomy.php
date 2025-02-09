@@ -41,7 +41,7 @@ class taxonomy {
     /**
      * return json represenation of the taxonomy
      *
-     * @param int lgwid id of the instance
+     * @param int $lgwid id of the instance
      * @return string
      */
     public static function get_taxonomy_as_json($lgwid): string {
@@ -59,7 +59,7 @@ class taxonomy {
     /**
      * return the topics of the taxonomy
      *
-     * @param int lgwid id of the lgw instance
+     * @param int $lgwid id of the lgw instance
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
     private static function get_topics($lgwid) {
@@ -123,7 +123,7 @@ class taxonomy {
     /**
      * Sorts an array by ranking
      *
-     * @param stdClass array Array to sort
+     * @param array $array Array to sort
      */
     public static function sort_by_ranking(&$array) {
         usort($array, function ($a, $b) {
@@ -135,7 +135,7 @@ class taxonomy {
      * Reassigns rankings to the elements in the array making sure they start from 1
      * and are contiguous
      *
-     * @param array array Array with the elements to reassing the rankings to
+     * @param array $array Array with the elements to reassing the rankings to
      */
     public static function reassign_rankings(&$array) {
         // Start ranking from 1.
@@ -152,7 +152,7 @@ class taxonomy {
      * and removing those that are not. It also reassings the rankings to make sure
      * they are contiguous
      *
-     * @param stdClass taxonomy Taxonomy to validate
+     * @param stdClass $taxonomy Taxonomy to validate
      */
     public static function validate_taxonomy(&$taxonomy) {
         if (!property_exists($taxonomy, 'children') || !is_array($taxonomy->children)) {
@@ -186,8 +186,8 @@ class taxonomy {
     /**
      * Updates the taxonomy in the DB given an ID and a new taxonomy
      *
-     * @param number lgwid Instance id to update
-     * @param stdClass taxonomy New taxonomy
+     * @param number $lgwid Instance id to update
+     * @param stdClass $taxonomy New taxonomy
      */
     public static function update_taxonomy($lgwid, &$taxonomy) {
         self::validate_taxonomy($taxonomy);

@@ -38,7 +38,7 @@ final class goal {
     /**
      * Check that a goal is valid, i.e. it is a valid child and has goalid (int)
      *
-     * @param stdClass goal Goal to check
+     * @param stdClass $goal Goal to check
      * @return is goal valid
      */
     public static function validate_goal(&$goal) {
@@ -52,9 +52,9 @@ final class goal {
     /**
      * Updates or inserts a goal into learninggoalwidget_goals
      *
-     * @param int lgwid ID of the LGW instance
-     * @param int topicid ID of the parent topic
-     * @param stdClass goal Goal to insert into the DB
+     * @param int $lgwid ID of the LGW instance
+     * @param int $topicid ID of the parent topic
+     * @param stdClass $goal Goal to insert into the DB
      * @return id of the updated goal or -1
      */
     public static function update_goal($lgwid, $topicid, $goal) {
@@ -107,9 +107,9 @@ final class goal {
     /**
      * Deletes a goal and all the progresses from the DB
      *
-     * @param number lgwid ID of the LGW instance
-     * @param number topicid ID of the topic to delete
-     * @param number goald ID of the goal to delete
+     * @param number $lgwid ID of the LGW instance
+     * @param number $topicid ID of the topic to delete
+     * @param number $goald ID of the goal to delete
      * @return bool whether deletion was successful or not
      */
     public static function delete_goal($lgwid, $topicid, $goalid): bool {
