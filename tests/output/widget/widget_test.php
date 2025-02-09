@@ -53,7 +53,7 @@ final class widget_renderable_test extends \advanced_testcase {
      * @covers \mod_learninggoalwidget\output\widget\widget_renderable::export_for_template
      */
     public function test_render_widget() {
-        $this->setup_widget();
+        $res = $this->setup_widget();
         $renderer = $this->get_renderer();
         // Create a mock of the renderable object
         $mockrenderable = $this->createMock(widget_renderable::class);
