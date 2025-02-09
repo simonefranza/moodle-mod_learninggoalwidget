@@ -165,32 +165,32 @@ final class taxonomy_test extends \advanced_testcase {
         taxonomy::validate_taxonomy($taxonomy);
         $this->assertSame(count($taxonomy->children), $numtopics - 1);
 
-        $originalindex = [0, 8, 2, 3, 4, 6, 7, 8, 1];
+        $originalindex = [0, 8, 2, 3, 4, 6, 7, 9, 1];
 
         for ($i = 0; $i <= 2; $i++)  {
-            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $numgoals, true);
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
         }
 
         // Need to check children manually.
-        $this->check_topic($taxonomy->children[3], $originalindex[3], $numgoals, false);
+        $this->check_topic($taxonomy->children[3], $originalindex[3], 4, $numgoals, false);
         $originalgoalsindex = [0, 1, 4, 3, 5, 6, 7, 8, 2];
         for ($ii = 0; $ii < $numgoals; $ii++) {
             $this->check_goal($taxonomy->children[3]->children[$ii], $originalindex[3], $originalgoalsindex[$ii]);
         }
 
         for ($i = 4; $i <= 5; $i++)  {
-            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $numgoals, true);
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
         }
 
         // Need to check children manually.
-        $this->check_topic($taxonomy->children[6], $originalindex[6], $numgoals, false);
+        $this->check_topic($taxonomy->children[6], $originalindex[6], 7, $numgoals, false);
         $originalgoalsindex = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         for ($ii = 0; $ii < $numgoals; $ii++) {
             $this->check_goal($taxonomy->children[6]->children[$ii], $originalindex[6], $originalgoalsindex[$ii]);
         }
 
         for ($i = 7; $i <= 8; $i++)  {
-            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $numgoals, true);
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
         }
     }
 
@@ -237,10 +237,11 @@ final class taxonomy_test extends \advanced_testcase {
      *
      * @param stdClass topic Topic to check
      * @param number i Value to use for the check
+     * @param number newranking New ranking of the topic
      * @param number numgoals Number of goals that the topic should contain
      * @param bool checkgoals Whether to check the goals of the topic or not
      */
-    private function check_topic($topic, $i, $numgoals, $checkgoals) {
+    private function check_topic($topic, $i, $newranking, $numgoals, $checkgoals) {
         $this->assertTrue(isset($topic->name) && is_string($topic->name));
         $this->assertSame($topic->name, 'T' . $i);
         $this->assertTrue(isset($topic->keyword) && is_string($topic->keyword));
@@ -248,7 +249,7 @@ final class taxonomy_test extends \advanced_testcase {
         $this->assertTrue(isset($topic->link) && is_string($topic->link));
         $this->assertSame($topic->link, 'http://topic' . $i . '.com');
         $this->assertTrue(isset($topic->ranking) && is_int($topic->ranking));
-        $this->assertSame($topic->ranking, $i + 1);
+        $this->assertSame($topic->ranking, $newranking);
         $this->assertTrue(isset($topic->topicid) && is_int($topic->topicid));
         $this->assertTrue(isset($topic->children) && is_array($topic->children));
         $this->assertTrue(count($topic->children) == $numgoals);
