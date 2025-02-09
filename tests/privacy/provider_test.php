@@ -50,7 +50,7 @@ use mod_learninggoalwidget\external\update_user_progress;
  * @runTestsInSeparateProcesses
  */
 final class provider_test extends provider_testcase {
-    use mod_learninggoalwidget\utils;
+    use \mod_learninggoalwidget\utils;
     /**
      * helper function, sets up test environment
      * @return void
