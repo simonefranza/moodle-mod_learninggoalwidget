@@ -83,7 +83,7 @@ final class widget_renderable_test extends \advanced_testcase {
             0,
             $res->instance->id
         );
-        $exporteddata = $widget->export_for_template($mockrenderer);
+        $exporteddata = $renderable->export_for_template($mockrenderer);
         $this->assertIsArray($exporteddata);
         $this->assertArrayHasKey('courseid', $exporteddata);
         $this->assertArrayHasKey('userid', $exporteddata);
