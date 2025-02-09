@@ -146,17 +146,39 @@ final class taxonomy_test extends \advanced_testcase {
     public function test_basic_validate_taxonomy(): void {
         $taxonomy = new \stdClass;
 
-        // Taxonomy with no children prop
+        // Taxonomy with no children prop.
         taxonomy::validate_taxonomy($taxonomy);
         $this->assertTrue(isset($taxonomy->children) && is_array($taxonomy->children));
         $this->assertTrue(count($taxonomy->children) == 0);
 
+        // Make topic invalid -> has to be removed.
         $taxonomy->children = $this->create_taxonomy(1, 0);
-        $this->assertTrue(count($taxonomy->children) == 1);
-        // Make topic invalid -> has to be removed
+        $this->assertSame(count($taxonomy->children), 1);
         unset($taxonomy->children[0]->name);
         taxonomy::validate_taxonomy($taxonomy);
-        $this->assertTrue(count($taxonomy->children) == 1);
+        $this->assertSame(count($taxonomy->children), 0);
+
+        // Make 2 topics and change ranking -> has to reassign rankings.
+        $taxonomy->children = $this->create_taxonomy(2, 0);
+        $this->assertSame(count($taxonomy->children), 2);
+        $taxonomy->children[0]->ranking = 100;
+        $taxonomy->children[1]->ranking = 200;
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertSame(count($taxonomy->children), 2);
+        for ($i = 0; $i < 2; $i++) {
+            $this->check_topic($taxonomy->children[$i], $i, $i + 1, 0, true);
+        }
+
+        // Make 2 topics and change ranking (change also order) -> has to reassign rankings and sort.
+        $taxonomy->children = $this->create_taxonomy(2, 0);
+        $this->assertSame(count($taxonomy->children), 2);
+        $taxonomy->children[0]->ranking = 50;
+        $taxonomy->children[1]->ranking = 25;
+        taxonomy::validate_taxonomy($taxonomy);
+        $this->assertSame(count($taxonomy->children), 2);
+        for ($i = 0; $i < 2; $i++) {
+            $this->check_topic($taxonomy->children[$i], 1 - $i, $i + 1, 0, true);
+        }
     }
 
     /**
@@ -194,7 +216,7 @@ final class taxonomy_test extends \advanced_testcase {
         $this->check_topic($taxonomy->children[3], $originalindex[3], 4, $numgoals, false);
         $originalgoalsindex = [0, 1, 4, 3, 5, 6, 7, 8, 2];
         for ($ii = 0; $ii < $numgoals; $ii++) {
-            $this->check_goal($taxonomy->children[3]->children[$ii], $originalindex[3], $originalgoalsindex[$ii]);
+            $this->check_goal($taxonomy->children[3]->children[$ii], $originalindex[3], $originalgoalsindex[$ii], $ii + 1);
         }
 
         for ($i = 4; $i <= 5; $i++) {
@@ -205,7 +227,7 @@ final class taxonomy_test extends \advanced_testcase {
         $this->check_topic($taxonomy->children[6], $originalindex[6], 7, $numgoals, false);
         $originalgoalsindex = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         for ($ii = 0; $ii < $numgoals; $ii++) {
-            $this->check_goal($taxonomy->children[6]->children[$ii], $originalindex[6], $originalgoalsindex[$ii]);
+            $this->check_goal($taxonomy->children[6]->children[$ii], $originalindex[6], $originalgoalsindex[$ii], $ii + 1);
         }
 
         for ($i = 7; $i <= 8; $i++) {
@@ -285,9 +307,14 @@ final class taxonomy_test extends \advanced_testcase {
      * The data must be generated with create_taxonomy
      *
      * @param stdClass goal Goal to check
-     * @param number i Value to use for the check
+     * @param number i Topic-value to use for the check
+     * @param number ii Goal-value to use for the check
+     * @param number newranking New ranking
      */
-    private function check_goal($goal, $i, $ii) {
+    private function check_goal($goal, $i, $ii, $newranking = -2) {
+        if ($newranking == -2) {
+            $newranking = $ii + 1;
+        }
         $this->assertTrue(isset($goal->name) && is_string($goal->name));
         $this->assertSame($goal->name, 'T' . $i . 'G' . $ii);
         $this->assertTrue(isset($goal->keyword) && is_string($goal->keyword));
@@ -295,7 +322,7 @@ final class taxonomy_test extends \advanced_testcase {
         $this->assertTrue(isset($goal->link) && is_string($goal->link));
         $this->assertSame($goal->link, 'http://topic' . $i . 'goal' . $ii . '.com');
         $this->assertTrue(isset($goal->ranking) && is_int($goal->ranking));
-        $this->assertSame($goal->ranking, $ii + 1);
+        $this->assertSame($goal->ranking, $newranking);
         $this->assertTrue(isset($goal->goalid) && is_int($goal->goalid));
     }
 }
