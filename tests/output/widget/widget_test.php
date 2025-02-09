@@ -74,7 +74,7 @@ final class widget_renderable_test extends \advanced_testcase {
         $widget = new widget_renderable(
             $res->course->id,
             $res->user->id,
-            $cm->id,
+            0,
             $res->instance->id
         );
         $widget->export_for_template($output);
