@@ -206,25 +206,34 @@ class taxonomy {
 
             // Add/update topic.
             $topic->id = topic::update_topic($lgwid, $topic);
-
-            foreach ($topic->children as $goal) {
-                // Check if goal is deleted or added.
-                $goaldeleted = isset($goal->deleted) && $goal->deleted;
-                $goalnew = isset($goal->new) && $goal->new;
-
-                // New + deleted = was never in the DB -> ignore.
-                if ($goaldeleted && $goalnew) {
-                    continue;
-                }
-                if ($goaldeleted) {
-                    goal::delete_goal($lgwid, $topic->id, $goal->goalid);
-                    continue;
-                }
-
-                // Add goal to db.
-                $goal->id = goal::update_goal($lgwid, $topic->id, $goal);
-            }
+            $this->update_topic_goals($lgwid, $topic);
         }
-
     }
+
+    /**
+     * Updates the taxonomy in the DB given the children of a topic
+     *
+     * @param number $lgwid Instance id to update
+     * @param stdClass $topic Topic whose goals should be added
+     */
+    public static function update_topic_goals($lgwid, &$topic) {
+        foreach ($topic->children as $goal) {
+            // Check if goal is deleted or added.
+            $goaldeleted = isset($goal->deleted) && $goal->deleted;
+            $goalnew = isset($goal->new) && $goal->new;
+
+            // New + deleted = was never in the DB -> ignore.
+            if ($goaldeleted && $goalnew) {
+                continue;
+            }
+            if ($goaldeleted) {
+                goal::delete_goal($lgwid, $topic->id, $goal->goalid);
+                continue;
+            }
+
+            // Add goal to db.
+            $goal->id = goal::update_goal($lgwid, $topic->id, $goal);
+        }
+    }
+
 }
