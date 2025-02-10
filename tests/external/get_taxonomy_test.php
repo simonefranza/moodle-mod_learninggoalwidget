@@ -82,7 +82,7 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
         $topic1->topicid = $res->topic1->id;
         $topic1->name = "Artificial Intelligence Basics Part 1";
         $topic1->shortname = "AIBasics 1";
-        $topic1->link = "http://aibasics1.at";
+        $topic1->url = "http://aibasics1.at";
         $topic1->ranking = 1;
         $topic1->children = [];
 
@@ -90,7 +90,7 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
         $topic2->topicid = $res->topic2->id;
         $topic2->name = "Artificial Intelligence Basics Part 2";
         $topic2->shortname = "AIBasics 2";
-        $topic2->link = "http://aibasics2.at";
+        $topic2->url = "http://aibasics2.at";
         $topic2->ranking = 2;
         $topic2->children = [];
         $expectedjson->children = [$topic1, $topic2];

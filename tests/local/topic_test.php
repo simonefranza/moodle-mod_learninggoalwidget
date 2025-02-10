@@ -67,35 +67,35 @@ final class topic_test extends \advanced_testcase {
         $topic->shortname = 10;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, shortname is string, but no link.
+        // Topic name, shortname is string, but no url.
         $topic->shortname = "Shortname";
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, shortname is string, but link is not.
-        $topic->link = 10;
+        // Topic name, shortname is string, but url is not.
+        $topic->url = 10;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, shortname, link is string, but no ranking.
-        $topic->link = 'http://example.com';
+        // Topic name, shortname, url is string, but no ranking.
+        $topic->url = 'http://example.com';
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, shortname, link is string, but ranking is not int.
+        // Topic name, shortname, url is string, but ranking is not int.
         $topic->ranking = 'test';
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, shortname, link is string, and ranking is int, but no topicid.
+        // Topic name, shortname, url is string, and ranking is int, but no topicid.
         $topic->ranking = 1;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, shortname, link is string, and ranking is int, but topicid is not int.
+        // Topic name, shortname, url is string, and ranking is int, but topicid is not int.
         $topic->topicid = 'test';
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, shortname, link is string, and ranking and topicid are int, but no children array.
+        // Topic name, shortname, url is string, and ranking and topicid are int, but no children array.
         $topic->topicid = 1;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, shortname, link is string, and ranking and topicid are int, but children is not an array.
+        // Topic name, shortname, url is string, and ranking and topicid are int, but children is not an array.
         $topic->children = 1;
         $this->validate_and_reset_topic($topic, false);
 
@@ -139,7 +139,7 @@ final class topic_test extends \advanced_testcase {
         $newtopic = (object) [
             'name' => 'T1',
             'shortname' => 'T1',
-            'link' => 'http://example.com',
+            'url' => 'http://example.com',
             'ranking' => 1,
             'topicid' => 1,
             'children' => [],
@@ -170,7 +170,7 @@ final class topic_test extends \advanced_testcase {
         $newtopic->edit = true;
         $newtopic->name = 'T2';
         $newtopic->shortname = 'T2';
-        $newtopic->link = 'http://example2.com';
+        $newtopic->url = 'http://example2.com';
         $newtopic->ranking = 2;
         $newtopic->topicid = $addedtopic->topicid + 1;
 
@@ -225,7 +225,7 @@ final class topic_test extends \advanced_testcase {
         $this->assertSame($topic1->topicid, $topic2->topicid);
         $this->assertSame($topic1->name, $topic2->name);
         $this->assertSame($topic1->shortname, $topic2->shortname);
-        $this->assertSame($topic1->link, $topic2->link);
+        $this->assertSame($topic1->url, $topic2->url);
         $this->assertSame($topic1->ranking, $topic2->ranking);
         $this->assertSame(count($topic1->children), count($topic2->children));
     }

@@ -36,7 +36,7 @@ trait shared {
      * Check that a child obj has the properties
      * - name (str)
      * - shortname (str)
-     * - link (str)
+     * - url (str)
      * - ranking (int)
      *
      * @param stdClass $child Child to check
@@ -49,7 +49,7 @@ trait shared {
             $isvalid = false;
         } else if (!(isset($child->shortname) && is_string($child->shortname))) {
             $isvalid = false;
-        } else if (!(isset($child->link) && is_string($child->link))) {
+        } else if (!(isset($child->url) && is_string($child->url))) {
             $isvalid = false;
         } else if (!(isset($child->ranking) && is_int($child->ranking))) {
             $isvalid = false;

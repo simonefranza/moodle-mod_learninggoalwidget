@@ -102,7 +102,7 @@ class userTaxonomy {
                 $topic->topicid = $topicrecord->tid;
                 $topic->name = $topicrecord->ttitle;
                 $topic->shortname = $topicrecord->tshortname;
-                $topic->link = $topicrecord->turl;
+                $topic->url = $topicrecord->turl;
                 $topic->ranking = $topicrecord->tranking;
                 $topic->type = "topic";
                 $topic->children = [];
@@ -118,7 +118,7 @@ class userTaxonomy {
             $goal->goalid = $topicrecord->gid;
             $goal->name = $topicrecord->gtitle;
             $goal->shortname = $topicrecord->gshortname;
-            $goal->link = $topicrecord->gurl;
+            $goal->url = $topicrecord->gurl;
             $goal->ranking = $topicrecord->granking;
             $goal->type = "goal";
             $goal->pro = $topicrecord->progress ?? 0;

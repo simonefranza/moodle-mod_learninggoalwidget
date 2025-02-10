@@ -27,7 +27,7 @@ The students can choose between the sunburst and the treemap view and use the
 plugin to track their learning progress on the different topics. 
 
 Each topic contains one or multiple learning goals and the lecturer can 
-provide external links to lecture or supplementary material. The 'taxonomy' 
+provide external URLs to lecture or supplementary material. The 'taxonomy' 
 (e.g. the list of topics and learning goals) can be entered manually via the settings 
 or via a JSON file (see [JSON structure](#json-structure)).
 
@@ -75,7 +75,7 @@ to complete the installation from the command line.
 ## Features
 
 The users can move sliders to track their learning progress on each goal as 
-well as open links to supplementary material or anything related to the topic/learning goal.
+well as open URLs to supplementary material or anything related to the topic/learning goal.
 
 ![slider](https://github.com/simonefranza/moodle-mod_learninggoalwidget/assets/6499758/48e8ad46-4d4f-4f69-8e3d-f60ae2cac163)
 
@@ -98,34 +98,34 @@ Here is a starting template for the JSON taxonomy:
     {
       "name": "First Topic",
       "shortname": "This is the description of the First Topic",
-      "link": "https://www.example.com",
+      "url": "https://www.example.com",
       "children": [
         {
           "name": "Learning Goal 1-1",
           "shortname": "This is the description of the First Learning Goal of the First Topic",
-          "link": "https://www.example.com"
+          "url": "https://www.example.com"
         },
         {
           "name": "Learning Goal 1-2",
           "shortname": "This is the description of the Second Learning Goal of the First Topic",
-          "link": "https://www.example.com"
+          "url": "https://www.example.com"
         }
       ]
     },
     {
       "name": "Second Topic",
       "shortname": "This is the description of the Second Topic",
-      "link": "https://www.example.com",
+      "url": "https://www.example.com",
       "children": [
         {
           "name": "Learning Goal 2-1",
           "shortname": "This is the description of the First Learning Goal of the Second Topic",
-          "link": "https://www.example.com"
+          "url": "https://www.example.com"
         },
         {
           "name": "Learning Goal 2-2",
           "shortname": "This is the description of the Second Learning Goal of the Second Topic",
-          "link": "https://www.example.com"
+          "url": "https://www.example.com"
         }
       ]
     }
@@ -146,7 +146,7 @@ The `Topic` object has the following structure:
 |------------|----------------|---------------------------------------------|
 | name       | string         | Name of the Topic                           |
 | shortname  | string         | Description of the Topic                    |
-| link       | string         | Link to supplementary material, slides, etc |
+| url        | string         | Url to supplementary material, slides, etc  |
 | children   | Array of Learning Goal | List of Learning Goals of this Topic|
 
 The `Learning Goal` object has the following structure:
@@ -155,7 +155,7 @@ The `Learning Goal` object has the following structure:
 |------------|----------------|---------------------------------------------|
 | name       | string         | Name of the Learning Goal                   |
 | shortname  | string         | Description of the Learning Goal            |
-| link       | string         | Link to supplementary material, slides, etc |
+| url        | string         | Url to supplementary material, slides, etc  |
 
 ## How to Report a Bug
 

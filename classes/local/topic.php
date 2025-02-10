@@ -81,7 +81,7 @@ final class topic {
             'learninggoalwidgetid' => $lgwid,
             'title' => $topic->name,
             'shortname' => $topic->shortname,
-            'url' => $topic->link,
+            'url' => $topic->url,
             'ranking' => $topic->ranking,
         ];
 

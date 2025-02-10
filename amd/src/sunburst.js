@@ -203,12 +203,12 @@ define(
         } else {
             topicText = topic.name;
         }
-        if (topic.link) {
-            var linkNode = document.createElement("a");
-            linkNode.setAttribute("href", topic.link);
-            linkNode.setAttribute("target", "_blank");
-            linkNode.textContent = topicText;
-            spanNode.appendChild(linkNode);
+        if (topic.url) {
+            var urlNode = document.createElement("a");
+            urlNode.setAttribute("href", topic.url);
+            urlNode.setAttribute("target", "_blank");
+            urlNode.textContent = topicText;
+            spanNode.appendChild(urlNode);
         } else {
             spanNode.textContent = topicText;
         }
@@ -239,12 +239,12 @@ define(
             goalText = goal.name;
         }
 
-        if (goal.link) {
-            var linkNode = document.createElement("a");
-            linkNode.setAttribute("href", goal.link);
-            linkNode.setAttribute("target", "_blank");
-            linkNode.textContent = goalText;
-            listItemNode.appendChild(linkNode);
+        if (goal.url) {
+            var urlNode = document.createElement("a");
+            urlNode.setAttribute("href", goal.url);
+            urlNode.setAttribute("target", "_blank");
+            urlNode.textContent = goalText;
+            listItemNode.appendChild(urlNode);
         } else {
             var spanNode = document.createElement("span");
             spanNode.textContent = goalText;
@@ -515,7 +515,7 @@ define(
                 .style("fill", "#e5e5e5")
                 .style(
                     "cursor", function(d) {
-                        if (d.data.link) {
+                        if (d.data.url) {
                             return "pointer";
                         } else {
                             return "default";
@@ -553,20 +553,20 @@ define(
                 .on(
                     "click", function(_, d) {
                         if (d.depth >= 1) {
-                            if (d.data.link) {
-                                window.open(d.data.link);
+                            if (d.data.url) {
+                                window.open(d.data.url);
                                 // Log url click event
                                 var courseid = getCourseId(this);
                                 var coursemoduleid = getCourseModuleId(this);
                                 var instanceid = getInstanceId(this);
                                 var userid = getUserId(this);
 
-                                var learningGoalEvent = createLearningGoalEvent("overviewOpenLink",
+                                var learningGoalEvent = createLearningGoalEvent("overviewOpenUrl",
                                     courseid, coursemoduleid, instanceid, userid);
-                                var eventLinkParam = new Object();
-                                eventLinkParam.name = "url";
-                                eventLinkParam.value = d.data.link;
-                                learningGoalEvent.push(eventLinkParam);
+                                var eventUrlParam = new Object();
+                                eventUrlParam.name = "url";
+                                eventUrlParam.value = d.data.url;
+                                learningGoalEvent.push(eventUrlParam);
                                 logLearningGoalEvent(instanceid, userid, learningGoalEvent);
                             }
 

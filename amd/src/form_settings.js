@@ -203,7 +203,7 @@ define(
         { key: 'settings:topic', component: 'mod_learninggoalwidget' },
         { key: 'settings:description', component: 'mod_learninggoalwidget' },
         { key: 'settings:addtopic', component: 'mod_learninggoalwidget' },
-        { key: 'settings:link', component: 'mod_learninggoalwidget' },
+        { key: 'settings:url', component: 'mod_learninggoalwidget' },
         { key: 'settings:save', component: 'mod_learninggoalwidget' },
       ];
       try {
@@ -247,13 +247,13 @@ define(
       }
       const oldTopicTitle = topic.name;
       const oldTopicShortname = topic.shortname;
-      const oldTopicUrl = topic.link;
+      const oldTopicUrl = topic.url;
 
       let strings = [
         { key: 'settings:topic', component: 'mod_learninggoalwidget' },
         { key: 'settings:description', component: 'mod_learninggoalwidget' },
         { key: 'settings:edittopic', component: 'mod_learninggoalwidget' },
-        { key: 'settings:link', component: 'mod_learninggoalwidget' },
+        { key: 'settings:url', component: 'mod_learninggoalwidget' },
         { key: 'settings:save', component: 'mod_learninggoalwidget' },
       ];
       try {
@@ -278,7 +278,7 @@ define(
         const update = {
           name: topicName,
           shortname: topicShortname,
-          link: topicUrl,
+          url: topicUrl,
         };
         updateLocalTopic(topic, update);
         updateTaxonomyValue();
@@ -395,7 +395,7 @@ define(
         { key: 'settings:topic', component: 'mod_learninggoalwidget' },
         { key: 'settings:goal', component: 'mod_learninggoalwidget' },
         { key: 'settings:description', component: 'mod_learninggoalwidget' },
-        { key: 'settings:link', component: 'mod_learninggoalwidget' },
+        { key: 'settings:url', component: 'mod_learninggoalwidget' },
         { key: 'settings:addgoal', component: 'mod_learninggoalwidget' },
         { key: 'settings:save', component: 'mod_learninggoalwidget' },
       ];
@@ -445,13 +445,13 @@ define(
       const topicTitle = topic.name;
       const oldGoalTitle = goal.name;
       const oldGoalShortname = goal.shortname;
-      const oldGoalUrl = goal.link;
+      const oldGoalUrl = goal.url;
 
       let strings = [
         {key: 'settings:topic', component: 'mod_learninggoalwidget'},
         {key: 'settings:goal', component: 'mod_learninggoalwidget'},
         {key: 'settings:description', component: 'mod_learninggoalwidget'},
-        {key: 'settings:link', component: 'mod_learninggoalwidget'},
+        {key: 'settings:url', component: 'mod_learninggoalwidget'},
         {key: 'settings:editgoal', component: 'mod_learninggoalwidget'},
         {key: 'settings:save', component: 'mod_learninggoalwidget'},
       ];
@@ -480,7 +480,7 @@ define(
         const update = {
           name: goalName,
           shortname: goalShortname,
-          link: goalUrl,
+          url: goalUrl,
         };
         updateLocalGoal(goal, update);
         updateTaxonomyValue();
@@ -599,7 +599,7 @@ define(
     const showModal = async (context, title, templateName, btnSaveText) => {
       let strings = [
         { key: 'validation:missingtitle', component: 'mod_learninggoalwidget' },
-        { key: 'validation:invalidlink', component: 'mod_learninggoalwidget' },
+        { key: 'validation:invalidurl', component: 'mod_learninggoalwidget' },
       ];
       const results = await CoreStr.get_strings(strings);
       const modal = await ModalFactory.create({
@@ -733,10 +733,10 @@ define(
         return { error: true, code: "validation:jsontopic1", codeParam: undefined };
       } else if (typeof (topic.name) !== 'string') {
         return { error: true, code: "validation:jsontopic2", codeParam: topic.name };
-      } else if ('link' in topic) {
-        if (typeof (topic.link) !== 'string') {
+      } else if ('url' in topic) {
+        if (typeof (topic.url) !== 'string') {
           return { error: true, code: "validation:jsontopic3", codeParam: topic.name };
-        } else if (!isValidUrl(topic.link)) {
+        } else if (!isValidUrl(topic.url)) {
           return { error: true, code: "validation:jsontopic4", codeParam: topic.name };
         }
       } else if ('shortname' in topic && typeof (topic.shortname) !== 'string') {
@@ -762,10 +762,10 @@ define(
         return { error: true, code: "validation:jsongoal1", codeParam: topicName };
       } else if (typeof (goal.name) !== 'string') {
         return { error: true, code: "validation:jsongoal2", codeParam: topicName };
-      } else if ('link' in goal) {
-        if (typeof (goal.link) !== 'string') {
+      } else if ('url' in goal) {
+        if (typeof (goal.url) !== 'string') {
           return { error: true, code: "validation:jsongoal3", codeParam: goal.name };
-        } else if (!isValidUrl(goal.link)) {
+        } else if (!isValidUrl(goal.url)) {
           return { error: true, code: "validation:jsongoal4", codeParam: goal.name };
         }
       } else if ('shortname' in goal && typeof (goal.shortname) !== 'string') {
@@ -872,9 +872,9 @@ ${isLast ? '\n\n' : '\n'}`;
           $("#topics-list").children().remove();
           $("#learninggoals-list").children().remove();
           parsed.children.forEach((topic) => {
-            const addedTopic = addLocalTopic(topic.name, topic.shortname, topic.link);
+            const addedTopic = addLocalTopic(topic.name, topic.shortname, topic.url);
             topic.children.forEach((goal) => {
-              addLocalGoal(addedTopic, goal.name, goal.shortname, goal.link);
+              addLocalGoal(addedTopic, goal.name, goal.shortname, goal.url);
             });
           });
           updateTaxonomyValue();
@@ -905,8 +905,8 @@ ${isLast ? '\n\n' : '\n'}`;
         if ('shortname' in topic) {
           topicObj.shortname= topic.shortname;
         }
-        if ('link' in topic) {
-          topicObj.link = topic.link;
+        if ('url' in topic) {
+          topicObj.url = topic.url;
         }
 
         if ('children' in topic) {
@@ -918,8 +918,8 @@ ${isLast ? '\n\n' : '\n'}`;
             if ('shortname' in goal) {
               goals[goals.length - 1].shortname = goal.shortname;
             }
-            if ('link' in goal) {
-              goals[goals.length - 1].link = goal.link;
+            if ('url' in goal) {
+              goals[goals.length - 1].url = goal.url;
             }
           });
         }
@@ -950,34 +950,34 @@ ${isLast ? '\n\n' : '\n'}`;
           {
             "name": "Topic 1 Name",
             "shortname": "Topic 1 Shortname",
-            "link": "https://example.com",
+            "url": "https://example.com",
             "children": [
               {
                 "name": "Learning Goal 1 of Topic 1",
                 "shortname": "Goal 1 Shortname",
-                "link": "https://example.com"
+                "url": "https://example.com"
               },
               {
                 "name": "Learning Goal 2 of Topic 1",
                 "shortname": "Goal 2 Shortname",
-                "link": "https://example.com"
+                "url": "https://example.com"
               }
             ]
           },
           {
             "name": "Topic 2 Name",
             "shortname": "Topic 2 Shortname",
-            "link": "https://example.com",
+            "url": "https://example.com",
             "children": [
               {
                 "name": "Learning Goal 1 of Topic 2",
                 "shortname": "Goal 1 Shortname",
-                "link": "https://example.com"
+                "url": "https://example.com"
               },
               {
                 "name": "Learning Goal 2 of Topic 2",
                 "shortname": "Goal 2 Shortname",
-                "link": "https://example.com"
+                "url": "https://example.com"
               }
             ]
           }
@@ -1107,7 +1107,7 @@ ${isLast ? '\n\n' : '\n'}`;
       let newTopic = {
         name: name,
         shortname: shortname,
-        link: url,
+        url: url,
         ranking: getNextTopicRanking(),
         topicid: getNextTopicId(),
         children: [],
@@ -1163,7 +1163,7 @@ ${isLast ? '\n\n' : '\n'}`;
       let newGoal = {
         name: name,
         shortname: shortname,
-        link: url,
+        url: url,
         ranking: getNextGoalRanking(topic),
         goalid: getNextGoalId(),
         type: 'goal',

@@ -80,7 +80,7 @@ final class goal {
             'topicid' => $topicid,
             'title' => $goal->name,
             'shortname' => $goal->shortname,
-            'url' => $goal->link,
+            'url' => $goal->url,
             'ranking' => $goal->ranking,
         ];
 

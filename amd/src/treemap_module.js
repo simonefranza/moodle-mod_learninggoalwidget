@@ -62,9 +62,9 @@ define(function(require, exports) {
     let isZoomedIn = false;
     let zooming = false;
     let transitionDuration = 750;
-    // Variable for button with link on top left
-    let linkEnlarged = false;
-    let resizingLink = false;
+    // Variable for button with url on top left
+    let urlEnlarged = false;
+    let resizingUrl = false;
     let sliderTextMaxFontSize = 13;
     let currentTextZoom = 0;
     let zoomDelta = isSmallScreen ? 0.5 : 2;
@@ -134,7 +134,7 @@ define(function(require, exports) {
     let depth1Width = rectWidth(depth1Child);
     let depth2Width = rectWidth(depth2Child) ?? 1;
 
-    let {linkContainerSize, linkIconSize} = getLinkSizes();
+    let {urlContainerSize, urlIconSize} = getUrlSizes();
     let changingProgress = false;
     let lastMousePosition = null;
     let objectToMove = null;
@@ -399,8 +399,8 @@ ${root.children.length} topic${root.children.lenght > 1 ? 's' : ''} present.`);
     rect.filter(d => d.depth === 1)
       .on('keydown', (evt, d) => {
         evt = evt || window.event;
-        if (evt.ctrlKey && evt.keyCode == 13 && d.data.link) {
-          window.open(d.data.link.replaceAll('\\/', '/'), '');
+        if (evt.ctrlKey && evt.keyCode == 13 && d.data.url) {
+          window.open(d.data.url.replaceAll('\\/', '/'), '');
         } else if (evt.keyCode == 13) {
           clicked(null, d);
         }
@@ -413,7 +413,7 @@ ${root.children.length} topic${root.children.lenght > 1 ? 's' : ''} present.`);
       .append('title')
       .attr('class', (d, i) => `depth${d.depth}_idx${i}`)
       .text(d => `${d.data.name} - Progress ${parseInt(computeProgress(d) * 100)}%.
-${d.data.link ? 'External link is available, press control and enter to open it.' : ''}`);
+${d.data.url ? 'External url is available, press control and enter to open it.' : ''}`);
     let isEnteringValue = false;
     let newProgress = '';
     rect.filter(d => d.depth === 2).on('keydown', handleRectKeyDown);
@@ -601,36 +601,36 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
       .classed('topic-prog-text', true)
       .style("font", `${subCircleWidth / 2.7}px sans-serif`);
 
-    let focusLinkFactor = 1.2;
-    // Create top left link icon
-    let linkContainerG = cell.filter(d => d.depth >= 1 && d.data.link)
+    let focusUrlFactor = 1.2;
+    // Create top left url icon
+    let urlContainerG = cell.filter(d => d.depth >= 1 && d.data.url)
       .append('g')
-      .attr('class', 'linkContainerG')
-      .attr('width', d => d.depth < 2 || !isSmallScreen ? linkContainerSize : 1)
-      .attr('height', d => d.depth < 2 || !isSmallScreen ? linkContainerSize : 1)
-      .on('mouseenter', (_, p) => changeLinkFocus(p, linkContainerG, true))
-      .on('mouseleave', (_, p) => changeLinkFocus(p, linkContainerG, false))
-      .on("click", (_, d) => window.open(d.data.link ? d.data.link.replaceAll('\\/', '/') :
+      .attr('class', 'urlContainerG')
+      .attr('width', d => d.depth < 2 || !isSmallScreen ? urlContainerSize : 1)
+      .attr('height', d => d.depth < 2 || !isSmallScreen ? urlContainerSize : 1)
+      .on('mouseenter', (_, p) => changeUrlFocus(p, urlContainerG, true))
+      .on('mouseleave', (_, p) => changeUrlFocus(p, urlContainerG, false))
+      .on("click", (_, d) => window.open(d.data.url ? d.data.url.replaceAll('\\/', '/') :
         'https://www.know-center.tugraz.at/en/', '_blank'));
 
-    let linkContainer = createElement(false);
-    linkContainer
-      .attr('aria-label', d => `Open link of ${d.data.name}`)
+    let urlContainer = createElement(false);
+    urlContainer
+      .attr('aria-label', d => `Open url of ${d.data.name}`)
       .style('filter', d => {
         let alphaArray = parseRGB(color(d.depth === 1 ? d.data.name : d.parent.data.name));
         alphaArray.push(0.8);
         return `drop-shadow(${dropShadowParams} ${convertRGBArrayToString(alphaArray)})`;
       });
 
-    linkContainer.append('path')
-      .attr('d', roundedRect(linkContainerSize));
+    urlContainer.append('path')
+      .attr('d', roundedRect(urlContainerSize));
 
-    let linkIconSvg = createElement(true);
+    let urlIconSvg = createElement(true);
 
-    linkIconSvg
+    urlIconSvg
       .append('path')
       .attr('d', 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71');
-    linkIconSvg
+    urlIconSvg
       .append('path')
       .attr('d', 'M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71');
 
@@ -829,8 +829,8 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
             addedTopic.classed('visible', true);
           }, transitionDuration);
         }
-        toggleLinkButton(linkContainer.filter(d => d === clickedTopic), t, false, !isZoomedIn);
-        toggleLinkButton(linkIconSvg.filter(d => d === clickedTopic), t, true, !isZoomedIn);
+        toggleUrlButton(urlContainer.filter(d => d === clickedTopic), t, false, !isZoomedIn);
+        toggleUrlButton(urlIconSvg.filter(d => d === clickedTopic), t, true, !isZoomedIn);
         backArrowSvg.filter(d => d === clickedTopic).transition(t)
           .attr("width", d => isZoomedIn ? 0 : rectWidth(d.target) * 0.8)
           .attr("height", d => isZoomedIn ? 0 : rectWidth(d.target) * 0.8)
@@ -852,7 +852,7 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
               content += `${d.children.length} learning goal${d.children.length > 1 ? 's' : ''}, ` +
                 `press enter to go back to the topic view. Use tab to navigate through it.`;
             }
-            content += `${d.data.link ? 'External link is available, press control and enter to open it.' : ' '}`;
+            content += `${d.data.url ? 'External url is available, press control and enter to open it.' : ' '}`;
             return content;
           });
       }
@@ -868,8 +868,8 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
           return 0;
         });
 
-      toggleLinkButton(linkContainer.filter(d => d.depth === 2), t, false, isZoomedIn);
-      toggleLinkButton(linkIconSvg.filter(d => d.depth === 2), t, true, isZoomedIn);
+      toggleUrlButton(urlContainer.filter(d => d.depth === 2), t, false, isZoomedIn);
+      toggleUrlButton(urlIconSvg.filter(d => d.depth === 2), t, true, isZoomedIn);
 
       learningGoalProgressBar.transition(t)
         .attr('y', d => isZoomedIn ? 0 : rectHeight(d.target) - learningGoalProgressBarHeight(d))
@@ -1091,30 +1091,30 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
       return contrastWhiteDoubled > contrastBlackDoubled ? 'rgb(240, 240, 240)' : 'black';
     }
     /**
-     * Changes the focus of a link element
-     * @param {object} p Element where the link element lies
-     * @param {object} el Link element to resize
+     * Changes the focus of a url element
+     * @param {object} p Element where the url element lies
+     * @param {object} el Url element to resize
      * @param {bool} isFocused Whether the size should be increased or decreased
      */
-    function changeLinkFocus(p, el, isFocused) {
-      if (zooming || !el || (isFocused && linkEnlarged) || (!isFocused && !linkEnlarged) || resizingLink) {
+    function changeUrlFocus(p, el, isFocused) {
+      if (zooming || !el || (isFocused && urlEnlarged) || (!isFocused && !urlEnlarged) || resizingUrl) {
         return;
       }
       if (isFocused) {
-        linkEnlarged = true;
+        urlEnlarged = true;
       }
 
-      resizingLink = true;
+      resizingUrl = true;
       let t = cell.transition().duration(300);
-      resizeLinkElement(linkContainer.filter(d => d === p),
-        isFocused ? linkContainerSize * focusLinkFactor : linkContainerSize, t);
-      resizeLinkElement(linkIconSvg.filter(d => d === p),
-        isFocused ? linkIconSize * focusLinkFactor : linkIconSize, t)
+      resizeUrlElement(urlContainer.filter(d => d === p),
+        isFocused ? urlContainerSize * focusUrlFactor : urlContainerSize, t);
+      resizeUrlElement(urlIconSvg.filter(d => d === p),
+        isFocused ? urlIconSize * focusUrlFactor : urlIconSize, t)
         .end()
         .then(() => {
-          resizingLink = false;
+          resizingUrl = false;
           if (!isFocused) {
-            linkEnlarged = false;
+            urlEnlarged = false;
           }
           return undefined;
         })
@@ -1129,7 +1129,7 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
      * @param {object} trans Transition to apply
      * @returns {object} Returns the element for chaining
      */
-    function resizeLinkElement(element, size, trans) {
+    function resizeUrlElement(element, size, trans) {
       return element.transition(trans)
         .attr('width', size)
         .attr('height', size);
@@ -1160,9 +1160,9 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
      * @param {bool} isIcon Whether it is the icon or the svg container
      * @param {bool} hide Whether the icon should be shown or not
      */
-    function toggleLinkButton(el, trans, isIcon, hide) {
-      let size = isIcon ? linkIconSize : linkContainerSize;
-      let viewBox = isIcon ? 23 : linkContainerSize;
+    function toggleUrlButton(el, trans, isIcon, hide) {
+      let size = isIcon ? urlIconSize : urlContainerSize;
+      let viewBox = isIcon ? 23 : urlContainerSize;
       el.transition(trans)
         .attr("width", hide ? 0.0001 : size)
         .attr("height", hide ? 0.0001 : size)
@@ -1348,22 +1348,22 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
     }
 
     /**
-     * Creates an svg element, that is used on the top left corner of each rect, where the link icon is
+     * Creates an svg element, that is used on the top left corner of each rect, where the url icon is
      * @param {bool} isIcon Whether it is the icon or the container element
      * @returns {object} The created element
      */
     function createElement(isIcon) {
-      // This function creates an svg element, that is used on the top left corner of each rect, where the link icon is
-      let size = isIcon ? linkIconSize : linkContainerSize;
-      let viewBox = isIcon ? 23 : linkContainerSize;
-      let element = linkContainerG
+      // This function creates an svg element, that is used on the top left corner of each rect, where the url icon is
+      let size = isIcon ? urlIconSize : urlContainerSize;
+      let viewBox = isIcon ? 23 : urlContainerSize;
+      let element = urlContainerG
         .append("svg")
         .attr("width", d => d.depth === 1 ? size : 0.0001)
         .attr("height", d => d.depth === 1 ? size : 0.0001) // On purpose same size
         .attr('viewBox', `0 0 ${viewBox} ${viewBox}`)
         .attr('x', isIcon ? 1 : 0)
         .attr('y', isIcon ? 1 : 0)
-        .classed('linkIconSvg', isIcon)
+        .classed('urlIconSvg', isIcon)
         .attr("stroke-opacity", d => contrastCorrectedColor(d, 0.7, true) === 'white' ? 1 : 0.5)
         .attr('stroke', d => isIcon ? contrastCorrectedColor(d, 0.7, true) : 'none')
         .classed(isIcon ? 'svg-element-icon' : 'svg-element', true)
@@ -1548,15 +1548,15 @@ ${d.data.link ? 'External link is available, press control and enter to open it.
         return color(d.data.name);
       });
       learningGoalProgressBar.transition(t).attr("fill", d => color(d.parent.data.name));
-      linkContainer.transition(t).attr("fill", d => {
+      urlContainer.transition(t).attr("fill", d => {
         return color(d.depth > 1 ? d.parent.data.name : d.data.name);
       });
-      linkContainer.style('filter', d => {
+      urlContainer.style('filter', d => {
         let alphaArray = parseRGB(color(d.depth === 1 ? d.data.name : d.parent.data.name));
         alphaArray.push(0.8);
         return `drop-shadow(${dropShadowParams} ${convertRGBArrayToString(alphaArray)})`;
       });
-      linkIconSvg.transition(t)
+      urlIconSvg.transition(t)
         .attr('stroke', d => contrastCorrectedColor(d, 0.7, true))
         .attr('stroke-opacity', d => contrastCorrectedColor(d, 0.7, true) === 'white' ? 1 : 0.5);
       sliderSvg.transition(t).attr('fill', d => color(d.parent.data.name));
@@ -2540,7 +2540,7 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
             content += `${d.children.length} learning goal${d.children.length > 1 ? 's' : ''}, press enter to expand the list.
                      Use tab to navigate through it.`;
           }
-          content += `${d.data.link ? 'External link is available, press control and enter to open it.' : ' '}`;
+          content += `${d.data.url ? 'External url is available, press control and enter to open it.' : ' '}`;
           return content;
         });
     }
@@ -2773,7 +2773,7 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
         learningGoalTitle.filter(d2 => d2.depth === 2 && d2 === d)
           .text(d => `Learning goal ${d.data.name}.
                                   Progress ${parseInt(computeProgress(d) * 100)}%.
-                                  ${d.data.link ? 'External link is available, press control and enter to open it.' : ' '}`);
+                                  ${d.data.url ? 'External url is available, press control and enter to open it.' : ' '}`);
       }, 5000);
       newProgress = '';
       isEnteringValue = false;
@@ -2800,7 +2800,7 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
         learningGoalTitle.filter(d2 => d2.depth === 2 && d2 == d)
           .text(d => `Learning goal ${d.data.name}.
                             Progress ${parseInt(computeProgress(d) * 100)}%.
-                            ${d.data.link ? 'External link is available, press control and enter to open it.' : ' '}`);
+                            ${d.data.url ? 'External url is available, press control and enter to open it.' : ' '}`);
       }, 5000);
       let trans = d3.transition().duration(300).ease(d3.easeExp);
       resetSlider((d2) => d2.depth === 2 && d2 === d, trans, false);
@@ -2881,8 +2881,8 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
           .text(d => `The current progress for the learning goal ${d.data.name} is ${d.data.pro}%.
           Please enter now the new value. You can save the changes by pressing ctrl shift enter
           or reject them by pressing ctrl shift delete.`);
-      } else if (!isEnteringValue && evt.ctrlKey && evt.keyCode == 13 && d.data.link) {
-        window.open(d.data.link.replaceAll('\\/', '/'), '');
+      } else if (!isEnteringValue && evt.ctrlKey && evt.keyCode == 13 && d.data.url) {
+        window.open(d.data.url.replaceAll('\\/', '/'), '');
       } else if (isEnteringValue) {
         handleIsEnteringValue(evt, d);
       }
@@ -2930,17 +2930,17 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
       return isSmallScreen ? 10 : 25;
     }
     /**
-     * Returns the correct link sizes
+     * Returns the correct url sizes
      * @returns {Object} sizes
      */
-    function getLinkSizes() {
-      let linkContainerSize = Math.min(Math.min(3 * mainCircleRadius / 2, 30), rectHeight(depth1Child) / 3.5);
-      let linkIconSize = linkContainerSize * 0.75;
+    function getUrlSizes() {
+      let urlContainerSize = Math.min(Math.min(3 * mainCircleRadius / 2, 30), rectHeight(depth1Child) / 3.5);
+      let urlIconSize = urlContainerSize * 0.75;
       if (isSmallScreen && isLandscapeMode) {
-        linkContainerSize *= 1.5;
-        linkIconSize *= 1.5;
+        urlContainerSize *= 1.5;
+        urlIconSize *= 1.5;
       }
-      return {linkContainerSize, linkIconSize};
+      return {urlContainerSize, urlIconSize};
     }
 
     /**
