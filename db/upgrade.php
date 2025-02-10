@@ -340,26 +340,28 @@ function upgrade2_delete_indexes($dbman) {
 
 /**
  * upgrade learning goal widget for oldversion < 2025020500
+ * rename old tables
  *
  * @param xmldb $dbman
  * @return void
  */
-function upgrade2($dbman) {
-    // Delete unneded foreign keys.
-    upgrade2_delete_foreign_keys($dbman);
-
-    // Delete unneded indexes.
-    upgrade2_delete_indexes($dbman);
-
-    // Rename tables.
+function upgrade2_rename_tables($dbman) {
     // Rename learninggoalwidget_topic -> learninggoalwidget_topics.
     rename_table($dbman, 'learninggoalwidget_topic', 'learninggoalwidget_topics');
     // Rename learninggoalwidget_goal -> learninggoalwidget_goals.
     rename_table($dbman, 'learninggoalwidget_goal', 'learninggoalwidget_goals');
     // Rename learninggoalwidget_i_userpro -> learninggoalwidget_progs.
     rename_table($dbman, 'learninggoalwidget_i_userpro', 'learninggoalwidget_progs');
+}
 
-    // Add/rename new fields.
+/**
+ * upgrade learning goal widget for oldversion < 2025020500
+ * add/rename new fields
+ *
+ * @param xmldb $dbman
+ * @return void
+ */
+function upgrade2_new_fields($dbman) {
     // Add field learninggoalwidget_topics->learninggoalwidgetid.
     $field = new xmldb_field('learninggoalwidgetid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'id');
     add_field($dbman, 'learninggoalwidget_topics', $field);
@@ -386,6 +388,26 @@ function upgrade2($dbman) {
     // Rename field learninggoalwidget_progs->goal -> goalid.
     $field = new xmldb_field('goal', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'topicid');
     rename_field($dbman, 'learninggoalwidget_progs', $field, 'goalid');
+}
+
+/**
+ * upgrade learning goal widget for oldversion < 2025020500
+ *
+ * @param xmldb $dbman
+ * @return void
+ */
+function upgrade2($dbman) {
+    // Delete unneded foreign keys.
+    upgrade2_delete_foreign_keys($dbman);
+
+    // Delete unneded indexes.
+    upgrade2_delete_indexes($dbman);
+
+    // Rename tables.
+    upgrade2_rename_tables($dbman);
+
+    // Add/rename new fields.
+    upgrade2_new_fields($dbman);
 
     // Consolidate topics.
     $sqlstmt = "SELECT id, instance, topic, ranking

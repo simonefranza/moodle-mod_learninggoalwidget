@@ -198,8 +198,8 @@ define(
 
         var spanNode = document.createElement("span");
         var topicText = "";
-        if (topic.keyword != "") {
-            topicText = topic.keyword + " - " + topic.name;
+        if (topic.shortname != "") {
+            topicText = topic.shortname + " - " + topic.name;
         } else {
             topicText = topic.name;
         }
@@ -233,8 +233,8 @@ define(
 
         var goalText = "";
 
-        if (goal.keyword != "") {
-            goalText = goal.keyword + " - " + goal.name;
+        if (goal.shortname != "") {
+            goalText = goal.shortname + " - " + goal.name;
         } else {
             goalText = goal.name;
         }
@@ -631,8 +631,8 @@ define(
                 .text((d) => {
                         if (d.depth > 0 && d.data.size <= 0.1) {
                             var title = d.data.name.toString();
-                            if (d.data.keyword.length > 0) {
-                                title = d.data.keyword;
+                            if (d.data.shortname.length > 0) {
+                                title = d.data.shortname;
                             }
                             if (title.length > VerNum) {
                                 return title.substring(0, VerNum) + "...";
@@ -697,8 +697,8 @@ define(
                         if (d.depth > 0 && d.data.size > 0.1) {
                             var CharNum = Math.round(d.data.size * maxLetters);
                             var title = d.data.name;
-                            if (d.data.keyword.length > 0) {
-                                title = d.data.keyword;
+                            if (d.data.shortname.length > 0) {
+                                title = d.data.shortname;
                             }
                             if (title.length > CharNum) {
                                 return title.substring(0, CharNum - 3) + "...";
@@ -970,8 +970,8 @@ define(
                             var per = percentage(d);
                             if (per !== null) {
                                 if (per.toString().length > 0) {
-                                    if (d.data.keyword.length > 0) {
-                                        title = per + "% " + d.data.keyword;
+                                    if (d.data.shortname.length > 0) {
+                                        title = per + "% " + d.data.shortname;
                                     } else {
                                         title = per + "% " + title;
                                     }
@@ -1051,8 +1051,8 @@ define(
                         if (d.depth > 0 && d.data.size > 0.1) {
                             var CharNum = Math.round(d.data.size * maxLetters);
                             var title = d.data.name;
-                            if (d.data.keyword.length > 0) {
-                                title = d.data.keyword;
+                            if (d.data.shortname.length > 0) {
+                                title = d.data.shortname;
                             }
                             if (title.length > CharNum) {
                                 return title.substring(0, CharNum - 3) + "...";

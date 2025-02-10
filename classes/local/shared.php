@@ -35,7 +35,7 @@ trait shared {
     /**
      * Check that a child obj has the properties
      * - name (str)
-     * - keyword (str)
+     * - shortname (str)
      * - link (str)
      * - ranking (int)
      *
@@ -47,7 +47,7 @@ trait shared {
         $isvalid = true;
         if (!(isset($child->name) && is_string($child->name))) {
             $isvalid = false;
-        } else if (!(isset($child->keyword) && is_string($child->keyword))) {
+        } else if (!(isset($child->shortname) && is_string($child->shortname))) {
             $isvalid = false;
         } else if (!(isset($child->link) && is_string($child->link))) {
             $isvalid = false;

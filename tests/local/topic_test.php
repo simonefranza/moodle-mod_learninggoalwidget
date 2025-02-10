@@ -59,43 +59,43 @@ final class topic_test extends \advanced_testcase {
         $topic->name = 10;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name is string, but no keyword.
+        // Topic name is string, but no shortname.
         $topic->name = "Name";
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name is string, but keyword is not.
-        $topic->keyword = 10;
+        // Topic name is string, but shortname is not.
+        $topic->shortname = 10;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, keyword is string, but no link.
-        $topic->keyword = "Keyword";
+        // Topic name, shortname is string, but no link.
+        $topic->shortname = "Shortname";
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, keyword is string, but link is not.
+        // Topic name, shortname is string, but link is not.
         $topic->link = 10;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, keyword, link is string, but no ranking.
+        // Topic name, shortname, link is string, but no ranking.
         $topic->link = 'http://example.com';
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, keyword, link is string, but ranking is not int.
+        // Topic name, shortname, link is string, but ranking is not int.
         $topic->ranking = 'test';
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, keyword, link is string, and ranking is int, but no topicid.
+        // Topic name, shortname, link is string, and ranking is int, but no topicid.
         $topic->ranking = 1;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, keyword, link is string, and ranking is int, but topicid is not int.
+        // Topic name, shortname, link is string, and ranking is int, but topicid is not int.
         $topic->topicid = 'test';
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, keyword, link is string, and ranking and topicid are int, but no children array.
+        // Topic name, shortname, link is string, and ranking and topicid are int, but no children array.
         $topic->topicid = 1;
         $this->validate_and_reset_topic($topic, false);
 
-        // Topic name, keyword, link is string, and ranking and topicid are int, but children is not an array.
+        // Topic name, shortname, link is string, and ranking and topicid are int, but children is not an array.
         $topic->children = 1;
         $this->validate_and_reset_topic($topic, false);
 
@@ -138,7 +138,7 @@ final class topic_test extends \advanced_testcase {
 
         $newtopic = (object) [
             'name' => 'T1',
-            'keyword' => 'T1',
+            'shortname' => 'T1',
             'link' => 'http://example.com',
             'ranking' => 1,
             'topicid' => 1,
@@ -224,7 +224,7 @@ final class topic_test extends \advanced_testcase {
     private function compare_two_topics($topic1, $topic2): void {
         $this->assertSame($topic1->topicid, $topic2->topicid);
         $this->assertSame($topic1->name, $topic2->name);
-        $this->assertSame($topic1->keyword, $topic2->keyword);
+        $this->assertSame($topic1->shortname, $topic2->shortname);
         $this->assertSame($topic1->link, $topic2->link);
         $this->assertSame($topic1->ranking, $topic2->ranking);
         $this->assertSame(count($topic1->children), count($topic2->children));

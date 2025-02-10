@@ -92,7 +92,7 @@ class taxonomy {
                 $topic = new stdClass;
                 $topic->topicid = $topicrecord->tid;
                 $topic->name = $topicrecord->ttitle;
-                $topic->keyword = $topicrecord->tshortname;
+                $topic->shortname = $topicrecord->tshortname;
                 $topic->link = $topicrecord->turl;
                 $topic->ranking = $topicrecord->tranking;
                 $topic->type = "topic";
@@ -108,7 +108,7 @@ class taxonomy {
             $goal = new stdClass;
             $goal->goalid = $topicrecord->gid;
             $goal->name = $topicrecord->gtitle;
-            $goal->keyword = $topicrecord->gshortname;
+            $goal->shortname = $topicrecord->gshortname;
             $goal->link = $topicrecord->gurl;
             $goal->ranking = $topicrecord->granking;
             $goal->type = "goal";
@@ -206,7 +206,7 @@ class taxonomy {
 
             // Add/update topic.
             $topic->id = topic::update_topic($lgwid, $topic);
-            $this->update_topic_goals($lgwid, $topic);
+            self::update_topic_goals($lgwid, $topic);
         }
     }
 

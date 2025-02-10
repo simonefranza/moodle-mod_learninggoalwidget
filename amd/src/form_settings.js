@@ -246,7 +246,7 @@ define(
         return;
       }
       const oldTopicTitle = topic.name;
-      const oldTopicShortname = topic.keyword;
+      const oldTopicShortname = topic.shortname;
       const oldTopicUrl = topic.link;
 
       let strings = [
@@ -277,7 +277,7 @@ define(
         // Update topic
         const update = {
           name: topicName,
-          keyword: topicShortname,
+          shortname: topicShortname,
           link: topicUrl,
         };
         updateLocalTopic(topic, update);
@@ -444,7 +444,7 @@ define(
 
       const topicTitle = topic.name;
       const oldGoalTitle = goal.name;
-      const oldGoalShortname = goal.keyword;
+      const oldGoalShortname = goal.shortname;
       const oldGoalUrl = goal.link;
 
       let strings = [
@@ -479,7 +479,7 @@ define(
         // Update goal
         const update = {
           name: goalName,
-          keyword: goalShortname,
+          shortname: goalShortname,
           link: goalUrl,
         };
         updateLocalGoal(goal, update);
@@ -739,7 +739,7 @@ define(
         } else if (!isValidUrl(topic.link)) {
           return { error: true, code: "validation:jsontopic4", codeParam: topic.name };
         }
-      } else if ('keyword' in topic && typeof (topic.keyword) !== 'string') {
+      } else if ('shortname' in topic && typeof (topic.shortname) !== 'string') {
         return { error: true, code: "validation:jsontopic5", codeParam: topic.name };
       } else if (!('children' in topic) || topic.children === null || topic.children === undefined) {
         return { error: false };
@@ -768,7 +768,7 @@ define(
         } else if (!isValidUrl(goal.link)) {
           return { error: true, code: "validation:jsongoal4", codeParam: goal.name };
         }
-      } else if ('keyword' in goal && typeof (goal.keyword) !== 'string') {
+      } else if ('shortname' in goal && typeof (goal.shortname) !== 'string') {
         return { error: true, code: "validation:jsongoal5", codeParam: goal.name };
       }
       return { error: false };
@@ -872,9 +872,9 @@ ${isLast ? '\n\n' : '\n'}`;
           $("#topics-list").children().remove();
           $("#learninggoals-list").children().remove();
           parsed.children.forEach((topic) => {
-            const addedTopic = addLocalTopic(topic.name, topic.keyword, topic.link);
+            const addedTopic = addLocalTopic(topic.name, topic.shortname, topic.link);
             topic.children.forEach((goal) => {
-              addLocalGoal(addedTopic, goal.name, goal.keyword, goal.link);
+              addLocalGoal(addedTopic, goal.name, goal.shortname, goal.link);
             });
           });
           updateTaxonomyValue();
@@ -902,8 +902,8 @@ ${isLast ? '\n\n' : '\n'}`;
         if ('name' in topic) {
           topicObj.name = topic.name;
         }
-        if ('keyword' in topic) {
-          topicObj.keyword = topic.keyword;
+        if ('shortname' in topic) {
+          topicObj.shortname= topic.shortname;
         }
         if ('link' in topic) {
           topicObj.link = topic.link;
@@ -915,8 +915,8 @@ ${isLast ? '\n\n' : '\n'}`;
             if ('name' in goal) {
               goals[goals.length - 1].name = goal.name;
             }
-            if ('keyword' in goal) {
-              goals[goals.length - 1].keyword = goal.keyword;
+            if ('shortname' in goal) {
+              goals[goals.length - 1].shortname = goal.shortname;
             }
             if ('link' in goal) {
               goals[goals.length - 1].link = goal.link;
@@ -949,34 +949,34 @@ ${isLast ? '\n\n' : '\n'}`;
         "children": [
           {
             "name": "Topic 1 Name",
-            "keyword": "Topic 1 Shortname",
+            "shortname": "Topic 1 Shortname",
             "link": "https://example.com",
             "children": [
               {
                 "name": "Learning Goal 1 of Topic 1",
-                "keyword": "Goal 1 Shortname",
+                "shortname": "Goal 1 Shortname",
                 "link": "https://example.com"
               },
               {
                 "name": "Learning Goal 2 of Topic 1",
-                "keyword": "Goal 2 Shortname",
+                "shortname": "Goal 2 Shortname",
                 "link": "https://example.com"
               }
             ]
           },
           {
             "name": "Topic 2 Name",
-            "keyword": "Topic 2 Shortname",
+            "shortname": "Topic 2 Shortname",
             "link": "https://example.com",
             "children": [
               {
                 "name": "Learning Goal 1 of Topic 2",
-                "keyword": "Goal 1 Shortname",
+                "shortname": "Goal 1 Shortname",
                 "link": "https://example.com"
               },
               {
                 "name": "Learning Goal 2 of Topic 2",
-                "keyword": "Goal 2 Shortname",
+                "shortname": "Goal 2 Shortname",
                 "link": "https://example.com"
               }
             ]
@@ -1106,7 +1106,7 @@ ${isLast ? '\n\n' : '\n'}`;
     const addLocalTopic = (name, shortname, url) => {
       let newTopic = {
         name: name,
-        keyword: shortname,
+        shortname: shortname,
         link: url,
         ranking: getNextTopicRanking(),
         topicid: getNextTopicId(),
@@ -1162,7 +1162,7 @@ ${isLast ? '\n\n' : '\n'}`;
     const addLocalGoal = (topic, name, shortname, url) => {
       let newGoal = {
         name: name,
-        keyword: shortname,
+        shortname: shortname,
         link: url,
         ranking: getNextGoalRanking(topic),
         goalid: getNextGoalId(),

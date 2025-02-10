@@ -53,7 +53,7 @@ class log_event extends \core_external\external_api {
                     new external_single_structure(
                         [
                             "name" => new external_value(PARAM_TEXT, 'name'),
-                            "value" => new external_value(PARAM_TEXT, 'keyword'),
+                            "value" => new external_value(PARAM_TEXT, 'shortname'),
                         ]
                     )
                 ),

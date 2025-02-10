@@ -101,7 +101,7 @@ class userTaxonomy {
                 $topic = new stdClass;
                 $topic->topicid = $topicrecord->tid;
                 $topic->name = $topicrecord->ttitle;
-                $topic->keyword = $topicrecord->tshortname;
+                $topic->shortname = $topicrecord->tshortname;
                 $topic->link = $topicrecord->turl;
                 $topic->ranking = $topicrecord->tranking;
                 $topic->type = "topic";
@@ -117,7 +117,7 @@ class userTaxonomy {
             $goal = new stdClass;
             $goal->goalid = $topicrecord->gid;
             $goal->name = $topicrecord->gtitle;
-            $goal->keyword = $topicrecord->gshortname;
+            $goal->shortname = $topicrecord->gshortname;
             $goal->link = $topicrecord->gurl;
             $goal->ranking = $topicrecord->granking;
             $goal->type = "goal";

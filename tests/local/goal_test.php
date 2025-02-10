@@ -60,35 +60,35 @@ final class goal_test extends \advanced_testcase {
         $goal->name = 10;
         $this->validate_and_reset_goal($goal, false);
 
-        // Goal name is string, but no keyword.
+        // Goal name is string, but no shortname.
         $goal->name = "Name";
         $this->validate_and_reset_goal($goal, false);
 
-        // Goal name is string, but keyword is not.
-        $goal->keyword = 10;
+        // Goal name is string, but shortname is not.
+        $goal->shortname = 10;
         $this->validate_and_reset_goal($goal, false);
 
-        // Goal name, keyword is string, but no link.
-        $goal->keyword = "Keyword";
+        // Goal name, shortname is string, but no link.
+        $goal->shortname = "Shortname";
         $this->validate_and_reset_goal($goal, false);
 
-        // Goal name, keyword is string, but link is not.
+        // Goal name, shortname is string, but link is not.
         $goal->link = 10;
         $this->validate_and_reset_goal($goal, false);
 
-        // Goal name, keyword, link is string, but no ranking.
+        // Goal name, shortname, link is string, but no ranking.
         $goal->link = 'http://example.com';
         $this->validate_and_reset_goal($goal, false);
 
-        // Goal name, keyword, link is string, but ranking is not int.
+        // Goal name, shortname, link is string, but ranking is not int.
         $goal->ranking = 'test';
         $this->validate_and_reset_goal($goal, false);
 
-        // Goal name, keyword, link is string, and ranking is int, but no goalid.
+        // Goal name, shortname, link is string, and ranking is int, but no goalid.
         $goal->ranking = 1;
         $this->validate_and_reset_goal($goal, false);
 
-        // Goal name, keyword, link is string, and ranking is int, but goalid is not int.
+        // Goal name, shortname, link is string, and ranking is int, but goalid is not int.
         $goal->goalid = 'test';
         $this->validate_and_reset_goal($goal, false);
 
@@ -117,7 +117,7 @@ final class goal_test extends \advanced_testcase {
         $lgwid = $res->instance->id;
         $topic = (object) [
             'name' => 'T1',
-            'keyword' => 'T1',
+            'shortname' => 'T1',
             'link' => 'http://example.com',
             'ranking' => 1,
             'topicid' => 1,
@@ -142,7 +142,7 @@ final class goal_test extends \advanced_testcase {
         $this->assertSame(goal::update_goal($lgwid, $topicid, $newgoal), -2);
 
         // Fix goal.
-        $newgoal->keyword = 'G1';
+        $newgoal->shortname = 'G1';
         $newgoal->link = 'http://example.com';
         $newgoal->ranking = 1;
         $newgoal->goalid = 3;
@@ -232,7 +232,7 @@ final class goal_test extends \advanced_testcase {
     private function compare_two_goals($goal1, $goal2): void {
         $this->assertSame($goal1->goalid, $goal2->goalid);
         $this->assertSame($goal1->name, $goal2->name);
-        $this->assertSame($goal1->keyword, $goal2->keyword);
+        $this->assertSame($goal1->shortname, $goal2->shortname);
         $this->assertSame($goal1->link, $goal2->link);
         $this->assertSame($goal1->ranking, $goal2->ranking);
     }

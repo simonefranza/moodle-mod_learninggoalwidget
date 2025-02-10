@@ -80,7 +80,7 @@ final class topic {
         $newtopic = (object) [
             'learninggoalwidgetid' => $lgwid,
             'title' => $topic->name,
-            'shortname' => $topic->keyword,
+            'shortname' => $topic->shortname,
             'url' => $topic->link,
             'ranking' => $topic->ranking,
         ];

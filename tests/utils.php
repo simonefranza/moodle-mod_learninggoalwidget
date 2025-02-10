@@ -179,13 +179,13 @@ trait utils {
             $expectedranking = $expectedtopic->ranking;
             $expectedtopicid = $expectedtopic->topicid;
             $expectedtopicname = $expectedtopic->name;
-            $expectedshortname = $expectedtopic->keyword;
+            $expectedshortname = $expectedtopic->shortname;
             $expectedurl = $expectedtopic->link;
             $expectedgoals = $expectedtopic->children;
             $this->assertEquals($expectedranking, $json->children[$topicidx]->ranking);
             $this->assertEquals($expectedtopicid, $json->children[$topicidx]->topicid);
             $this->assertEquals($expectedtopicname, $json->children[$topicidx]->name);
-            $this->assertEquals($expectedshortname, $json->children[$topicidx]->keyword);
+            $this->assertEquals($expectedshortname, $json->children[$topicidx]->shortname);
             $this->assertEquals($expectedurl, $json->children[$topicidx]->link);
 
             $this->assertNotNull($expectedgoals);
@@ -199,12 +199,12 @@ trait utils {
                 $expectedgranking = $expectedgoal->ranking;
                 $expectedggoalid = $expectedgoal->goalid;
                 $expectedggoalname = $expectedgoal->name;
-                $expectedgshortname = $expectedgoal->keyword;
+                $expectedgshortname = $expectedgoal->shortname;
                 $expectedgurl = $expectedgoal->link;
                 $this->assertEquals($expectedgranking, $testedgoals[$goalidx]->ranking);
                 $this->assertEquals($expectedggoalid, $testedgoals[$goalidx]->goalid);
                 $this->assertEquals($expectedggoalname, $testedgoals[$goalidx]->name);
-                $this->assertEquals($expectedgshortname, $testedgoals[$goalidx]->keyword);
+                $this->assertEquals($expectedgshortname, $testedgoals[$goalidx]->shortname);
                 $this->assertEquals($expectedgurl, $testedgoals[$goalidx]->link);
             }
         }
@@ -319,7 +319,7 @@ trait utils {
         $topic = $parsed->children[0];
         $topicid = $topic->topicid;
         $title = $topic->name;
-        $shortname = $topic->keyword;
+        $shortname = $topic->shortname;
         $url = $topic->link;
         $type = $topic->type;
         $goals = $topic->children;
@@ -334,7 +334,7 @@ trait utils {
 
         foreach ($goals as $goal) {
             $goalname = $goal->name;
-            $goalshortname = $goal->keyword;
+            $goalshortname = $goal->shortname;
             $goalurl = $goal->link;
             $goaltype = $goal->type;
             $goalprogress = $goal->pro;
@@ -382,7 +382,7 @@ trait utils {
             $ranking = $topic->ranking;
             $topicid = $topic->topicid;
             $topicname = $topic->name;
-            $shortname = $topic->keyword;
+            $shortname = $topic->shortname;
             $url = $topic->link;
             $goals = $topic->children;
             if ($topicname === "Artificial Intelligence Basics Part 1") {
@@ -418,7 +418,7 @@ trait utils {
             for ($ii = 0; $ii < $numgoals; $ii++) {
                 $newgoal = (object) [
                     'name' => 'T' . $i . 'G' . $ii,
-                    'keyword' => 'T' . $i . 'G' . $ii,
+                    'shortname' => 'T' . $i . 'G' . $ii,
                     'link' => 'http://topic' . $i . 'goal' . $ii . '.com',
                     'ranking' => $ii + 1,
                     'goalid' => $i * $numtopics + $ii,
@@ -428,7 +428,7 @@ trait utils {
             }
             $newtopic = (object) [
                 'name' => 'T' . $i,
-                'keyword' => 'T' . $i,
+                'shortname' => 'T' . $i,
                 'link' => 'http://topic' . $i . '.com',
                 'ranking' => $i + 1,
                 'topicid' => $i,
@@ -453,8 +453,8 @@ trait utils {
     private function check_topic($topic, $i, $newranking, $numgoals, $checkgoals) {
         $this->assertTrue(isset($topic->name) && is_string($topic->name));
         $this->assertSame($topic->name, 'T' . $i);
-        $this->assertTrue(isset($topic->keyword) && is_string($topic->keyword));
-        $this->assertSame($topic->keyword, 'T' . $i);
+        $this->assertTrue(isset($topic->shortname) && is_string($topic->shortname));
+        $this->assertSame($topic->shortname, 'T' . $i);
         $this->assertTrue(isset($topic->link) && is_string($topic->link));
         $this->assertSame($topic->link, 'http://topic' . $i . '.com');
         $this->assertTrue(isset($topic->ranking) && is_int($topic->ranking));
@@ -485,8 +485,8 @@ trait utils {
         }
         $this->assertTrue(isset($goal->name) && is_string($goal->name));
         $this->assertSame($goal->name, 'T' . $i . 'G' . $ii);
-        $this->assertTrue(isset($goal->keyword) && is_string($goal->keyword));
-        $this->assertSame($goal->keyword, 'T' . $i . 'G' . $ii);
+        $this->assertTrue(isset($goal->shortname) && is_string($goal->shortname));
+        $this->assertSame($goal->shortname, 'T' . $i . 'G' . $ii);
         $this->assertTrue(isset($goal->link) && is_string($goal->link));
         $this->assertSame($goal->link, 'http://topic' . $i . 'goal' . $ii . '.com');
         $this->assertTrue(isset($goal->ranking) && is_int($goal->ranking));

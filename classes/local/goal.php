@@ -79,7 +79,7 @@ final class goal {
             'learninggoalwidgetid' => $lgwid,
             'topicid' => $topicid,
             'title' => $goal->name,
-            'shortname' => $goal->keyword,
+            'shortname' => $goal->shortname,
             'url' => $goal->link,
             'ranking' => $goal->ranking,
         ];

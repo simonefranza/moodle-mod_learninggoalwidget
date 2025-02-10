@@ -97,34 +97,34 @@ Here is a starting template for the JSON taxonomy:
   "children": [
     {
       "name": "First Topic",
-      "keyword": "This is the description of the First Topic",
+      "shortname": "This is the description of the First Topic",
       "link": "https://www.example.com",
       "children": [
         {
           "name": "Learning Goal 1-1",
-          "keyword": "This is the description of the First Learning Goal of the First Topic",
+          "shortname": "This is the description of the First Learning Goal of the First Topic",
           "link": "https://www.example.com"
         },
         {
           "name": "Learning Goal 1-2",
-          "keyword": "This is the description of the Second Learning Goal of the First Topic",
+          "shortname": "This is the description of the Second Learning Goal of the First Topic",
           "link": "https://www.example.com"
         }
       ]
     },
     {
       "name": "Second Topic",
-      "keyword": "This is the description of the Second Topic",
+      "shortname": "This is the description of the Second Topic",
       "link": "https://www.example.com",
       "children": [
         {
           "name": "Learning Goal 2-1",
-          "keyword": "This is the description of the First Learning Goal of the Second Topic",
+          "shortname": "This is the description of the First Learning Goal of the Second Topic",
           "link": "https://www.example.com"
         },
         {
           "name": "Learning Goal 2-2",
-          "keyword": "This is the description of the Second Learning Goal of the Second Topic",
+          "shortname": "This is the description of the Second Learning Goal of the Second Topic",
           "link": "https://www.example.com"
         }
       ]
@@ -142,20 +142,20 @@ The JSON object contains the two properties:
 
 The `Topic` object has the following structure:
 
-| Property | Type           | Description                                 |
-|----------|----------------|---------------------------------------------|
-| name     | string         | Name of the Topic                           |
-| keyword  | string         | Description of the Topic                    |
-| link     | string         | Link to supplementary material, slides, etc |
-| children | Array of Learning Goal | List of Learning Goals of this Topic|
+| Property   | Type           | Description                                 |
+|------------|----------------|---------------------------------------------|
+| name       | string         | Name of the Topic                           |
+| shortname  | string         | Description of the Topic                    |
+| link       | string         | Link to supplementary material, slides, etc |
+| children   | Array of Learning Goal | List of Learning Goals of this Topic|
 
 The `Learning Goal` object has the following structure:
 
-| Property | Type           | Description                                 |
-|----------|----------------|---------------------------------------------|
-| name     | string         | Name of the Learning Goal                   |
-| keyword  | string         | Description of the Learning Goal            |
-| link     | string         | Link to supplementary material, slides, etc |
+| Property   | Type           | Description                                 |
+|------------|----------------|---------------------------------------------|
+| name       | string         | Name of the Learning Goal                   |
+| shortname  | string         | Description of the Learning Goal            |
+| link       | string         | Link to supplementary material, slides, etc |
 
 ## How to Report a Bug
 
