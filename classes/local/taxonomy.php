@@ -216,7 +216,7 @@ class taxonomy {
      * @param number $lgwid Instance id to update
      * @param stdClass $topic Topic whose goals should be added
      */
-    public static function update_topic_goals($lgwid, &$topic) {
+    private static function update_topic_goals($lgwid, &$topic) {
         foreach ($topic->children as $goal) {
             // Check if goal is deleted or added.
             $goaldeleted = isset($goal->deleted) && $goal->deleted;
