@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 
 use externallib_advanced_testcase;
 use core_external\external_api;
+use mod_learninggoalwidget\local\taxonomy;
 
 /**
  * Unit tests for the log_event function.

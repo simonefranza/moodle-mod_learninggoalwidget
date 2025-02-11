@@ -83,10 +83,10 @@ final class update_user_progress_test extends externallib_advanced_testcase {
             $topic = $taxonomy->children[$i];
             $this->check_topic($topic, $i, $i + 1, 2, true);
         }
-        $this->assertSame($taxonomy->children[0]->children[0], 99);
-        $this->assertSame($taxonomy->children[0]->children[1], 0);
-        $this->assertSame($taxonomy->children[1]->children[0], 0);
-        $this->assertSame($taxonomy->children[1]->children[1], 0);
+        $this->assertSame($taxonomy->children[0]->children[0]->pro, 99);
+        $this->assertSame($taxonomy->children[0]->children[1]->pro, 0);
+        $this->assertSame($taxonomy->children[1]->children[0]->pro, 0);
+        $this->assertSame($taxonomy->children[1]->children[1]->pro, 0);
 
         $topic1 = $taxonomy->children[0];
 
@@ -108,10 +108,10 @@ final class update_user_progress_test extends externallib_advanced_testcase {
             $topic = $taxonomy->children[$i];
             $this->check_topic($topic, $i, $i + 1, 2, true);
         }
-        $this->assertSame($taxonomy->children[0]->children[0], 50);
-        $this->assertSame($taxonomy->children[0]->children[1], 0);
-        $this->assertSame($taxonomy->children[1]->children[0], 0);
-        $this->assertSame($taxonomy->children[1]->children[1], 0);
+        $this->assertSame($taxonomy->children[0]->children[0]->pro, 50);
+        $this->assertSame($taxonomy->children[0]->children[1]->pro, 0);
+        $this->assertSame($taxonomy->children[1]->children[0]->pro, 0);
+        $this->assertSame($taxonomy->children[1]->children[1]->pro, 0);
 
         $topic1 = $taxonomy->children[0];
 
@@ -133,9 +133,9 @@ final class update_user_progress_test extends externallib_advanced_testcase {
             $topic = $taxonomy->children[$i];
             $this->check_topic($topic, $i, $i + 1, 2, true);
         }
-        $this->assertSame($taxonomy->children[0]->children[0], 50);
-        $this->assertSame($taxonomy->children[0]->children[1], 100);
-        $this->assertSame($taxonomy->children[1]->children[0], 0);
-        $this->assertSame($taxonomy->children[1]->children[1], 0);
+        $this->assertSame($taxonomy->children[0]->children[0]->pro, 50);
+        $this->assertSame($taxonomy->children[0]->children[1]->pro, 100);
+        $this->assertSame($taxonomy->children[1]->children[0]->pro, 0);
+        $this->assertSame($taxonomy->children[1]->children[1]->pro, 0);
     }
 }

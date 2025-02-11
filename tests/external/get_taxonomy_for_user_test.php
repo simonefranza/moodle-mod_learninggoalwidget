@@ -66,6 +66,7 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(get_taxonomy_for_user::execute_returns(), $result);
+        $taxonomy = json_decode($result);
 
         for ($i = 0; $i < 2; $i++) {
             $this->check_topic($taxonomy->children[$i], $i, $i + 1, 2, true);
