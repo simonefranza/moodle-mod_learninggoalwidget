@@ -71,9 +71,9 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
         for ($i = 0; $i < 2; $i++) {
             $this->check_topic($taxonomy->children[$i], $i, $i + 1, 2, true);
         }
-        $this->assertSame($taxonomy->children[0]->children[0], 0);
-        $this->assertSame($taxonomy->children[0]->children[1], 0);
-        $this->assertSame($taxonomy->children[1]->children[0], 0);
-        $this->assertSame($taxonomy->children[1]->children[1], 0);
+        $this->assertSame($taxonomy->children[0]->children[0]->pro, 0);
+        $this->assertSame($taxonomy->children[0]->children[1]->pro, 0);
+        $this->assertSame($taxonomy->children[1]->children[0]->pro, 0);
+        $this->assertSame($taxonomy->children[1]->children[1]->pro, 0);
     }
 }
