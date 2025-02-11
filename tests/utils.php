@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
 use core_external\external_api;
+use mod_learninggoalwidget\local\taxonomy;
 use mod_learninggoalwidget\external\update_topic;
 
 /**

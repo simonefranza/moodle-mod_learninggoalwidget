@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 
 use externallib_advanced_testcase;
+use mod_learninggoalwidget\local\taxonomy;
 use core_external\external_api;
 
 /**

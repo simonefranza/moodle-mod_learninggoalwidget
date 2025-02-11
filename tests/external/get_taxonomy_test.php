@@ -75,7 +75,7 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result);
         $parsed = json_decode($result);
 
-        for ($i = 0; $i <= 5; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $this->check_topic($parsed->children[$i], $i, $i + 1, 5, true);
         }
     }

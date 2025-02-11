@@ -39,6 +39,7 @@ use core_privacy\local\request\writer;
 use core_privacy\local\request\approved_contextlist;
 use mod_learninggoalwidget\privacy\provider;
 use mod_learninggoalwidget\external\update_user_progress;
+use mod_learninggoalwidget\local\taxonomy;
 
 /**
  * Learning Goal Taxonomy Privacy Provider Test
@@ -132,7 +133,6 @@ final class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
@@ -311,7 +311,6 @@ final class provider_test extends provider_testcase {
 
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];

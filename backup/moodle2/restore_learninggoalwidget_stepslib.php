@@ -64,7 +64,6 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
         $data->course = $this->get_courseid();
 
         $data->timecreated = $this->apply_date_offset($data->timecreated);
@@ -120,7 +119,6 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
 
         $data->learninggoalwidgetid = $this->get_new_parentid('learninggoalwidget');
         $data->topicid = $this->get_new_parentid('topic');
@@ -128,7 +126,7 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
 
         $data->userid = $this->get_mappingid('user', $data->userid);
 
-        $newitemid = $DB->insert_record('learninggoalwidget_progs', $data);
+        $DB->insert_record('learninggoalwidget_progs', $data);
         // No need to save this mapping as far as nothing depend on it.
     }
 
