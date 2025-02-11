@@ -56,40 +56,42 @@ final class log_event_test extends externallib_advanced_testcase {
      */
     public function test_log_event(): void {
         global $DB;
-        $this->setUp();
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
         $this->preventResetByRollback();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
         set_config('buffersize', 0, 'logstore_standard');
         get_log_manager(true);
-        $res = $this->setup_course_and_insert_goals();
-        $widgetinstance = $res->instance;
-        $topicrecord = $res->topic1;
-        $user1 = $res->user;
-        $goalrecord = $res->goal;
+
+        $this->insert_two_goals($lgwid);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
 
         $progress = 50;
         $timestamp = 12345678;
+        $topic = $taxonomy->children[0];
+        $goal = $topic->children[0];
 
         update_user_progress::execute(
-            $widgetinstance->id,
-            $user1->id,
-            $topicrecord->id,
-            $goalrecord->id,
+            $lgwid,
+            $userid,
+            $topic->topicid,
+            $goal->goalid,
             $progress,
         );
 
         $eventparams = [];
         $eventname = "\\mod_learninggoalwidget\\event\\learninggoal_updated";
-        $eventparams[3] = ["name" => "instanceid", "value" => $widgetinstance->id];
-        $eventparams[4] = ["name" => "userid", "value" => $user1->id];
+        $eventparams[3] = ["name" => "instanceid", "value" => $lgwid];
+        $eventparams[4] = ["name" => "userid", "value" => $userid];
         $eventparams[5] = ["name" => "timestamp", "value" => $timestamp];
-        $eventparams[6] = ["name" => "goalname", "value" => $goalrecord->title];
+        $eventparams[6] = ["name" => "goalname", "value" => $goal->name];
         $eventparams[7] = ["name" => "goalprogress", "value" => $progress];
 
         // Update learning goal 2 progess to 50.
         $result = log_event::execute(
-            $widgetinstance->id,
-            $user1->id,
+            $lgwid,
+            $userid,
             $eventparams
         );
 
@@ -99,7 +101,7 @@ final class log_event_test extends externallib_advanced_testcase {
                        AND userid = :userid';
         $params = [
             'eventname' => $eventname,
-            'userid' => $user1->id,
+            'userid' => $userid,
         ];
         $res = $DB->get_record_sql($sqlstmt, $params);
         $this->assertTrue($res !== false);
@@ -108,10 +110,10 @@ final class log_event_test extends externallib_advanced_testcase {
         foreach (get_object_vars($otherdata) as $value) {
             $output->{$value->name} = $value->value;
         }
-        $this->assertTrue($output->instanceid == $widgetinstance->id);
-        $this->assertTrue($output->userid == $user1->id);
+        $this->assertTrue($output->instanceid == $lgwid);
+        $this->assertTrue($output->userid == $userid);
         $this->assertTrue($output->timestamp == $timestamp);
-        $this->assertTrue($output->goalname == $goalrecord->title);
+        $this->assertTrue($output->goalname == $goal->name);
         $this->assertTrue($output->goalprogress == $progress);
 
         // We need to execute the return values cleaning process to simulate the web service server.

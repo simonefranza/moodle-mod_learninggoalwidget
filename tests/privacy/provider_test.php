@@ -95,9 +95,15 @@ final class provider_test extends provider_testcase {
      */
     public function test_get_contexts_for_userid(): void {
         // Reset all changes automatically after this test.
-        $this->setUp();
-        $res = $this->setup_course_and_insert_goals();
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
+        $this->insert_two_goals($lgwid);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $topic = $taxonomy->children[0];
+        $goal = $topic->children[0];
+
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext = \context_module::instance($coursemodule->id);
 
         // The user will be in these contexts.
@@ -106,10 +112,10 @@ final class provider_test extends provider_testcase {
         ];
 
         update_user_progress::execute(
-            $res->instance->id,
-            $res->user->id,
-            $res->topic1->id,
-            $res->goal->id,
+            $lgwid,
+            $userid,
+            $topic->topicid,
+            $goal->goalid,
             50,
         );
 
@@ -124,9 +130,15 @@ final class provider_test extends provider_testcase {
      */
     public function test_get_users_in_context(): void {
         // Reset all changes automatically after this test.
-        $this->setUp();
-        $res = $this->setup_course_and_insert_goals();
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
+        $this->insert_two_goals($lgwid);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $topic = $taxonomy->children[0];
+        $goal = $topic->children[0];
+
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext = \context_module::instance($coursemodule->id);
 
         $user1 = $res->user;
@@ -143,10 +155,10 @@ final class provider_test extends provider_testcase {
         $this->getDataGenerator()->enrol_user($user5->id, $coursemodule->course, 'editingteacher');
 
         update_user_progress::execute(
-            $res->instance->id,
+            $lgwid,
             $user1->id,
-            $res->topic1->id,
-            $res->goal->id,
+            $topic->topicid,
+            $goal->goalid,
             60,
         );
 
@@ -179,17 +191,23 @@ final class provider_test extends provider_testcase {
      */
     public function test_export_user_data_student(): void {
         // Reset all changes automatically after this test.
-        $this->setUp();
-        $res = $this->setup_course_and_insert_goals();
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
+        $this->insert_two_goals($lgwid);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $topic = $taxonomy->children[0];
+        $goal = $topic->children[0];
+
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $coursecontext = \context_course::instance($coursemodule->course);
         $cmcontext = \context_module::instance($coursemodule->id);
 
         update_user_progress::execute(
-            $res->instance->id,
-            $res->user->id,
-            $res->topic1->id,
-            $res->goal->id,
+            $lgwid,
+            $userid,
+            $topic->topicid,
+            $goal->goalid,
             50,
         );
 
@@ -204,8 +222,8 @@ final class provider_test extends provider_testcase {
         $progressexport = $writer->get_data(['progress'])->progress;
         $this->assertNotNull($progressexport);
         $this->assertEquals(count($progressexport), 1);
-        $this->assertEquals($progressexport[0]->topictitle, "Artificial Intelligence Basics Part 1");
-        $this->assertEquals($progressexport[0]->goaltitle, "Goal under Topic 1 to be updated");
+        $this->assertEquals($progressexport[0]->topictitle, $topic->name);
+        $this->assertEquals($progressexport[0]->goaltitle, $goal->name);
         $this->assertEquals($progressexport[0]->progress, "50.00");
     }
 
@@ -215,19 +233,25 @@ final class provider_test extends provider_testcase {
      * @covers \mod_learninggoalwidget\privacy\provider::delete_data_for_all_users_in_context
      */
     public function test_delete_data_for_all_users_in_context(): void {
-        $this->setUp();
         global $DB;
 
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
+        $this->insert_two_goals($lgwid);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $topic = $taxonomy->children[0];
+        $goal = $topic->children[0];
+
         // Reset all changes automatically after this test.
-        $res = $this->setup_course_and_insert_goals();
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext = \context_module::instance($coursemodule->id);
 
         update_user_progress::execute(
-            $res->instance->id,
-            $res->user->id,
-            $res->topic1->id,
-            $res->goal->id,
+            $lgwid,
+            $userid,
+            $topic->topicid,
+            $goal->goalid,
             50,
         );
 
@@ -246,19 +270,25 @@ final class provider_test extends provider_testcase {
      */
     public function test_delete_data_for_user(): void {
         global $DB;
-        $this->setUp();
+
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
+        $this->insert_two_goals($lgwid);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $topic = $taxonomy->children[0];
+        $goal = $topic->children[0];
 
         // Reset all changes automatically after this test.
-        $res = $this->setup_course_and_insert_goals();
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext = \context_module::instance($coursemodule->id);
         $coursecontext = \context_course::instance($coursemodule->course);
 
         update_user_progress::execute(
-            $res->instance->id,
-            $res->user->id,
-            $res->topic1->id,
-            $res->goal->id,
+            $lgwid,
+            $userid,
+            $topic->topicid,
+            $goal->goalid,
             50,
         );
 
@@ -267,7 +297,7 @@ final class provider_test extends provider_testcase {
         provider::delete_data_for_user($approvedlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $res->user->id]);
+        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $userid]);
         $this->assertEmpty($records);
     }
 
@@ -278,10 +308,17 @@ final class provider_test extends provider_testcase {
      */
     public function test_delete_data_for_users(): void {
         global $DB;
-        $this->setUp();
+
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
+        $this->insert_two_goals($lgwid);
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $topic = $taxonomy->children[0];
+        $goal = $topic->children[0];
+
         // Reset all changes automatically after this test.
-        $res = $this->setup_course_and_insert_goals();
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $res->instance->id);
+        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext1 = \context_module::instance($coursemodule->id);
 
         $user1 = $res->user;
@@ -293,24 +330,24 @@ final class provider_test extends provider_testcase {
         $this->getDataGenerator()->enrol_user($user3->id, $coursemodule->course, 'student');
 
         update_user_progress::execute(
-            $res->instance->id,
+            $lgwid,
             $user1->id,
-            $res->topic1->id,
-            $res->goal->id,
+            $topic->topicid,
+            $goal->goalid,
             50,
         );
         update_user_progress::execute(
-            $res->instance->id,
+            $lgwid,
             $user2->id,
-            $res->topic1->id,
-            $res->goal->id,
+            $topic->topicid,
+            $goal->goalid,
             60,
         );
         update_user_progress::execute(
-            $res->instance->id,
+            $lgwid,
             $user3->id,
-            $res->topic1->id,
-            $res->goal->id,
+            $topic->topicid,
+            $goal->goalid,
             80,
         );
 

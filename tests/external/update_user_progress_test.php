@@ -31,6 +31,8 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 
+use mod_learninggoalwidget\local\taxonomy;
+use mod_learninggoalwidget\local\userTaxonomy;
 use externallib_advanced_testcase;
 use core_external\external_api;
 
@@ -55,70 +57,85 @@ final class update_user_progress_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\update_user_progress::execute_parameters
      */
     public function test_update_user_progress(): void {
-        $this->setUp();
-        $res = $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
+        $this->insert_two_goals($lgwid);
+
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $topic1 = $taxonomy->children[0];
 
         // Update learning goal 1 progess to 99.
         $result = update_user_progress::execute(
-            $res->instance->id,
-            $res->user->id,
-            $res->topic1->id,
-            $res->goal1->id,
+            $lgwid,
+            $userid,
+            $topic1->topicid,
+            $topic1->children[0]->goalid,
             99
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $this->check_userprogress(
-            "Artificial Intelligence Basics Part 1",
-            "AIBasics 1",
-            "http://aibasics1.at",
-            99,
-            $res->goal1->id,
-            $result
-        );
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
+
+        for ($i = 0; $i < 2; $i++) {
+            $topic = $taxonomy->children[$i];
+            $this->check_topic($topic, $i, $i + 1, 2, true);
+        }
+        $this->assertSame($taxonomy->children[0]->children[0], 99);
+        $this->assertSame($taxonomy->children[0]->children[1], 0);
+        $this->assertSame($taxonomy->children[1]->children[0], 0);
+        $this->assertSame($taxonomy->children[1]->children[1], 0);
+
+        $topic1 = $taxonomy->children[0];
 
         // Update learning goal 1 progess to 50.
         $result = update_user_progress::execute(
-            $res->instance->id,
-            $res->user->id,
-            $res->topic1->id,
-            $res->goal1->id,
+            $lgwid,
+            $userid,
+            $topic1->topicid,
+            $topic1->children[0]->goalid,
             50
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $this->check_userprogress(
-            "Artificial Intelligence Basics Part 1",
-            "AIBasics 1",
-            "http://aibasics1.at",
-            50,
-            $res->goal1->id,
-            $result
-        );
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
+
+        for ($i = 0; $i < 2; $i++) {
+            $topic = $taxonomy->children[$i];
+            $this->check_topic($topic, $i, $i + 1, 2, true);
+        }
+        $this->assertSame($taxonomy->children[0]->children[0], 50);
+        $this->assertSame($taxonomy->children[0]->children[1], 0);
+        $this->assertSame($taxonomy->children[1]->children[0], 0);
+        $this->assertSame($taxonomy->children[1]->children[1], 0);
+
+        $topic1 = $taxonomy->children[0];
 
         // Update learning goal 2 progess to 100.
         $result = update_user_progress::execute(
-            $res->instance->id,
-            $res->user->id,
-            $res->topic1->id,
-            $res->goal2->id,
+            $lgwid,
+            $userid,
+            $topic1->topicid,
+            $topic1->children[1]->goalid,
             100
         );
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $this->check_userprogress(
-            "Artificial Intelligence Basics Part 1",
-            "AIBasics 1",
-            "http://aibasics1.at",
-            100,
-            $res->goal2->id,
-            $result
-        );
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
+
+        for ($i = 0; $i < 2; $i++) {
+            $topic = $taxonomy->children[$i];
+            $this->check_topic($topic, $i, $i + 1, 2, true);
+        }
+        $this->assertSame($taxonomy->children[0]->children[0], 50);
+        $this->assertSame($taxonomy->children[0]->children[1], 100);
+        $this->assertSame($taxonomy->children[1]->children[0], 0);
+        $this->assertSame($taxonomy->children[1]->children[1], 0);
     }
 }

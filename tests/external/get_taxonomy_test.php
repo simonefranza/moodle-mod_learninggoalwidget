@@ -55,18 +55,17 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\get_taxonomy::execute_parameters
      */
     public function test_get_taxonomy(): void {
-        $this->setUp();
-        $res = $this->setup_course_with_topics(
-            "Artificial Intelligence Basics Part 1",
-            "AIBasics 1",
-            "http://aibasics1.at",
-            "Artificial Intelligence Basics Part 2",
-            "AIBasics 2",
-            "http://aibasics2.at"
-        );
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+
+        $taxonomy = new \stdClass;
+        $taxonomy->name = 'name';
+        $taxonomy->children = $this->create_taxonomy(5, 5);
+
+        taxonomy::update_taxonomy($lgwid, $taxonomy);
 
         // Get taxonomy.
-        $result = get_taxonomy::execute($res->instance->id);
+        $result = get_taxonomy::execute($lgwid);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(get_taxonomy::execute_returns(), $result);
@@ -75,26 +74,8 @@ final class get_taxonomy_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result);
         $parsed = json_decode($result);
 
-        $expectedjson = new \stdClass();
-        $expectedjson->name = "name";
-
-        $topic1 = new \stdClass();
-        $topic1->topicid = $res->topic1->id;
-        $topic1->name = "Artificial Intelligence Basics Part 1";
-        $topic1->shortname = "AIBasics 1";
-        $topic1->url = "http://aibasics1.at";
-        $topic1->ranking = 1;
-        $topic1->children = [];
-
-        $topic2 = new \stdClass();
-        $topic2->topicid = $res->topic2->id;
-        $topic2->name = "Artificial Intelligence Basics Part 2";
-        $topic2->shortname = "AIBasics 2";
-        $topic2->url = "http://aibasics2.at";
-        $topic2->ranking = 2;
-        $topic2->children = [];
-        $expectedjson->children = [$topic1, $topic2];
-
-        $this->check_json($parsed, $expectedjson);
+        for ($i = 0; $i <= 5; $i++) {
+            $this->check_topic($parsed->children[$i], $i, $i + 1, 5, true);
+        }
     }
 }

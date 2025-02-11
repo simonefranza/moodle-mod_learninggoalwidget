@@ -38,7 +38,7 @@ class restore_learninggoalwidget_activity_task extends restore_activity_task {
      * Define (add) particular settings this activity can have.
      */
     protected function define_my_settings() {
-        // No particular settings for this activity
+        // No particular settings for this activity.
     }
 
     /**
@@ -57,10 +57,10 @@ class restore_learninggoalwidget_activity_task extends restore_activity_task {
      *
      * @return array
      */
-    static public function define_decode_contents() {
-        $contents = array();
+    public static function define_decode_contents() {
+        $contents = [];
 
-        $contents[] = new restore_decode_content('learninggoalwidget', array('intro'), 'learninggoalwidget');
+        $contents[] = new restore_decode_content('learninggoalwidget', ['intro'], 'learninggoalwidget');
 
         return $contents;
     }
@@ -71,8 +71,8 @@ class restore_learninggoalwidget_activity_task extends restore_activity_task {
      *
      * @return array
      */
-    static public function define_decode_rules() {
-        $rules = array();
+    public static function define_decode_rules() {
+        $rules = [];
 
         $rules[] = new restore_decode_rule('LEARNINGGOALWIDGETVIEWBYID', '/mod/learninggoalwidget/view.php?id=$1', 'course_module');
         $rules[] = new restore_decode_rule('LEARNINGGOALWIDGETINDEX', '/mod/learninggoalwidget/index.php?id=$1', 'course');
@@ -82,33 +82,30 @@ class restore_learninggoalwidget_activity_task extends restore_activity_task {
     }
 
     /**
-     * Define the restore log rules that will be applied
-     * by the {@link restore_logs_processor} when restoring
-     * learninggoalwidget logs. It must return one array
-     * of {@link restore_log_rule} objects
+     * Define the restore log rules
      *
      * @return array
      */
-    static public function define_restore_log_rules() {
-        $rules = array();
+    public static function define_restore_log_rules() {
+        $rules = [];
 
-        $rules[] = new restore_log_rule('learninggoalwidget', 'learninggoal_updated', 'view.php?id={course_module}', '{learninggoalwidget}');
+        $rules[] = new restore_log_rule(
+            'learninggoalwidget',
+            'learninggoal_updated',
+            'view.php?id={course_module}',
+            '{learninggoalwidget}'
+        );
 
         return $rules;
     }
 
     /**
-     * Define the restore log rules that will be applied
-     * by the {@link restore_logs_processor} when restoring
-     * course logs. It must return one array
-     * of {@link restore_log_rule} objects
+     * Define the restore log rules for course
      *
-     * Note this rules are applied when restoring course logs
-     * by the restore final task, but are defined here at
-     * activity level. All them are rules not linked to any module instance (cmid = 0)
+     * @return array
      */
-    static public function define_restore_log_rules_for_course() {
-        $rules = array();
+    public static function define_restore_log_rules_for_course() {
+        $rules = [];
 
         $rules[] = new restore_log_rule('learninggoalwidget', 'view all', 'index.php?id={course}', null);
 

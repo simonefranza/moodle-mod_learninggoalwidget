@@ -55,34 +55,23 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
      * @covers \mod_learninggoalwidget\external\get_taxonomy_for_user::execute_parameters
      */
     public function test_get_taxonomy_for_user(): void {
-        $this->setUp();
-
-        $res = $this->setup_course_and_insert_two_goals();
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $red->user->id;
+        $this->insert_two_goals($lgwid);
 
         // Get taxonomy with user progress values.
-        $result = get_taxonomy_for_user::execute(
-            $res->instance->id,
-            $res->user->id,
-        );
+        $result = get_taxonomy_for_user::execute($lgwid, $userid);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(get_taxonomy_for_user::execute_returns(), $result);
 
-        $this->check_userprogress(
-            "Artificial Intelligence Basics Part 1",
-            "AIBasics 1",
-            "http://aibasics1.at",
-            0,
-            $res->goal1->id,
-            $result
-        );
-        $this->check_userprogress(
-            "Artificial Intelligence Basics Part 1",
-            "AIBasics 1",
-            "http://aibasics1.at",
-            0,
-            $res->goal2->id,
-            $result
-        );
+        for ($i = 0; $i < 2; $i++) {
+            $this->check_topic($taxonomy->children[$i], $i, $i + 1, 2, true);
+        }
+        $this->assertSame($taxonomy->children[0]->children[0], 0);
+        $this->assertSame($taxonomy->children[0]->children[1], 0);
+        $this->assertSame($taxonomy->children[1]->children[0], 0);
+        $this->assertSame($taxonomy->children[1]->children[1], 0);
     }
 }

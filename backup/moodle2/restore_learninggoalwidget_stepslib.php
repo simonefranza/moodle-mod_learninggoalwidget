@@ -38,7 +38,7 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
      */
     protected function define_structure() {
 
-        $paths = array();
+        $paths = [];
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('learninggoalwidget', '/activity/learninggoalwidget');
@@ -70,9 +70,9 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
 
-        // insert the learninggoalwidget record
+        // Insert the learninggoalwidget record.
         $newitemid = $DB->insert_record('learninggoalwidget', $data);
-        // immediately after inserting "activity" record, call this
+        // Immediately after inserting "activity" record, call this.
         $this->apply_activity_instance($newitemid);
     }
 
@@ -132,6 +132,9 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
         // No need to save this mapping as far as nothing depend on it.
     }
 
+    /**
+     * Function to execute after restore is complete
+     */
     protected function after_execute() {
         // No related files.
     }
