@@ -57,7 +57,7 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
     public function test_get_taxonomy_for_user(): void {
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
 
         // Get taxonomy with user progress values.

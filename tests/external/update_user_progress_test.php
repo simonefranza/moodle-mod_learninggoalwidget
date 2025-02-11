@@ -59,7 +59,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
     public function test_update_user_progress(): void {
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
 
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));

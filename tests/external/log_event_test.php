@@ -58,7 +58,7 @@ final class log_event_test extends externallib_advanced_testcase {
         global $DB;
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->preventResetByRollback();
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
         set_config('buffersize', 0, 'logstore_standard');

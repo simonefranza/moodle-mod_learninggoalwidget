@@ -97,7 +97,7 @@ final class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
@@ -132,7 +132,7 @@ final class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
@@ -193,7 +193,7 @@ final class provider_test extends provider_testcase {
         // Reset all changes automatically after this test.
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
@@ -237,7 +237,7 @@ final class provider_test extends provider_testcase {
 
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
@@ -273,7 +273,7 @@ final class provider_test extends provider_testcase {
 
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
@@ -311,7 +311,7 @@ final class provider_test extends provider_testcase {
 
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $red->user->id;
+        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
