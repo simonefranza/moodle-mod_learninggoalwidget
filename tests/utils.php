@@ -61,7 +61,7 @@ trait utils {
         $return = new \stdClass;
         $return->course = $this->getDataGenerator()->create_course();
         $return->user = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($return->user->id, $return->course->id, 'editing_teacher');
+        $this->getDataGenerator()->enrol_user($return->user->id, $return->course->id, 'editingteacher');
         $this->setUser($return->user);
         $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $return->course->id]);
 
