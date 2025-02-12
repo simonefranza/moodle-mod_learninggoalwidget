@@ -275,6 +275,7 @@ final class taxonomy_test extends \advanced_testcase {
      * @return void
      *
      * @covers \mod_learninggoalwidget\local\taxonomy::update_taxonomy
+     * @covers \mod_learninggoalwidget\local\taxonomy::maanage_taxonomy
      * @covers \mod_learninggoalwidget\local\taxonomy::update_topic_goals
      * @covers \mod_learninggoalwidget\local\taxonomy::get_taxonomy_as_json
      * @covers \mod_learninggoalwidget\local\taxonomy::get_topics

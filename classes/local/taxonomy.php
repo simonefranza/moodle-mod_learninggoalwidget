@@ -199,6 +199,17 @@ class taxonomy {
         $cm = get_coursemodule_from_instance('learninggoalwidget', $lgwid, 0, false, MUST_EXIST);
         require_capability('mod/learninggoalwidget:addinstance', \context_module::instance($cm->id));
 
+        self::manage_taxonomy($lgwid, $taxonomy);
+    }
+    /**
+     * Manages the taxonomy in the DB given an ID and a new taxonomy
+     * without capability check because used by "add_instance"
+     *
+     * @param number $lgwid Instance id to update
+     * @param stdClass $taxonomy New taxonomy
+     */
+    public static function manage_taxonomy($lgwid, &$taxonomy) {
+        // Capability check.
         self::validate_taxonomy($taxonomy);
 
         // Add all topics and goals to db.

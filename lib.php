@@ -66,7 +66,7 @@ function learninggoalwidget_add_instance(stdClass $data): int {
     $data->id = $DB->insert_record('learninggoalwidget', $data);
     $taxonomy = json_decode($data->taxonomy);
 
-    taxonomy::update_taxonomy($data->id, $taxonomy);
+    taxonomy::manage_taxonomy($data->id, $taxonomy);
 
     return $data->id;
 }
