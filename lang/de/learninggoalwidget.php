@@ -27,6 +27,7 @@ $string['examview'] = 'Mein Lernfortschritt';
 $string['guestaccess'] = 'Dafür müssen sie angemeldet sein';
 
 $string['learninggoalwidget:addinstance'] = 'Lernziele Widget hinzufügen';
+$string['learninggoalwidget:updateprogress'] = 'Lernzielfortschritt aktualisieren';
 $string['learninggoalwidget:view'] = 'Lernziele Widget anzeigen';
 $string['learninggoalwidgettext'] = 'Lernziele Widget Text';
 $string['modulename'] = 'Lernziele Widget';

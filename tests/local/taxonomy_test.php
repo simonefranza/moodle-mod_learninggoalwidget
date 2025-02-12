@@ -98,7 +98,9 @@ final class taxonomy_test extends \advanced_testcase {
      * @covers \mod_learninggoalwidget\local\taxonomy::get_topics
      */
     public function test_get_taxonomy_as_json(): void {
-        $this->assertSame(taxonomy::get_taxonomy_as_json(-1), "{}");
+        $this->assertSame(taxonomy::get_taxonomy_as_json(null), "{}");
+        $this->expectException(dml_missing_record_exception::class);
+        taxonomy::get_taxonomy_as_json(-1);
 
         // Create instance.
         $res = $this->setup_widget();
@@ -284,6 +286,13 @@ final class taxonomy_test extends \advanced_testcase {
         $taxonomy = new \stdClass;
         $taxonomy->name = 'name';
         $taxonomy->children = $this->create_taxonomy(1, 0);
+
+        // Check that students cannot update taxonomy
+        $student = $this->create_user('student', $res->course->id, true);
+        $this->expectException(required_capability_exception::class);
+        taxonomy::update_taxonomy($lgwid, $taxonomy);
+
+        $this->setUser($res->user);
 
         // Add + delete = no changes.
         $taxonomy->children[0]->deleted = true;

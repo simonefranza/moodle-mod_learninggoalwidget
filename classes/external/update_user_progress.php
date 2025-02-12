@@ -47,7 +47,6 @@ class update_user_progress extends \core_external\external_api {
         return new external_function_parameters(
             [
                 'instanceid' => new external_value(PARAM_INT, 'ID of the course module instance'),
-                'userid' => new external_value(PARAM_INT, 'ID of the user'),
                 'topicid' => new external_value(PARAM_INT, 'ID of the topic'),
                 'goalid' => new external_value(PARAM_INT, 'ID of the goal'),
                 'progress' => new external_value(PARAM_INT, 'Progress value for the learning goal'),
@@ -67,27 +66,30 @@ class update_user_progress extends \core_external\external_api {
      * Updates the progress of a learning goal for the chosen user
      *
      * @param number $instanceid
-     * @param number $userid
      * @param number $topicid
      * @param number $goalid
      * @param number $progress
      * @return [string] taxonomy
      */
-    public static function execute($instanceid, $userid, $topicid, $goalid, $progress) {
+    public static function execute($instanceid, $topicid, $goalid, $progress) {
         global $USER, $DB;
 
         self::validate_parameters(
             self::execute_parameters(),
             [
                 'instanceid' => $instanceid,
-                'userid' => $userid,
                 'topicid' => $topicid,
                 'goalid' => $goalid,
                 'progress' => $progress,
             ]
         );
 
-        self::validate_context(\context_user::instance($USER->id));
+        // Capability check.
+        $userid = $USER->id;
+        $cm = get_coursemodule_from_instance('learninggoalwidget', $instanceid, 0, false, MUST_EXIST);
+        $context = \context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/learninggoalwidget:updateprogress', $context);
 
         $params = [
             'learninggoalwidgetid' => $instanceid,

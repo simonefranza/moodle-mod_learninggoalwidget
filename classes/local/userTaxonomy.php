@@ -41,22 +41,29 @@ class userTaxonomy {
      * return json represenation of the taxonomy
      *
      * @param int $lgwid id of the instance
-     * @param int $userid id of the user
      * @return string
      */
-    public static function get_taxonomy_as_json($lgwid, $userid): string {
-        global $DB;
+    public static function get_taxonomy_as_json($lgwid): string {
+        global $DB, $USER;
+
         if ($lgwid === null) {
             return "{}";
         }
+
+        // Capability check.
+        $userid = $USER->id;
+        $cm = get_coursemodule_from_instance('learninggoalwidget', $lgwid, 0, false, MUST_EXIST);
+        $context = \context_module::instance($cm->id);
+        require_capability('mod/learninggoalwidget:view', $context);
+
+        $isstudent = has_capability('mod/learninggoalwidget:updateprogress', $context);
+
         $instance = $DB->get_record('learninggoalwidget', ['id' => $lgwid]);
-        if (!$instance) {
-            return "{}";
-        }
 
         $usertaxonomy = new stdClass;
         $usertaxonomy->name = $instance->name;
-        $usertaxonomy->children = self::get_topics($lgwid, $userid);
+        $usertaxonomy->student = $isstudent;
+        $usertaxonomy->children = self::get_topics($lgwid, $userid, $isstudent);
         return json_encode($usertaxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     }
 
@@ -65,9 +72,10 @@ class userTaxonomy {
      *
      * @param int $lgwid id of the instance
      * @param int $userid id of the user
+     * @param bool $isstudent Whether the user is a student or not
      * @return array array of topic's, each an array itself [ranking, id, title, shortname, url, goals]
      */
-    private static function get_topics($lgwid, $userid) {
+    private static function get_topics($lgwid, $userid, $isstudent) {
         $topics = [];
         global $DB;
         // CONCAT to create unique column.
@@ -121,7 +129,9 @@ class userTaxonomy {
             $goal->url = $topicrecord->gurl;
             $goal->ranking = $topicrecord->granking;
             $goal->type = "goal";
-            $goal->pro = $topicrecord->progress ?? 0;
+            if ($isstudent) {
+                $goal->pro = $topicrecord->progress ?? 0;
+            }
             $topic->children[] = $goal;
         }
         return $topics;

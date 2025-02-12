@@ -55,6 +55,7 @@ final class topic {
 
     /**
      * Updates or inserts a topic into learninggoalwidget_topics
+     * NOTE: Only call from taxonomy class. There are no capability checks in here
      *
      * @param int $lgwid ID of the LGW instance
      * @param stdClass $topic Topic to insert into the DB
@@ -106,6 +107,7 @@ final class topic {
 
     /**
      * Deletes a topic and all the goals and progress from the DB
+     * NOTE: Only call from taxonomy class. There are no capability checks in here
      *
      * @param number $lgwid ID of the LGW instance
      * @param number $topicid ID of the topic to delete

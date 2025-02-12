@@ -26,12 +26,14 @@ define(
     "jquery",
     "mod_learninggoalwidget/controller",
     "mod_learninggoalwidget/treemap_module",
-    "core/config"
+    "core/config",
+    "core/notification",
   ], function(
     $,
     Controller,
     Treemap,
-    Configuration
+    Configuration,
+    Notification,
   ) {
 
   /**
@@ -59,10 +61,7 @@ define(
         return;
       }
       )
-      .catch(() => {
-        // Do nothing
-      });
-
+      .catch(Notification.exception);
   };
 
   /**
@@ -77,13 +76,9 @@ define(
       Treemap.setupTreemap(taxonomy, d3, treemapId, treemapaccessibilitytext, showConfirmation, (map, obj, progress) => {
         saveProgress(
           getTreemapId(map),
-          getCourseId(map),
-          getCourseModuleId(map),
           getInstanceId(map),
-          getUserId(map),
           obj.parent.data.topicid,
           obj.data.goalid,
-          obj.data.name,
           progress);
       });
       Treemap.setupSvg();
@@ -93,22 +88,16 @@ define(
   /**
    * Update the users progress.
    * @param {*} treemapId The treemap ID
-   * @param {*} courseid The course ID
-   * @param {*} coursemoduleid The course module ID
    * @param {*} instanceid The course module instance ID
-   * @param {*} userid The user ID
    * @param {*} topicId The topic ID
    * @param {*} goalId The goal ID
-   * @param {*} goalName The name of the goal
    * @param {*} goalProgressValue The user progress
    */
-  const saveProgress = (treemapId, courseid, coursemoduleid, instanceid, userid, topicId,
-    goalId, goalName, goalProgressValue) => {
+  const saveProgress = (treemapId, instanceid, topicId, goalId, goalProgressValue) => {
     // Learninggoals webservice: save the learning goal progress for a learning goal
     Controller.updateUserProgress(
       {
         instanceid: instanceid,
-        userid: userid,
         topicid: topicId,
         goalid: goalId,
         progress: goalProgressValue
@@ -132,9 +121,7 @@ define(
         return;
       }
       )
-      .catch(() => {
-        // Do nothing
-      });
+      .catch(Notification.exception);
   };
 
   /**
@@ -150,41 +137,11 @@ define(
   /**
    *
    * @param {*} element The learning goal widget element
-   * @returns {number} The course ID
-   */
-  const getCourseId = (element) => {
-    const learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
-    return $(learningGoalWidgetElement).data("course-id");
-  };
-
-  /**
-   *
-   * @param {*} element The learning goal widget element
-   * @returns {number} The course module ID
-   */
-  const getCourseModuleId = (element) => {
-    const learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
-    return $(learningGoalWidgetElement).data("coursemodule-id");
-  };
-
-  /**
-   *
-   * @param {*} element The learning goal widget element
    * @returns {number} The course module instance ID
    */
   const getInstanceId = (element) => {
     const learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
     return $(learningGoalWidgetElement).data("instance-id");
-  };
-
-  /**
-   *
-   * @param {*} element The learning goal widget element
-   * @returns {number} The user ID
-   */
-  const getUserId = (element) => {
-    let learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
-    return $(learningGoalWidgetElement).data("user-id");
   };
 
   return {

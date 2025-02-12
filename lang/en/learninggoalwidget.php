@@ -28,6 +28,7 @@ $string['examview'] = 'Progress view';
 $string['guestaccess'] = 'You need to login first';
 
 $string['learninggoalwidget:addinstance'] = 'Add a new Learning Goal Widget';
+$string['learninggoalwidget:updateprogress'] = 'Update the progress of a learning goal';
 $string['learninggoalwidget:view'] = 'View Learning Goal Widget';
 $string['learninggoalwidgettext'] = 'Learning Goal Widget text';
 $string['modulename'] = 'Learning Goal Widget';

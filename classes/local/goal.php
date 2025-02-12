@@ -51,6 +51,7 @@ final class goal {
 
     /**
      * Updates or inserts a goal into learninggoalwidget_goals
+     * NOTE: Only call from taxonomy class. There are no capability checks in here
      *
      * @param int $lgwid ID of the LGW instance
      * @param int $topicid ID of the parent topic
@@ -106,6 +107,7 @@ final class goal {
 
     /**
      * Deletes a goal and all the progresses from the DB
+     * NOTE: Only call from taxonomy class. There are no capability checks in here
      *
      * @param number $lgwid ID of the LGW instance
      * @param number $topicid ID of the topic to delete

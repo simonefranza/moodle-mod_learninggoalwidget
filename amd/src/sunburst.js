@@ -52,6 +52,7 @@ define(
     ) {
 
     var progressModalsDict = {};
+    let taxonomy = null;
 
     var TEMPLATES = {
         EDIT_PROGRESS_VALUES: "mod_learninggoalwidget/widget/sunburst-edit-progress-view"
@@ -78,26 +79,30 @@ define(
             .then((jsonLearningGoals) => {
 
                     var loadedTaxonomy = JSON.parse(jsonLearningGoals);
+                    taxonomy = loadedTaxonomy;
                     if (loadedTaxonomy.children.length > 0) {
                         renderSunburstView(loadedTaxonomy, sunburstId);
-                        renderSunburstWithProgressView(loadedTaxonomy, sunburstId, progresslegendlabel);
                         renderTextualBulletPointList(loadedTaxonomy, sunburstId);
+                    }
+                    const progressButton = document.getElementById(sunburstId + "-ClickedPreparation");
+                    if (loadedTaxonomy.student) {
+                        renderSunburstWithProgressView(loadedTaxonomy, sunburstId, progresslegendlabel);
+                        progressButton.onclick = function() {
+                            changeView("Preparation", getSunburstId(this));
+                        };
+                    } else {
+                        progressButton.remove();
                     }
                     return 0;
                 }
             )
-            .catch(function() {
-                // Do nothing
-            });
+            .catch(Notification.exception);
 
         // Adding functionality to the elements
         document.getElementById(sunburstId + "-ClickedOverview").onclick = function() {
             changeView("Overview", getSunburstId(this));
         };
 
-        document.getElementById(sunburstId + "-ClickedPreparation").onclick = function() {
-            changeView("Preparation", getSunburstId(this));
-        };
 
         // Setting the visualisation container to fit nicely ;)
         document.querySelector("div[data-region='" + sunburstId + "-content-view']").parentElement.style.position = "relative";
@@ -839,12 +844,8 @@ define(
                 .on(
                     "click", function(e, d) {
                         if (!d.children) {
-                            var courseid = getCourseId(this);
-                            var coursemoduleid = getCourseModuleId(this);
                             var instanceid = getInstanceId(this);
                             var sunburstId = getSunburstId(this);
-                            var userid = getUserId(this);
-                            var goalName = d.data.name;
                             var goalId = d.data.goalid;
                             var goalProgressValue = 0;
                             var topicId = d.parent.data.topicid;
@@ -872,8 +873,7 @@ define(
                                             ModalEvents.save, function(e) {
                                                 e.preventDefault();
                                                 goalProgressValue = document.getElementById("progressvalue-" + modalId).value;
-                                                saveProgress(sunburstId, courseid, coursemoduleid, instanceid,
-                                                    userid, topicId, goalId, goalName, goalProgressValue);
+                                                saveProgress(sunburstId, instanceid, topicId, goalId, goalProgressValue);
                                                 modal.hide();
                                             }
                                         );
@@ -1213,6 +1213,9 @@ define(
      * @returns {string} The color hex code
      */
     var getColor = function(value) {
+        if (!taxonomy.student) {
+            return "#e5e5e5";
+        }
         switch (true) {
             case value <= 0:
                 return "#e5e5e5";
@@ -1260,24 +1263,16 @@ define(
     /**
      * Update the users progress.
      * @param {*} sunburstId The sunburst instance ID
-     * @param {*} courseid The course ID
-     * @param {*} coursemoduleid The course module ID
      * @param {*} instanceid The course module instance ID
-     * @param {*} userid The user ID
      * @param {*} topicId The topic ID
      * @param {*} goalId The goal ID
-     * @param {*} goalName The name of the goal
      * @param {*} goalProgressValue The user progress
      */
-    var saveProgress = function(sunburstId,
-        courseid, coursemoduleid, instanceid, userid, topicId,
-        goalId,
-        goalName, goalProgressValue) {
+    var saveProgress = function(sunburstId, instanceid, topicId, goalId, goalProgressValue) {
         // Learninggoals webservice: save the learning goal progress for a learning goal
         Controller.updateUserProgress(
             {
                 instanceid: instanceid,
-                userid: userid,
                 topicid: topicId,
                 goalid: goalId,
                 progress: goalProgressValue
@@ -1332,41 +1327,11 @@ define(
     /**
      *
      * @param {*} element The learning goal widget element
-     * @returns {number} The course ID
-     */
-    var getCourseId = function(element) {
-        var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
-        return $(learningGoalWidgetElement).data("course-id");
-    };
-
-    /**
-     *
-     * @param {*} element The learning goal widget element
-     * @returns {number} The course module ID
-     */
-    var getCourseModuleId = function(element) {
-        var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
-        return $(learningGoalWidgetElement).data("coursemodule-id");
-    };
-
-    /**
-     *
-     * @param {*} element The learning goal widget element
      * @returns {number} The course module instance ID
      */
     var getInstanceId = function(element) {
         var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
         return $(learningGoalWidgetElement).data("instance-id");
-    };
-
-    /**
-     *
-     * @param {*} element The learning goal widget element
-     * @returns {number} The user id
-     */
-    var getUserId = function(element) {
-        var learningGoalWidgetElement = $(element).closest('div.learninggoalwidget');
-        return $(learningGoalWidgetElement).data("user-id");
     };
 
     return {

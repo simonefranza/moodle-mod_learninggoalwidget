@@ -104,6 +104,7 @@ final class provider_test extends provider_testcase {
         $topic = $taxonomy->children[0];
         $goal = $topic->children[0];
 
+        $student = $this->create_user('student', $res->course->id, true);
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext = \context_module::instance($coursemodule->id);
 
@@ -114,13 +115,12 @@ final class provider_test extends provider_testcase {
 
         update_user_progress::execute(
             $lgwid,
-            $userid,
             $topic->topicid,
             $goal->goalid,
             50,
         );
 
-        $contextlist = provider::get_contexts_for_userid($res->user->id);
+        $contextlist = provider::get_contexts_for_userid($student->id);
         $this->assertEquals(count($usercontextids), count($contextlist->get_contextids()));
     }
 
@@ -141,22 +141,15 @@ final class provider_test extends provider_testcase {
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext = \context_module::instance($coursemodule->id);
 
-        $user1 = $res->user;
-        $user2 = $this->getDataGenerator()->create_user();
-        $user3 = $this->getDataGenerator()->create_user();
-        $user4 = $this->getDataGenerator()->create_user();
-        $user5 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
+        $user1 = $this->create_user('student', $res->course->id, true);
+        $user2 = $this->create_user('student', $res->course->id, false);
+        $user3 = $this->create_user('student', $res->course->id, false);
+        $user4 = $this->create_user('student', $res->course->id, false);
+        $user5 = $this->create_user('editingteacher', $res->course->id, false);
 
-        $this->getDataGenerator()->enrol_user($user1->id, $coursemodule->course, 'student');
-        $this->getDataGenerator()->enrol_user($user2->id, $coursemodule->course, 'student');
-        $this->getDataGenerator()->enrol_user($user3->id, $coursemodule->course, 'student');
-        $this->getDataGenerator()->enrol_user($user4->id, $coursemodule->course, 'student');
-        $this->getDataGenerator()->enrol_user($user5->id, $coursemodule->course, 'editingteacher');
-
+        // User1 is active.
         update_user_progress::execute(
             $lgwid,
-            $user1->id,
             $topic->topicid,
             $goal->goalid,
             60,
@@ -203,9 +196,9 @@ final class provider_test extends provider_testcase {
         $coursecontext = \context_course::instance($coursemodule->course);
         $cmcontext = \context_module::instance($coursemodule->id);
 
+        $student = $this->create_user('student', $res->course->id, true);
         update_user_progress::execute(
             $lgwid,
-            $userid,
             $topic->topicid,
             $goal->goalid,
             50,
@@ -215,7 +208,7 @@ final class provider_test extends provider_testcase {
         $this->assertFalse($writer->has_any_data());
 
         // Add the course context as well to make sure there is no error.
-        $approvedlist = new approved_contextlist($res->user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
+        $approvedlist = new approved_contextlist($student, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
         provider::export_user_data($approvedlist);
 
         // Check export details.
@@ -237,7 +230,6 @@ final class provider_test extends provider_testcase {
 
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
@@ -247,9 +239,9 @@ final class provider_test extends provider_testcase {
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext = \context_module::instance($coursemodule->id);
 
+        $student = $this->create_user('student', $res->course->id, true);
         update_user_progress::execute(
             $lgwid,
-            $userid,
             $topic->topicid,
             $goal->goalid,
             50,
@@ -273,7 +265,6 @@ final class provider_test extends provider_testcase {
 
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic = $taxonomy->children[0];
@@ -284,20 +275,20 @@ final class provider_test extends provider_testcase {
         $cmcontext = \context_module::instance($coursemodule->id);
         $coursecontext = \context_course::instance($coursemodule->course);
 
+        $student = $this->create_user('student', $res->course->id, true);
         update_user_progress::execute(
             $lgwid,
-            $userid,
             $topic->topicid,
             $goal->goalid,
             50,
         );
 
         // Delete user 1's data.
-        $approvedlist = new approved_contextlist($res->user, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
+        $approvedlist = new approved_contextlist($student, 'learninggoalwidget', [$cmcontext->id, $coursecontext->id]);
         provider::delete_data_for_user($approvedlist);
 
         // Check all relevant tables.
-        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $userid]);
+        $records = $DB->get_records('learninggoalwidget_progs', ['userid' => $student->id]);
         $this->assertEmpty($records);
     }
 
@@ -320,31 +311,27 @@ final class provider_test extends provider_testcase {
         $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $lgwid);
         $cmcontext1 = \context_module::instance($coursemodule->id);
 
-        $user1 = $res->user;
-        $user2 = $this->getDataGenerator()->create_user();
-        $user3 = $this->getDataGenerator()->create_user();
+        $user1 = $this->create_user('student', $res->course->id, true);
+        $user2 = $this->create_user('student', $res->course->id, false);
+        $user3 = $this->create_user('student', $res->course->id, false);
 
-        $this->getDataGenerator()->enrol_user($user1->id, $coursemodule->course, 'student');
-        $this->getDataGenerator()->enrol_user($user2->id, $coursemodule->course, 'student');
-        $this->getDataGenerator()->enrol_user($user3->id, $coursemodule->course, 'student');
-
+        $this->setUser($user1);
         update_user_progress::execute(
             $lgwid,
-            $user1->id,
             $topic->topicid,
             $goal->goalid,
             50,
         );
+        $this->setUser($user2);
         update_user_progress::execute(
             $lgwid,
-            $user2->id,
             $topic->topicid,
             $goal->goalid,
             60,
         );
+        $this->setUser($user3);
         update_user_progress::execute(
             $lgwid,
-            $user3->id,
             $topic->topicid,
             $goal->goalid,
             80,

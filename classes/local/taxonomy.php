@@ -45,11 +45,18 @@ class taxonomy {
      * @return string
      */
     public static function get_taxonomy_as_json($lgwid): string {
-        global $DB;
-        $instance = $DB->get_record('learninggoalwidget', ['id' => $lgwid]);
-        if (!$instance) {
+        global $DB, $USER;
+        if ($lgwid === null) {
             return "{}";
         }
+
+        // Capability check.
+        $cm = get_coursemodule_from_instance('learninggoalwidget', $lgwid, 0, false, MUST_EXIST);
+        $context = \context_module::instance($cm->id);
+        require_capability('mod/learninggoalwidget:view', $context);
+
+        $instance = $DB->get_record('learninggoalwidget', ['id' => $lgwid]);
+
         $taxonomy = new stdClass;
         $taxonomy->name = $instance->name;
         $taxonomy->children = self::get_topics($lgwid);
@@ -187,6 +194,11 @@ class taxonomy {
      * @param stdClass $taxonomy New taxonomy
      */
     public static function update_taxonomy($lgwid, &$taxonomy) {
+        // Capability check.
+        global $USER;
+        $cm = get_coursemodule_from_instance('learninggoalwidget', $lgwid, 0, false, MUST_EXIST);
+        require_capability('mod/learninggoalwidget:addinstance', \context_module::instance($cm->id));
+
         self::validate_taxonomy($taxonomy);
 
         // Add all topics and goals to db.

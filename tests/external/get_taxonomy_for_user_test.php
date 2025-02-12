@@ -58,13 +58,28 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
     public function test_get_taxonomy_for_user(): void {
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
+        $teacher = $res->user;
+
         $this->insert_two_goals($lgwid);
 
-        // Get taxonomy with user progress values.
+        // Teacher doesn't get progress.
         $result = get_taxonomy_for_user::execute($lgwid);
-
-        // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(get_taxonomy_for_user::execute_returns(), $result);
+
+        $taxonomy = json_decode($result);
+
+        for ($i = 0; $i < 2; $i++) {
+            $this->check_topic($taxonomy->children[$i], $i, $i + 1, 2, true);
+        }
+        $this->assertFalse(isset($taxonomy->children[0]->children[0]->pro));
+        $this->assertFalse(isset($taxonomy->children[0]->children[1]->pro));
+        $this->assertFalse($taxonomy->student);
+
+        // Students do get progress.
+        $student = $this->create_user('student', $res->course->id, true);
+        $result = get_taxonomy_for_user::execute($lgwid);
+        $result = external_api::clean_returnvalue(get_taxonomy_for_user::execute_returns(), $result);
+
         $taxonomy = json_decode($result);
 
         for ($i = 0; $i < 2; $i++) {
@@ -74,5 +89,6 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
         $this->assertSame($taxonomy->children[0]->children[1]->pro, 0);
         $this->assertSame($taxonomy->children[1]->children[0]->pro, 0);
         $this->assertSame($taxonomy->children[1]->children[1]->pro, 0);
+        $this->assertTrue($taxonomy->student);
     }
 }

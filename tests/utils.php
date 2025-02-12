@@ -60,11 +60,30 @@ trait utils {
 
         $return = new \stdClass;
         $return->course = $this->getDataGenerator()->create_course();
-        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $return->course->id]);
         $return->user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($return->user->id, $return->course->id, 'editing_teacher');
         $this->setUser($return->user);
+        $return->instance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $return->course->id]);
 
         return $return;
+    }
+
+    /**
+     * helper function to create a user with the desired role
+     *
+     * @param string $role of the user to be created
+     * @param number $courseid id of the course where the user should be enrolled
+     * @param bool $activate whether the user should be set as current user
+     * @return \stdClass
+     */
+    protected function create_user($role, $courseid, $activate) {
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $courseid, $role);
+        if ($activate) {
+            $this->setUser($return->user);
+        }
+
+        return $user;
     }
 
     /**

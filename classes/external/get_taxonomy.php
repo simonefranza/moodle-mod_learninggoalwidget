@@ -47,7 +47,7 @@ class get_taxonomy extends \core_external\external_api {
     public static function execute_parameters() {
         return new external_function_parameters(
             [
-                'instance' => new external_value(PARAM_INT, 'ID of the instance'),
+                'instanceid' => new external_value(PARAM_INT, 'LGW instance id'),
             ]
         );
     }
@@ -63,16 +63,20 @@ class get_taxonomy extends \core_external\external_api {
     /**
      * Get the taxonomy
      *
-     * @param int $instance
+     * @param int $instanceid
      * @return string
      */
-    public static function execute($instance) {
-        self::validate_parameters(
-            self::execute_parameters(),
-            [
-                'instance' => $instance,
-            ]
-        );
-        return taxonomy::get_taxonomy_as_json($instance);
+    public static function execute($instanceid) {
+        global $USER;
+
+        self::validate_parameters(self::execute_parameters(), ['instanceid' => $instanceid]);
+
+        // Capability check.
+        $cm = get_coursemodule_from_instance('learninggoalwidget', $instanceid, 0, false, MUST_EXIST);
+        $context = \context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/learninggoalwidget:view', $context);
+
+        return taxonomy::get_taxonomy_as_json($instanceid);
     }
 }

@@ -48,4 +48,12 @@ $capabilities = [
             'manager' => CAP_ALLOW,
         ],
     ],
+
+    'mod/learninggoalwidget:updateprogress' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => [
+            'student' => CAP_ALLOW,
+        ],
+    ],
 ];

@@ -65,10 +65,19 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic1 = $taxonomy->children[0];
 
-        // Update learning goal 1 progess to 99.
+        // Teacher cannot get data of user.
+        $this->expectException(required_capability_exception::class);
         $result = update_user_progress::execute(
             $lgwid,
-            $userid,
+            $topic1->topicid,
+            $topic1->children[0]->goalid,
+            99
+        );
+
+        // Update learning goal 1 progess to 99.
+        $student = $this->create_user('student', $res->course->id, true);
+        $result = update_user_progress::execute(
+            $lgwid,
             $topic1->topicid,
             $topic1->children[0]->goalid,
             99
@@ -77,7 +86,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
 
         for ($i = 0; $i < 2; $i++) {
             $topic = $taxonomy->children[$i];
@@ -93,7 +102,6 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         // Update learning goal 1 progess to 50.
         $result = update_user_progress::execute(
             $lgwid,
-            $userid,
             $topic1->topicid,
             $topic1->children[0]->goalid,
             50
@@ -102,7 +110,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
 
         for ($i = 0; $i < 2; $i++) {
             $topic = $taxonomy->children[$i];
@@ -118,7 +126,6 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         // Update learning goal 2 progess to 100.
         $result = update_user_progress::execute(
             $lgwid,
-            $userid,
             $topic1->topicid,
             $topic1->children[1]->goalid,
             100
@@ -127,7 +134,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid, $userid));
+        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
 
         for ($i = 0; $i < 2; $i++) {
             $topic = $taxonomy->children[$i];

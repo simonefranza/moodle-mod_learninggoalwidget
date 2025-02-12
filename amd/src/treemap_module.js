@@ -13,11 +13,14 @@ define(function(require, exports) {
   const ELLIPSIS_CODE = 8230;
   const U_ELLIPSIS = "&#" + ELLIPSIS_CODE.toString() + ";";
   const HIGHLIGHT_DURATION_SEC = 60;
+  const FONTSIZE_TO_CH = 0.58;
   let widgetTitle = '';
   let data = null;
   let treemapId = null;
   let treemapaccessibilitytext = null;
   let taxonomy = null;
+  let isStudent = false;
+  let visibilityString = null;
   let updateProgressCallback = null;
   let highlightedGoals = null;
   let confirmationBoxesActive = null;
@@ -409,29 +412,17 @@ ${root.children.length} topic${root.children.lenght > 1 ? 's' : ''} present.`);
       .attr('aria-live', "polite")
       .attr('aria-labelledby', (d, i) => `depth${d.depth}_idx${i}`);
 
-    let learningGoalTitle = rect.filter(d => d.depth === 2)
-      .append('title')
-      .attr('class', (d, i) => `depth${d.depth}_idx${i}`)
-      .text(d => `${d.data.name} - Progress ${parseInt(computeProgress(d) * 100)}%.
-${d.data.url ? 'External url is available, press control and enter to open it.' : ''}`);
+    let learningGoalTitle = createLearningGoalTitle(rect);
     let isEnteringValue = false;
     let newProgress = '';
     rect.filter(d => d.depth === 2).on('keydown', handleRectKeyDown);
 
     // Create learning goal progress bar
-    let learningGoalProgressBar = cell.filter(d => d.depth === 2)
-      .append("rect")
-      .attr("width", d => isSmallScreen ? 0 : rectWidth(d) * computeProgress(d))
-      .attr("height", d => rectHeight(d))
-      .attr('y', 0)
-      .attr("fill-opacity", 0.6)
-      .attr("fill", d => color(d.parent.data.name))
-      .on("click", depth2Child ? clicked : null);
+    let learningGoalProgressBar = createLearningGoalProgressBar(cell);
     const text = cell.append("text")
       .attr('aria-hidden', true)
       .attr("width", d => d.y1 - d.y0)
       .classed('text-element', true);
-
 
     text.filter(d => d.depth === 0)
       .classed('vertical-text', true);
@@ -482,20 +473,42 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       .classed('maintspan-d2', true)
       .call(truncateText, depth2Width * 0.95, true);
     // Create slider
-    let sliderG = cell.filter(d => d.depth === 2).append('g')
+    let sliderG = null;
+    let sliderRejectG = null;
+    let sliderRejectSvg = null;
+    let sliderRejectCircle = null;
+    let sliderRejectIcon = null;
+    let sliderAcceptG = null;
+    let sliderAcceptSvg = null;
+    let sliderAcceptCircle = null;
+    let sliderAcceptIcon = null;
+    let sliderSvg = null;
+
+    let sliderPath = null;
+    let sliderText = null;
+    let showSliderPercent = null;
+
+    let topicProgressG = null;
+    let topicProgressContainerBG = null;
+    let topicProgressContainer = null;
+    let topicProgressPie = null;
+    let topicProgressTextSvg = null;
+    let topicProgressText = null;
+    if (isStudent) {
+      sliderG = cell.filter(d => d.depth === 2).append('g')
       .classed('sliderG', true);
 
-    let sliderRejectG = sliderG.append('g').classed('circleReject', true);
-    let sliderRejectSvg = setupSliderSvg(sliderRejectG, 'reject', rejectChanges);
-    let sliderRejectCircle = setupSliderCircles(sliderRejectSvg);
-    let sliderRejectIcon = setupSliderCircleIcon(sliderRejectSvg, 'reject');
+      sliderRejectG = sliderG.append('g').classed('circleReject', true);
+      sliderRejectSvg = setupSliderSvg(sliderRejectG, 'reject', rejectChanges);
+      sliderRejectCircle = setupSliderCircles(sliderRejectSvg);
+      sliderRejectIcon = setupSliderCircleIcon(sliderRejectSvg, 'reject');
 
-    let sliderAcceptG = sliderG.append('g').attr('class', 'circleAccept');
-    let sliderAcceptSvg = setupSliderSvg(sliderAcceptG, 'accept', acceptChanges);
-    let sliderAcceptCircle = setupSliderCircles(sliderAcceptSvg);
-    let sliderAcceptIcon = setupSliderCircleIcon(sliderAcceptSvg, 'accept');
+      sliderAcceptG = sliderG.append('g').attr('class', 'circleAccept');
+      sliderAcceptSvg = setupSliderSvg(sliderAcceptG, 'accept', acceptChanges);
+      sliderAcceptCircle = setupSliderCircles(sliderAcceptSvg);
+      sliderAcceptIcon = setupSliderCircleIcon(sliderAcceptSvg, 'accept');
 
-    let sliderSvg = sliderG
+      sliderSvg = sliderG
       .append('svg')
       .attr('aria-label', d => `Progress slider, current progress ${d.data.pro}%. ` +
         `Press enter and then use the arrow keys to adjust. Press enter when you are done.`)
@@ -507,12 +520,12 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       .attr('viewBox', '0 0 100 100')
       .attr('fill', d => color(d.parent.data.name));
 
-    addListeners(sliderSvg);
-    let sliderPath = sliderSvg
+      addListeners(sliderSvg);
+      sliderPath = sliderSvg
       .append('path')
       .attr('d', `M 50 50 m 49, 0 a 49,49 0 1,0 -98,0 a 49,49 0 1,0 98,0 `);
 
-    let sliderText = sliderG
+      sliderText = sliderG
       .append('text')
       .text('100%')
       .classed('slider-text', true)
@@ -520,17 +533,17 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       .attr('y', d => rectHeight(d) / 2)
       .attr('fill', d => contrastCorrectedColor(d, 1, false))
       .style('font', (d) => `${sliderTextSize(d, true)}px sans-serif`);
-    let showSliderPercent = checkSliderPercentFits();
-    sliderText
-      .text(d => d.data.pro + (showSliderPercent ? '%' : ''));
+      showSliderPercent = checkSliderPercentFits();
+      sliderText
+        .text(d => d.data.pro + (showSliderPercent ? '%' : ''));
 
-    let topicProgressG = cell.filter(d => d.depth === 1)
+      topicProgressG = cell.filter(d => d.depth === 1)
       .append('g')
       .on("click", clicked)
       .attr('transform', d => `translate(${rectWidth(d) - mainCircleWidth - topicCellPadding},` +
         ` ${rectHeight(d) / 2 - mainCircleRadius})`);
 
-    let topicProgressContainerBG = topicProgressG
+      topicProgressContainerBG = topicProgressG
       .append('svg')
       .attr('width', mainCircleWidth)
       .attr('height', mainCircleWidth)
@@ -549,11 +562,11 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
         return convertRGBAtoRGB(color(d.data.name), bgColor, 0.4, true);
       });
 
-    topicProgressContainerBG
-      .append('path')
-      .attr('d', `M 50 50 m 49, 0 a 49,49 0 1,0 -98,0 a 49,49 0 1,0 98,0 `);
+      topicProgressContainerBG
+        .append('path')
+        .attr('d', `M 50 50 m 49, 0 a 49,49 0 1,0 -98,0 a 49,49 0 1,0 98,0 `);
 
-    let topicProgressContainer = topicProgressG
+      topicProgressContainer = topicProgressG
       .append('svg')
       .attr('width', mainCircleWidth)
       .attr('height', mainCircleWidth)
@@ -561,7 +574,7 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       .attr('viewBox', '0 0 100 100')
       .attr('fill-opacity', 1)
       .attr('fill', d => convertRGBAtoRGB(color(d.data.name), 'black', 0.94, true));
-    let topicProgressPie = topicProgressContainer
+      topicProgressPie = topicProgressContainer
       .append('path')
       .attr('d', d => {
         let angle = 2 * Math.PI * computeProgress(d);
@@ -573,7 +586,7 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
         return `M 50 50 v -49 A 49,49 0 ${angle >= Math.PI ? 1 : 0},1 ${sin * 49 + 50} ${-cos * 49 + 50} z`;
       });
 
-    let topicProgressTextSvg = topicProgressG
+      topicProgressTextSvg = topicProgressG
       .append('svg')
       .attr('x', (mainCircleRadius - subCircleRadius))
       .attr('y', (mainCircleRadius - subCircleRadius))
@@ -584,13 +597,13 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       .classed('base-stroke', true)
       .attr('fill', d => convertRGBAtoRGB(color(d.data.name), 'white', 0.6, true));
 
-    // Topic progress text bg
-    topicProgressTextSvg
-      .append('path')
-      .classed('topic-prog-text-svg', true)
-      .attr('d', `M 50 50 m 48, 0 a 48,48 0 1,0 -96,0 a 48,48 0 1,0 96,0 `);
+      // Topic progress text bg
+      topicProgressTextSvg
+        .append('path')
+        .classed('topic-prog-text-svg', true)
+        .attr('d', `M 50 50 m 48, 0 a 48,48 0 1,0 -96,0 a 48,48 0 1,0 96,0 `);
 
-    let topicProgressText = topicProgressG
+      topicProgressText = topicProgressG
       .append('text')
       .attr('aria-hidden', true)
       .style('transform-origin', `${mainCircleWidth}px ${0}px`)
@@ -600,6 +613,7 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       .attr('fill', d => contrastCorrectedColor(d, 0.6, false))
       .classed('topic-prog-text', true)
       .style("font", `${subCircleWidth / 2.7}px sans-serif`);
+    }
 
     let focusUrlFactor = 1.2;
     // Create top left url icon
@@ -871,70 +885,71 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       toggleUrlButton(urlContainer.filter(d => d.depth === 2), t, false, isZoomedIn);
       toggleUrlButton(urlIconSvg.filter(d => d.depth === 2), t, true, isZoomedIn);
 
-      learningGoalProgressBar.transition(t)
-        .attr('y', d => isZoomedIn ? 0 : rectHeight(d.target) - learningGoalProgressBarHeight(d))
-        .attr('height', d => learningGoalProgressBarHeight(d))
-        .attr("width", d => {
-          if (isZoomedIn && isSmallScreen) {
-            return 0;
-          }
-
-          let progress = computeProgress(d);
-          if (isZoomedIn) {
-            return rectWidth(d) * progress;
-          }
-          if (!isZoomedIn && isSmallScreen) {
-            return computeLearningGoalProgressBarWidth(d, progress);
-          }
-          return computeLearningGoalProgressBarWidth(d);
-        });
-      moveTopicProgress(t);
-
       const currentZoomState = isZoomedIn;
       let newDuration = transitionDuration;
       let newT = d3.transition().duration(newDuration);
-      resetSlider(() => true, newT, isZoomedIn);
+      if (isStudent) {
+        learningGoalProgressBar.transition(t)
+          .attr('y', d => isZoomedIn ? 0 : rectHeight(d.target) - learningGoalProgressBarHeight(d))
+          .attr('height', d => learningGoalProgressBarHeight(d))
+          .attr("width", d => {
+            if (isZoomedIn && isSmallScreen) {
+              return 0;
+            }
 
-      // In order to silence grunt, and to improve performance,
-      // These functions are defined outside the following loop, instead of using anonymous functions.
+            let progress = computeProgress(d);
+            if (isZoomedIn) {
+              return rectWidth(d) * progress;
+            }
+            if (!isZoomedIn && isSmallScreen) {
+              return computeLearningGoalProgressBarWidth(d, progress);
+            }
+            return computeLearningGoalProgressBarWidth(d);
+          });
+        moveTopicProgress(t);
 
-      const xAttrSvg = d => {
-        if (currentZoomState) {
-          return !isSmallScreen ? d.proY0 : 0;
-        }
-        let newVal = computeCircleContainerXPosition(d);
-        return d.data.pro === 100 ? newVal + 1 : newVal;
-      },
+        resetSlider(() => true, newT, isZoomedIn);
+
+        // In order to silence grunt, and to improve performance,
+        // These functions are defined outside the following loop, instead of using anonymous functions.
+
+        const xAttrSvg = d => {
+          if (currentZoomState) {
+            return !isSmallScreen ? d.proY0 : 0;
+          }
+          let newVal = computeCircleContainerXPosition(d);
+          return d.data.pro === 100 ? newVal + 1 : newVal;
+        },
         yAttrSvg = d => currentZoomState ? (rectHeight(d) - sliderSize(d)) / 2 : computeCircleContainerYPosition(d, true),
         widthHeightAttr = d => currentZoomState ? sliderSize(d) : circleEnlargeFactor * sliderSize(d);
 
-      const xAttrText = d => {
-        if (currentZoomState) {
-          return !isSmallScreen ? d.proY0 + sliderSize(d) / 2 : sliderSize(d) / 2;
-        }
-        let newVal = computeCircleTextXPosition(d);
-        return d.data.pro === 100 ? newVal + 1 : newVal;
-      },
+        const xAttrText = d => {
+          if (currentZoomState) {
+            return !isSmallScreen ? d.proY0 + sliderSize(d) / 2 : sliderSize(d) / 2;
+          }
+          let newVal = computeCircleTextXPosition(d);
+          return d.data.pro === 100 ? newVal + 1 : newVal;
+        },
         yAttrText = d => currentZoomState ? rectHeight(d) / 2 : rectHeight(d.target) - 4.5,
         content = d => d.data.pro + (!currentZoomState || sliderTextShowPercent(d) ? '%' : ''),
         font = (d) => `${sliderTextSize(d, currentZoomState)}px sans-serif`;
-      sliderSvg
-        .attr('cursor', isZoomedIn ? '' : 'pointer')
-        .transition(newT)
-        .attr('x', xAttrSvg)
-        .attr('y', yAttrSvg)
-        .attr('width', widthHeightAttr)
-        .attr('height', widthHeightAttr);
-      sliderText
-        .style('dominant-baseline', isZoomedIn ? 'central' : 'auto')
-        .text(content)
-        .transition(newT)
-        .style('font', font)
-        .attr("x", xAttrText)
-        .attr('y', yAttrText);
-      sliderPath.transition(t).attr('d', isZoomedIn ? `M 50 50 m 49, 0 a 49,49 0 1,0 -98,0 a 49,49 0 1,0 98,0` :
-        `M 50 100 m 49, 0 a 49,49 0 1,0 -98,0 a 49,49 0 1,0 98,0`);
-
+        sliderSvg
+          .attr('cursor', isZoomedIn ? '' : 'pointer')
+          .transition(newT)
+          .attr('x', xAttrSvg)
+          .attr('y', yAttrSvg)
+          .attr('width', widthHeightAttr)
+          .attr('height', widthHeightAttr);
+        sliderText
+          .style('dominant-baseline', isZoomedIn ? 'central' : 'auto')
+          .text(content)
+          .transition(newT)
+          .style('font', font)
+          .attr("x", xAttrText)
+          .attr('y', yAttrText);
+        sliderPath.transition(t).attr('d', isZoomedIn ? `M 50 50 m 49, 0 a 49,49 0 1,0 -98,0 a 49,49 0 1,0 98,0` :
+          `M 50 100 m 49, 0 a 49,49 0 1,0 -98,0 a 49,49 0 1,0 98,0`);
+      }
 
       isZoomedIn = !isZoomedIn;
       maintspan.filter(d => d.depth > 0)
@@ -1152,6 +1167,45 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       }
       return percent / d.data.children.length / 100;
     }
+
+    /**
+     * Creates a learning goal title element
+     * @param {object} rect Element
+     * @returns {object} Title element
+     */
+    function createLearningGoalTitle(rect) {
+      const learningGoalTitle = rect.filter(d => d.depth === 2)
+        .append('title')
+        .attr('class', (d, i) => `depth${d.depth}_idx${i}`);
+
+      if (isStudent) {
+        learningGoalTitle.text(d => `${d.data.name} - Progress ${parseInt(computeProgress(d) * 100)}%.
+          ${d.data.url ? 'External url is available, press control and enter to open it.' : ''}`);
+      } else {
+        learningGoalTitle.text(d => `${d.data.name}.
+          ${d.data.url ? 'External url is available, press control and enter to open it.' : ''}`);
+      }
+      return learningGoalTitle;
+    }
+    /**
+     * Creates a learning goal progress bar
+     * @param {object} cell Element
+     * @returns {object} progressbar element
+     */
+    function createLearningGoalProgressBar(cell) {
+      if (!isStudent) {
+        return null;
+      }
+      return cell.filter(d => d.depth === 2)
+      .append("rect")
+      .attr("width", d => isSmallScreen ? 0 : rectWidth(d) * computeProgress(d))
+      .attr("height", d => rectHeight(d))
+      .attr('y', 0)
+      .attr("fill-opacity", 0.6)
+      .attr("fill", d => color(d.parent.data.name))
+      .on("click", depth2Child ? clicked : null);
+    }
+
 
     /**
      * Shows or hides an element
@@ -1547,7 +1601,9 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
         }
         return color(d.data.name);
       });
-      learningGoalProgressBar.transition(t).attr("fill", d => color(d.parent.data.name));
+      if (isStudent) {
+        learningGoalProgressBar.transition(t).attr("fill", d => color(d.parent.data.name));
+      }
       urlContainer.transition(t).attr("fill", d => {
         return color(d.depth > 1 ? d.parent.data.name : d.data.name);
       });
@@ -1559,34 +1615,36 @@ ${d.data.url ? 'External url is available, press control and enter to open it.' 
       urlIconSvg.transition(t)
         .attr('stroke', d => contrastCorrectedColor(d, 0.7, true))
         .attr('stroke-opacity', d => contrastCorrectedColor(d, 0.7, true) === 'white' ? 1 : 0.5);
-      sliderSvg.transition(t).attr('fill', d => color(d.parent.data.name));
-      sliderText.transition(t).attr('fill', d => contrastCorrectedColor(d, 1, false));
-      sliderAcceptSvg.transition(t).attr('fill', d => color(d.parent.data.name, 1, false));
-      sliderRejectSvg.transition(t).attr('fill', d => color(d.parent.data.name, 1, false));
-      sliderRejectIcon.transition(t).attr('stroke', d => contrastCorrectedColor(d, 1, false));
-      sliderAcceptIcon.transition(t).attr('stroke', d => contrastCorrectedColor(d, 1, false));
-      topicProgressContainerBG
-        .style('filter', d => {
-          let alphaArray = parseRGB(color(d.data.name));
-          alphaArray.push(0.8);
-          return `drop-shadow(${dropShadowParams} ${convertRGBArrayToString(alphaArray)})`;
-        });
-      topicProgressContainerBG.transition(t)
-        .attr('stroke', d => convertRGBAtoRGB(color(d.data.name), 'black', 0.8, true))
-        .attr('fill', d => {
-          let baseColor = color(d.data.name);
-          let bgColor = convertRGBAtoRGB(baseColor, 'white', 0.6);
-          return convertRGBAtoRGB(color(d.data.name), bgColor, 0.4, true);
-        });
-      topicProgressContainer.transition(t)
-        .attr('fill', d => convertRGBAtoRGB(color(d.data.name), 'black', 0.94, true));
-      topicProgressTextSvg.transition(t)
-        .attr('stroke', d => convertRGBAtoRGB(color(d.data.name), 'black', 0.8, true))
-        .attr('fill', d => convertRGBAtoRGB(color(d.data.name), 'white', 0.6, true));
-      topicProgressText.transition(t)
-        .attr('fill', d => contrastCorrectedColor(d, 0.6, false));
+      if (isStudent) {
+        sliderSvg.transition(t).attr('fill', d => color(d.parent.data.name));
+        sliderText.transition(t).attr('fill', d => contrastCorrectedColor(d, 1, false));
+        sliderAcceptSvg.transition(t).attr('fill', d => color(d.parent.data.name, 1, false));
+        sliderRejectSvg.transition(t).attr('fill', d => color(d.parent.data.name, 1, false));
+        sliderRejectIcon.transition(t).attr('stroke', d => contrastCorrectedColor(d, 1, false));
+        sliderAcceptIcon.transition(t).attr('stroke', d => contrastCorrectedColor(d, 1, false));
+        topicProgressContainerBG
+          .style('filter', d => {
+            let alphaArray = parseRGB(color(d.data.name));
+            alphaArray.push(0.8);
+            return `drop-shadow(${dropShadowParams} ${convertRGBArrayToString(alphaArray)})`;
+          });
+        topicProgressContainerBG.transition(t)
+          .attr('stroke', d => convertRGBAtoRGB(color(d.data.name), 'black', 0.8, true))
+          .attr('fill', d => {
+            let baseColor = color(d.data.name);
+            let bgColor = convertRGBAtoRGB(baseColor, 'white', 0.6);
+            return convertRGBAtoRGB(color(d.data.name), bgColor, 0.4, true);
+          });
+        topicProgressContainer.transition(t)
+          .attr('fill', d => convertRGBAtoRGB(color(d.data.name), 'black', 0.94, true));
+        topicProgressTextSvg.transition(t)
+          .attr('stroke', d => convertRGBAtoRGB(color(d.data.name), 'black', 0.8, true))
+          .attr('fill', d => convertRGBAtoRGB(color(d.data.name), 'white', 0.6, true));
+        topicProgressText.transition(t)
+          .attr('fill', d => contrastCorrectedColor(d, 0.6, false));
+      }
 
-      maintspan.transition(t)
+      maintspan.transition(d3.transition().duration(300))
         .attr('fill', d => {
           return contrastCorrectedColor(d, 0.6, d.depth === 2);
         });
@@ -2295,7 +2353,9 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
       }
       let val = sliderTextShowPercent(el) ? sliderTextMaxFontSize : (el.proX1 - el.proX0) * fontFactor;
       let elSize = sliderSize(el);
-      if (val > elSize) {
+      if (val * FONTSIZE_TO_CH * 4 > elSize) {
+        val = elSize / 4 / FONTSIZE_TO_CH;
+      } else if (val > elSize) {
         val = elSize / 2;
       }
       return val;
@@ -2412,8 +2472,10 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
      */
     function toggleZoomCursor() {
       let newCursor = isZoomedIn ? 'zoom-out' : 'zoom-in';
-      topicProgressG.attr('cursor', newCursor);
-      learningGoalProgressBar.attr('cursor', newCursor);
+      if (isStudent) {
+        topicProgressG.attr('cursor', newCursor);
+        learningGoalProgressBar.attr('cursor', newCursor);
+      }
       rect.filter(d => d.depth > 0).attr('cursor', newCursor);
     }
 
@@ -3115,6 +3177,8 @@ a ${radius} ${radius} 0 0 1 ${radius} ${-radius} z`;
     d3 = d3v7;
     data = taxonomyObj;
     taxonomy = taxonomyObj;
+    isStudent = taxonomy.student;
+    visibilityString = isStudent ? 'visible' : 'hidden';
     treemapId = id;
     treemapaccessibilitytext = accessibilityText;
     confirmationBoxesActive = showConfirmation;

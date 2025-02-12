@@ -69,16 +69,15 @@ class get_taxonomy_for_user extends \core_external\external_api {
     public static function execute($instanceid) {
         global $USER;
 
-        // Parameter validation.
         self::validate_parameters(self::execute_parameters(), ['instanceid' => $instanceid]);
 
+        // Capability check.
         $userid = $USER->id;
-
         $cm = get_coursemodule_from_instance('learninggoalwidget', $instanceid, 0, false, MUST_EXIST);
-        $context = \context_user::instance($userid);
+        $context = \context_module::instance($cm->id);
         self::validate_context($context);
         require_capability('mod/learninggoalwidget:view', $context);
 
-        return userTaxonomy::get_taxonomy_as_json($instanceid, $userid);
+        return userTaxonomy::get_taxonomy_as_json($instanceid);
     }
 }
