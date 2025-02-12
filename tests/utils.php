@@ -80,7 +80,7 @@ trait utils {
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $courseid, $role);
         if ($activate) {
-            $this->setUser($return->user);
+            $this->setUser(user);
         }
 
         return $user;

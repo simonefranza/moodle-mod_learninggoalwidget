@@ -60,7 +60,7 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
      */
     public function test_update_taxonomy(): void {
         $this->assertSame(userTaxonomy::get_taxonomy_as_json(null), '{}');
-        $this->expectException(dml_missing_record_exception::class);
+        $this->expectException(\dml_missing_record_exception::class);
         userTaxonomy::get_taxonomy_as_json(-1);
 
         $res = $this->setup_widget();

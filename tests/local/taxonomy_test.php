@@ -99,7 +99,7 @@ final class taxonomy_test extends \advanced_testcase {
      */
     public function test_get_taxonomy_as_json(): void {
         $this->assertSame(taxonomy::get_taxonomy_as_json(null), "{}");
-        $this->expectException(dml_missing_record_exception::class);
+        $this->expectException(\dml_missing_record_exception::class);
         taxonomy::get_taxonomy_as_json(-1);
 
         // Create instance.
@@ -290,7 +290,7 @@ final class taxonomy_test extends \advanced_testcase {
 
         // Check that students cannot update taxonomy
         $student = $this->create_user('student', $res->course->id, true);
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         taxonomy::update_taxonomy($lgwid, $taxonomy);
 
         $this->setUser($res->user);

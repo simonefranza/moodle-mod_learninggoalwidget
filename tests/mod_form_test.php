@@ -49,19 +49,17 @@ final class mod_form_test extends externallib_advanced_testcase {
      */
     public function test_definition(): void {
         global $COURSE;
-        $this->setUp();
+        $res = $this->setup_widget();
+        $course = $res->course;
+        $lgwid = $res->instance->id;
 
-        $course = $this->getDataGenerator()->create_course();
         $COURSE->id = $course->id;
 
-        $widgetinstance = $this->getDataGenerator()->create_module('learninggoalwidget', ['course' => $course->id]);
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
-        $coursemodule = get_coursemodule_from_instance('learninggoalwidget', $widgetinstance->id, $course->id, true);
+        $cm = get_coursemodule_from_instance('learninggoalwidget', $lgwid, $course->id, true);
 
         $data = new \stdClass();
-        $data->instance = $widgetinstance->id;
-        new mod_learninggoalwidget_mod_form($data, $coursemodule->sectionnum, $coursemodule, $course);
+        $data->instance = $lgwid;
+        new mod_learninggoalwidget_mod_form($data, $cm->sectionnum, $cm, $course);
         $this->assertDebuggingNotCalled();
     }
 }

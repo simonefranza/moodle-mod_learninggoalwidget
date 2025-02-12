@@ -66,7 +66,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         $topic1 = $taxonomy->children[0];
 
         // Teacher cannot get data of user.
-        $this->expectException(required_capability_exception::class);
+        $this->expectException(\required_capability_exception::class);
         $result = update_user_progress::execute(
             $lgwid,
             $topic1->topicid,
