@@ -91,6 +91,16 @@ final class taxonomy_test extends \advanced_testcase {
     }
 
     /**
+     * testing method taxonomy::get_taxonomy_as_json to trigger exception
+     * @return void
+     *
+     * @covers \mod_learninggoalwidget\local\taxonomy::get_taxonomy_as_json
+     */
+    public function test_get_taxonomy_as_json_exc(): void {
+        $this->expectException(\dml_missing_record_exception::class);
+        taxonomy::get_taxonomy_as_json(-1);
+    }
+    /**
      * testing method taxonomy::get_taxonomy_as_json
      * @return void
      *
@@ -99,9 +109,6 @@ final class taxonomy_test extends \advanced_testcase {
      */
     public function test_get_taxonomy_as_json(): void {
         $this->assertSame(taxonomy::get_taxonomy_as_json(null), "{}");
-        $this->expectException(\dml_missing_record_exception::class);
-        taxonomy::get_taxonomy_as_json(-1);
-
         // Create instance.
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
@@ -271,11 +278,35 @@ final class taxonomy_test extends \advanced_testcase {
     }
 
     /**
+     * testing method taxonomy::update_taxonomy to trigger exception
+     * @return void
+     *
+     * @covers \mod_learninggoalwidget\local\taxonomy::update_taxonomy
+     * @covers \mod_learninggoalwidget\local\taxonomy::manage_taxonomy
+     * @covers \mod_learninggoalwidget\local\taxonomy::update_topic_goals
+     * @covers \mod_learninggoalwidget\local\taxonomy::get_taxonomy_as_json
+     * @covers \mod_learninggoalwidget\local\taxonomy::get_topics
+     */
+    public function test_update_taxonomy_exc(): void {
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+
+        $taxonomy = new \stdClass;
+        $taxonomy->name = 'name';
+        $taxonomy->children = $this->create_taxonomy(1, 0);
+
+        // Check that students cannot update taxonomy.
+        $student = $this->create_user('student', $res->course->id, true);
+        $this->expectException(\required_capability_exception::class);
+        taxonomy::update_taxonomy($lgwid, $taxonomy);
+    }
+
+    /**
      * testing method taxonomy::update_taxonomy
      * @return void
      *
      * @covers \mod_learninggoalwidget\local\taxonomy::update_taxonomy
-     * @covers \mod_learninggoalwidget\local\taxonomy::maanage_taxonomy
+     * @covers \mod_learninggoalwidget\local\taxonomy::manage_taxonomy
      * @covers \mod_learninggoalwidget\local\taxonomy::update_topic_goals
      * @covers \mod_learninggoalwidget\local\taxonomy::get_taxonomy_as_json
      * @covers \mod_learninggoalwidget\local\taxonomy::get_topics
@@ -287,11 +318,6 @@ final class taxonomy_test extends \advanced_testcase {
         $taxonomy = new \stdClass;
         $taxonomy->name = 'name';
         $taxonomy->children = $this->create_taxonomy(1, 0);
-
-        // Check that students cannot update taxonomy
-        $student = $this->create_user('student', $res->course->id, true);
-        $this->expectException(\required_capability_exception::class);
-        taxonomy::update_taxonomy($lgwid, $taxonomy);
 
         $this->setUser($res->user);
 

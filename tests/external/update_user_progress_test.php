@@ -49,14 +49,14 @@ use core_external\external_api;
 final class update_user_progress_test extends externallib_advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
-     * Test update_user_progress
+     * Test update_user_progress to trigger exception
      * @return void
      *
      * @covers \mod_learninggoalwidget\external\update_user_progress::execute
      * @covers \mod_learninggoalwidget\external\update_user_progress::execute_returns
      * @covers \mod_learninggoalwidget\external\update_user_progress::execute_parameters
      */
-    public function test_update_user_progress(): void {
+    public function test_update_user_progress_exc(): void {
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
         $userid = $res->user->id;
@@ -73,6 +73,23 @@ final class update_user_progress_test extends externallib_advanced_testcase {
             $topic1->children[0]->goalid,
             99
         );
+    }
+    /**
+     * Test update_user_progress
+     * @return void
+     *
+     * @covers \mod_learninggoalwidget\external\update_user_progress::execute
+     * @covers \mod_learninggoalwidget\external\update_user_progress::execute_returns
+     * @covers \mod_learninggoalwidget\external\update_user_progress::execute_parameters
+     */
+    public function test_update_user_progress(): void {
+        $res = $this->setup_widget();
+        $lgwid = $res->instance->id;
+        $userid = $res->user->id;
+        $this->insert_two_goals($lgwid);
+
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
+        $topic1 = $taxonomy->children[0];
 
         // Update learning goal 1 progess to 99.
         $student = $this->create_user('student', $res->course->id, true);
