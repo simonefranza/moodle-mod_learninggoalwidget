@@ -57,7 +57,6 @@ define(
       root.attr("data-progresslegendLabel"));
 
     Treemap.renderTreemap(root.data("treemap-id"),
-      root.data("user-id"),
       root.data("course-id"),
       root.data("coursemodule-id"),
       root.data("instance-id"),
@@ -70,7 +69,6 @@ define(
         $("#" + root.data("treemap-id") + "-container").removeClass("d-none");
         $("#" + root.data("treemap-id")).empty();
         Treemap.renderTreemap(root.data("treemap-id"),
-          root.data("user-id"),
           root.data("course-id"),
           root.data("coursemodule-id"),
           root.data("instance-id"),

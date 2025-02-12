@@ -54,14 +54,4 @@ $functions = [
             MOODLE_OFFICIAL_MOBILE_SERVICE,
         ],
     ],
-    // Events.
-    'mod_learninggoalwidget_log_event' => [
-        'classname'   => 'mod_learninggoalwidget\external\log_event',
-        'description' => 'Logs user interactions in the learning goals widget',
-        'type'        => 'write',
-        'ajax'        => true,
-        'services' => [
-            MOODLE_OFFICIAL_MOBILE_SERVICE,
-        ],
-    ],
 ];

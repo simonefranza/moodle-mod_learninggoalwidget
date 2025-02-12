@@ -75,26 +75,10 @@ define(
       return Ajax.call([request])[0];
     };
 
-    /**
-     * Log user interaction event
-     *
-     * @method logEvent
-     * @param  {object} args The request arguments
-     * @return {promise} ajax call
-     */
-    const logEvent = (args) => {
-      const request = {
-        methodname: 'mod_learninggoalwidget_log_event',
-        args: args
-      };
-      return Ajax.call([request])[0];
-    };
-
     return {
       getTaxonomy: getTaxonomy,
       getLearningGoals: getLearningGoals,
       updateUserProgress: updateUserProgress,
-      logEvent: logEvent,
     };
   }
 );

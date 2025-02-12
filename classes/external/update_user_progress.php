@@ -111,6 +111,6 @@ class update_user_progress extends \core_external\external_api {
             $DB->insert_record('learninggoalwidget_progs', $userprogress);
         }
 
-        return get_taxonomy_for_user::execute($instanceid, $userid);
+        return get_taxonomy_for_user::execute($instanceid);
     }
 }

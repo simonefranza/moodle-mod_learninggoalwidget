@@ -37,13 +37,12 @@ define(
   /**
    * Intialise the treemap widget.
    * @param {*} treemapId The treemap ID
-   * @param {*} userid The user ID
    * @param {*} courseid The course ID
    * @param {*} coursemoduleid The course module ID
    * @param {*} instanceid The course module instance ID
    * @param {*} treemapaccessibilitytext The accessibility text
    */
-  const renderTreemap = (treemapId, userid, courseid, coursemoduleid, instanceid, treemapaccessibilitytext) => {
+  const renderTreemap = (treemapId, courseid, coursemoduleid, instanceid, treemapaccessibilitytext) => {
     require.config({
       paths: {
         d3v7: Configuration.wwwroot + "/mod/learninggoalwidget/js/d3.v7.min"
@@ -51,7 +50,7 @@ define(
     });
 
     // Request learning goals taxonomy
-    Controller.getLearningGoals({instanceid: instanceid, userid: userid})
+    Controller.getLearningGoals({instanceid: instanceid})
       .then((jsonLearningGoals) => {
         const taxonomy = JSON.parse(jsonLearningGoals);
         if (taxonomy.children.length > 0) {
@@ -136,53 +135,6 @@ define(
       .catch(() => {
         // Do nothing
       });
-
-    // Log save progress event
-    let learningGoalEvent = createLearningGoalEvent(
-      "preparationSaveProgress",
-      courseid,
-      coursemoduleid,
-      instanceid,
-      userid);
-    let eventGoalParam = {name: "goalname", value: goalName};
-    let eventGoalProgressParam = {name: "goalprogress", value: goalProgressValue};
-    learningGoalEvent.push(eventGoalParam);
-    learningGoalEvent.push(eventGoalProgressParam);
-    logLearningGoalEvent(instanceid, userid, learningGoalEvent);
-  };
-
-  /**
-   * Create learning goal event parameters
-   * @param {*} courseid The course ID
-   * @param {*} coursemoduleid The course module ID
-   * @param {*} instanceid The course module instance ID
-   * @param {*} userid The user ID
-   * @returns {Array} The array of learning goal event parameters
-   */
-  const createLearningGoalEvent = (courseid, coursemoduleid, instanceid, userid) => {
-    const eventCourseParam = {name: "courseid", value: courseid};
-    const eventCourseModuleParam = {name: "coursemoduleid", value: coursemoduleid};
-    const eventInstanceParam = {name: "instanceid", value: instanceid};
-    const eventUserParam = {name: "userid", value: userid};
-    const timestampParam = {name: "timestamp", value: Math.trunc(new Date().getTime() / 1000)};
-
-    return [eventCourseParam, eventCourseModuleParam, eventInstanceParam, eventUserParam, timestampParam];
-  };
-
-  /**
-   * Logs learning goal events into moodles standard log store
-   * @param {*} instanceid The course module instance ID
-   * @param {*} userid The user ID
-   * @param {*} eventParams The learning goal event parameters
-   */
-  const logLearningGoalEvent = (instanceid, userid, eventParams) => {
-    Controller.logEvent(
-      {
-        instanceid: instanceid,
-        userid: userid,
-        eventparams: eventParams
-      }
-    );
   };
 
   /**

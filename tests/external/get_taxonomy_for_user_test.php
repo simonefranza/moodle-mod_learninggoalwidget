@@ -58,11 +58,10 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
     public function test_get_taxonomy_for_user(): void {
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
 
         // Get taxonomy with user progress values.
-        $result = get_taxonomy_for_user::execute($lgwid, $userid);
+        $result = get_taxonomy_for_user::execute($lgwid);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(get_taxonomy_for_user::execute_returns(), $result);

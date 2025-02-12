@@ -74,7 +74,7 @@ define(
         });
 
         // Request learning goals taxonomy
-        Controller.getLearningGoals({instanceid: instanceid, userid: userid})
+        Controller.getLearningGoals({instanceid: instanceid})
             .then((jsonLearningGoals) => {
 
                     var loadedTaxonomy = JSON.parse(jsonLearningGoals);
@@ -92,33 +92,11 @@ define(
 
         // Adding functionality to the elements
         document.getElementById(sunburstId + "-ClickedOverview").onclick = function() {
-
-            var sunburstId = getSunburstId(this);
-            var courseid = getCourseId(this);
-            var coursemoduleid = getCourseModuleId(this);
-            var instanceid = getInstanceId(this);
-            var userid = getUserId(this);
-
-            changeView("Overview", sunburstId);
-
-            // Log overview click event
-            var learningGoalEvent = createLearningGoalEvent("clickedOverview", courseid, coursemoduleid, instanceid, userid);
-            logLearningGoalEvent(instanceid, userid, learningGoalEvent);
+            changeView("Overview", getSunburstId(this));
         };
 
         document.getElementById(sunburstId + "-ClickedPreparation").onclick = function() {
-
-            var sunburstId = getSunburstId(this);
-            var courseid = getCourseId(this);
-            var coursemoduleid = getCourseModuleId(this);
-            var instanceid = getInstanceId(this);
-            var userid = getUserId(this);
-
-            changeView("Preparation", sunburstId);
-
-            // Log preparation click event
-            var learningGoalEvent = createLearningGoalEvent("clickedPreparation", courseid, coursemoduleid, instanceid, userid);
-            logLearningGoalEvent(instanceid, userid, learningGoalEvent);
+            changeView("Preparation", getSunburstId(this));
         };
 
         // Setting the visualisation container to fit nicely ;)
@@ -555,19 +533,6 @@ define(
                         if (d.depth >= 1) {
                             if (d.data.url) {
                                 window.open(d.data.url);
-                                // Log url click event
-                                var courseid = getCourseId(this);
-                                var coursemoduleid = getCourseModuleId(this);
-                                var instanceid = getInstanceId(this);
-                                var userid = getUserId(this);
-
-                                var learningGoalEvent = createLearningGoalEvent("overviewOpenUrl",
-                                    courseid, coursemoduleid, instanceid, userid);
-                                var eventUrlParam = new Object();
-                                eventUrlParam.name = "url";
-                                eventUrlParam.value = d.data.url;
-                                learningGoalEvent.push(eventUrlParam);
-                                logLearningGoalEvent(instanceid, userid, learningGoalEvent);
                             }
 
                             const sunburstClickEvent = new CustomEvent('sunburstclick', {
@@ -1340,70 +1305,6 @@ define(
                 }
             )
             .catch(Notification.exception);
-
-        // Log save progress event
-        var learningGoalEvent = createLearningGoalEvent("preparationSaveProgress", courseid, coursemoduleid, instanceid, userid);
-        var eventGoalParam = new Object();
-        eventGoalParam.name = "goalname";
-        eventGoalParam.value = goalName;
-        var eventGoalProgressParam = new Object();
-        eventGoalProgressParam.name = "goalprogress";
-        eventGoalProgressParam.value = goalProgressValue;
-        learningGoalEvent.push(eventGoalParam);
-        learningGoalEvent.push(eventGoalProgressParam);
-        logLearningGoalEvent(instanceid, userid, learningGoalEvent);
-    };
-
-    /**
-     * Logs learning goal events into moodles standard log store
-     * @param {*} instanceid The course module instance ID
-     * @param {*} userid The user ID
-     * @param {*} eventParams The learning goal event parameters
-     */
-    var logLearningGoalEvent = function(instanceid, userid, eventParams) {
-        Controller.logEvent(
-            {
-                instanceid: instanceid,
-                userid: userid,
-                eventparams: eventParams
-            }
-        )
-        .then(() => {
-          return;
-        })
-        .catch(Notification.exception);
-    };
-
-    /**
-     * Create learning goal event parameters
-     * @param {*} courseid The course ID
-     * @param {*} coursemoduleid The course module ID
-     * @param {*} instanceid The course module instance ID
-     * @param {*} userid The user ID
-     * @returns {array} The array of learning goal event parameters
-     */
-    var createLearningGoalEvent = function(courseid, coursemoduleid, instanceid, userid) {
-        var eventCourseParam = new Object();
-        eventCourseParam.name = "courseid";
-        eventCourseParam.value = courseid;
-
-        var eventCourseModuleParam = new Object();
-        eventCourseModuleParam.name = "coursemoduleid";
-        eventCourseModuleParam.value = coursemoduleid;
-
-        var eventInstanceParam = new Object();
-        eventInstanceParam.name = "instanceid";
-        eventInstanceParam.value = instanceid;
-
-        var eventUserParam = new Object();
-        eventUserParam.name = "userid";
-        eventUserParam.value = userid;
-
-        var timestampParam = new Object();
-        timestampParam.name = "timestamp";
-        timestampParam.value = Math.trunc(new Date().getTime() / 1000);
-
-        return [eventCourseParam, eventCourseModuleParam, eventInstanceParam, eventUserParam, timestampParam];
     };
 
     /**
