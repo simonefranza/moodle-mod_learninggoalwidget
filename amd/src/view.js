@@ -30,85 +30,77 @@
     }
 }] */
 
-define(
-  [
-    "jquery",
-    "mod_learninggoalwidget/sunburst",
-    "mod_learninggoalwidget/treemap"
-  ], function(
-    $,
-    Sunburst,
-    Treemap
-  ) {
+import $ from "jquery";
+import Sunburst from "mod_learninggoalwidget/sunburst";
+import Treemap from "mod_learninggoalwidget/treemap";
 
-  /**
-   * Intialise the widget and its content and exam views.
-   *
-   * @param {object} root The root element of the learning goals widget.
-   */
-  const initViews = (root) => {
-    root = $(root);
+/**
+ * Intialise the widget and its content and exam views.
+ *
+ * @param {object} root The root element of the learning goals widget.
+ */
+const initViews = (root) => {
+  root = $(root);
 
-    Sunburst.renderSunburst(root.data("sunburst-id"),
-      root.data("user-id"),
-      root.data("course-id"),
-      root.data("coursemodule-id"),
-      root.data("instance-id"),
-      root.attr("data-progresslegendLabel"));
+  Sunburst.renderSunburst(root.data("sunburst-id"),
+    root.data("user-id"),
+    root.data("course-id"),
+    root.data("coursemodule-id"),
+    root.data("instance-id"),
+    root.attr("data-progresslegendLabel"));
 
-    Treemap.renderTreemap(root.data("treemap-id"),
-      root.data("course-id"),
-      root.data("coursemodule-id"),
-      root.data("instance-id"),
-      root.attr("data-treemapaccessibilitytext"));
+  Treemap.renderTreemap(root.data("treemap-id"),
+    root.data("course-id"),
+    root.data("coursemodule-id"),
+    root.data("instance-id"),
+    root.attr("data-treemapaccessibilitytext"));
 
-    document.getElementById(root.data("course-id") + "-"
-      + root.data("coursemodule-id") + "-"
-      + root.data("instance-id")
-      + "-treemap-thumbnail").onclick = function() {
-        $("#" + root.data("treemap-id") + "-container").removeClass("d-none");
-        $("#" + root.data("treemap-id")).empty();
-        Treemap.renderTreemap(root.data("treemap-id"),
-          root.data("course-id"),
-          root.data("coursemodule-id"),
-          root.data("instance-id"),
-          root.attr("data-treemapaccessibilitytext"));
-        $("#" + root.data("sunburst-id") + "-container").addClass("d-none");
-      };
+  document.getElementById(root.data("course-id") + "-"
+    + root.data("coursemodule-id") + "-"
+    + root.data("instance-id")
+    + "-treemap-thumbnail").onclick = function() {
+      $("#" + root.data("treemap-id") + "-container").removeClass("d-none");
+      $("#" + root.data("treemap-id")).empty();
+      Treemap.renderTreemap(root.data("treemap-id"),
+        root.data("course-id"),
+        root.data("coursemodule-id"),
+        root.data("instance-id"),
+        root.attr("data-treemapaccessibilitytext"));
+      $("#" + root.data("sunburst-id") + "-container").addClass("d-none");
+    };
 
-    document.getElementById(root.data("course-id") + "-" + root.data("coursemodule-id") + "-"
-      + root.data("instance-id")
-      + "-sunburst-thumbnail").onclick = function() {
-        $("#" + root.data("treemap-id") + "-container").addClass("d-none");
-        $("#" + root.data("sunburst-id") + "-container").removeClass("d-none");
-      };
+  document.getElementById(root.data("course-id") + "-" + root.data("coursemodule-id") + "-"
+    + root.data("instance-id")
+    + "-sunburst-thumbnail").onclick = function() {
+      $("#" + root.data("treemap-id") + "-container").addClass("d-none");
+      $("#" + root.data("sunburst-id") + "-container").removeClass("d-none");
+    };
 
-    $("#" + root.data("treemap-id") + "-container").addClass("d-none");
-    $("#" + root.data("sunburst-id") + "-container").removeClass("d-none");
+  $("#" + root.data("treemap-id") + "-container").addClass("d-none");
+  $("#" + root.data("sunburst-id") + "-container").removeClass("d-none");
 
-    // Update visualisations whenever a learning goal's progress changes
-    root.on("update_learning_goal_progress", function(updateLearningGoalProgressEvent) {
-      if (updateLearningGoalProgressEvent.detail.sender === "sunburst") {
-        $("#" + root.data("treemap-id")).empty();
-        Treemap.renderTreemapView(
-          updateLearningGoalProgressEvent.detail.taxonomy,
-          root.data("treemap-id"),
-          root.attr("data-treemapaccessibilitytext"));
-      }
-      if (updateLearningGoalProgressEvent.detail.sender === "treemap") {
-        $("div#" + root.data("sunburst-id") + "-taxonomy-userprogress-chart-fullgoal").remove();
-        $("#" + root.data("sunburst-id") + "-taxonomy-userprogress-chart").empty();
-        $("#" + root.data("sunburst-id") + "-taxonomy-userprogress-legend").empty();
-        Sunburst.renderSunburstWithProgressView(
-          updateLearningGoalProgressEvent.detail.taxonomy,
-          root.data("sunburst-id"),
-          root.attr("data-progresslegendLabel"));
-      }
-    });
-  };
+  // Update visualisations whenever a learning goal's progress changes
+  root.on("update_learning_goal_progress", function(updateLearningGoalProgressEvent) {
+    if (updateLearningGoalProgressEvent.detail.sender === "sunburst") {
+      $("#" + root.data("treemap-id")).empty();
+      Treemap.renderTreemapView(
+        updateLearningGoalProgressEvent.detail.taxonomy,
+        root.data("treemap-id"),
+        root.attr("data-treemapaccessibilitytext"));
+    }
+    if (updateLearningGoalProgressEvent.detail.sender === "treemap") {
+      $("div#" + root.data("sunburst-id") + "-taxonomy-userprogress-chart-fullgoal").remove();
+      $("#" + root.data("sunburst-id") + "-taxonomy-userprogress-chart").empty();
+      $("#" + root.data("sunburst-id") + "-taxonomy-userprogress-legend").empty();
+      Sunburst.renderSunburstWithProgressView(
+        updateLearningGoalProgressEvent.detail.taxonomy,
+        root.data("sunburst-id"),
+        root.attr("data-progresslegendLabel"));
+    }
+  });
 
-  return {
-    initViews: initViews
-  };
-}
-);
+};
+
+export default {
+  initViews: initViews
+};

@@ -125,16 +125,5 @@
 </div>
 
 {{#js}}
-require(
-[
-    'jquery',
-    'mod_learninggoalwidget/main',
-],
-function(
-    $,
-    Main
-) {
-    var root = $('#learninggoals-widget-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}');
-    Main.init(root);
-});
+require(['mod_learninggoalwidget/main'], (module) => module.init('#learninggoals-widget-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}'));
 {{/js}}

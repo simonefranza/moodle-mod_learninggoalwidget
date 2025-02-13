@@ -30,22 +30,14 @@
     }
 }] */
 
-define(
-    [
-        'jquery',
-        'mod_learninggoalwidget/view'
-    ],
-    ($, View) => {
-        /**
-         * Initialise all of the modules for the Learning Goals Widget.
-         *
-         * @param {object} root The root element for the Learning Goals Widget.
-         */
-        const init = (root) => {
-            root = $(root);
-            View.initViews(root);
-        };
-
-        return {init: init};
-    }
-);
+import $ from 'jquery';
+import * as View from 'mod_learninggoalwidget/view';
+/**
+ * Initialise all of the modules for the Learning Goals Widget.
+ *
+ * @param {string} root The root element for the Learning Goals Widget.
+ */
+export const init = (root) => {
+  root = $(root);
+  View.initViews(root);
+};

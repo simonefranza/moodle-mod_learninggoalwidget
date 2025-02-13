@@ -94,7 +94,6 @@ define(
     const loadTopics = async () => {
       $("#topics-list").children().remove();
       taxonomy.children.sort((a, b) => a.ranking - b.ranking);
-      console.log("taxonomy", taxonomy);
 
       if (taxonomy.children.length === 0) {
         $("#notopics").removeClass("d-none");
@@ -227,7 +226,7 @@ define(
 
         loadTopics();
       } catch (e) {
-        console.error("Failed to create new topic", e);
+        // A console.error("Failed to create new topic", e);
       }
     };
 
@@ -285,7 +284,7 @@ define(
 
         loadTopics();
       } catch (e) {
-        console.error("Failed to edit topic", e);
+        // A console.error("Failed to edit topic", e);
       }
     };
 
@@ -322,7 +321,7 @@ define(
 
         loadTopics();
       } catch (e) {
-        console.error("Failed to delete topic", e);
+        // A console.error("Failed to delete topic", e);
       }
     };
 
@@ -423,7 +422,7 @@ define(
 
         loadGoals(topic);
       } catch (e) {
-        console.error("Failed to create new goal", e);
+        // A console.error("Failed to create new goal", e);
       }
     };
 
@@ -487,7 +486,7 @@ define(
 
         loadGoals(topic);
       } catch (e) {
-        console.error("Failed to edit goal", e);
+        // A console.error("Failed to edit goal", e);
       }
     };
 
@@ -526,7 +525,7 @@ define(
 
         loadGoals(topic);
       } catch (e) {
-        console.error("Failed to delete goal", e);
+        // A console.error("Failed to delete goal", e);
       }
     };
 
@@ -878,7 +877,7 @@ ${isLast ? '\n\n' : '\n'}`;
             });
           });
           updateTaxonomyValue();
-          console.log(parsed, taxonomy);
+          // A console.log(parsed, taxonomy);
 
           loadTopics();
         } catch (e) {

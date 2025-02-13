@@ -28,57 +28,55 @@
     }
 }] */
 
-define(
-  ['core/ajax'], function(Ajax) {
-    /**
-     * Get the taxonomy
-     *
-     * @method getTaxonomy
-     * @param  {object} args The request arguments
-     * @return {promise} ajax call
-     */
-    const getTaxonomy = (args) => {
-      var request = {
-        methodname: 'mod_learninggoalwidget_get_taxonomy',
-        args: args
-      };
-      return Ajax.call([request])[0];
-    };
+import Ajax from 'core/ajax';
 
-    /**
-     * Get taxonomy with user's progress
-     *
-     * @method getLearningGoals
-     * @param  {object} args The request arguments
-     * @return {promise} ajax call
-     */
-    const getLearningGoals = (args) => {
-      const request = {
-        methodname: 'mod_learninggoalwidget_get_taxonomy_for_user',
-        args: args
-      };
-      return Ajax.call([request])[0];
-    };
+/**
+ * Get the taxonomy
+ *
+ * @method getTaxonomy
+ * @param  {object} args The request arguments
+ * @return {promise} ajax call
+ */
+const getTaxonomy = (args) => {
+  var request = {
+    methodname: 'mod_learninggoalwidget_get_taxonomy',
+    args: args
+  };
+  return Ajax.call([request])[0];
+};
 
-    /**
-     * Update learning progress for a goal and user
-     *
-     * @method updateUserProgress
-     * @param  {object} args The request arguments
-     * @return {promise} ajax call
-     */
-    const updateUserProgress = (args) => {
-      const request = {
-        methodname: 'mod_learninggoalwidget_update_user_progress',
-        args: args
-      };
-      return Ajax.call([request])[0];
-    };
+/**
+ * Get taxonomy with user's progress
+ *
+ * @method getLearningGoals
+ * @param  {object} args The request arguments
+ * @return {promise} ajax call
+ */
+const getLearningGoals = (args) => {
+  const request = {
+    methodname: 'mod_learninggoalwidget_get_taxonomy_for_user',
+    args: args
+  };
+  return Ajax.call([request])[0];
+};
 
-    return {
-      getTaxonomy: getTaxonomy,
-      getLearningGoals: getLearningGoals,
-      updateUserProgress: updateUserProgress,
-    };
-  }
-);
+/**
+ * Update learning progress for a goal and user
+ *
+ * @method updateUserProgress
+ * @param  {object} args The request arguments
+ * @return {promise} ajax call
+ */
+const updateUserProgress = (args) => {
+  const request = {
+    methodname: 'mod_learninggoalwidget_update_user_progress',
+    args: args
+  };
+  return Ajax.call([request])[0];
+};
+
+export default {
+  getTaxonomy: getTaxonomy,
+  getLearningGoals: getLearningGoals,
+  updateUserProgress: updateUserProgress,
+};
