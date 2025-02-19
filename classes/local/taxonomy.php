@@ -46,8 +46,11 @@ class taxonomy {
      */
     public static function get_taxonomy_as_json($lgwid): string {
         global $DB, $USER;
-        if ($lgwid === null) {
-            return "{}";
+        $taxonomy = new stdClass;
+        $taxonomy->name = '';
+        $taxonomy->children = [];
+        if (!$lgwid) {
+            return json_encode($taxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
         }
 
         // Capability check.
@@ -57,7 +60,6 @@ class taxonomy {
 
         $instance = $DB->get_record('learninggoalwidget', ['id' => $lgwid]);
 
-        $taxonomy = new stdClass;
         $taxonomy->name = $instance->name;
         $taxonomy->children = self::get_topics($lgwid);
         return json_encode($taxonomy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);

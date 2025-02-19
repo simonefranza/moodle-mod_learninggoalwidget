@@ -108,7 +108,9 @@ final class taxonomy_test extends \advanced_testcase {
      * @covers \mod_learninggoalwidget\local\taxonomy::get_topics
      */
     public function test_get_taxonomy_as_json(): void {
-        $this->assertSame(taxonomy::get_taxonomy_as_json(null), "{}");
+        $taxonomy = json_decode(taxonomy::get_taxonomy_as_json(null));
+        $this->assertSame($taxonomy->name, "");
+        $this->assertSame(count($taxonomy->children), 0);
         // Create instance.
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
