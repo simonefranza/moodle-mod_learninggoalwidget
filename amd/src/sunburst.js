@@ -35,8 +35,9 @@ import Controller from "mod_learninggoalwidget/controller";
 import Configuration from "core/config";
 import Notification from "core/notification";
 import Templates from "core/templates";
-import ModalFactory from "core/modal_factory";
+import ModalSaveCancel from "core/modal_save_cancel";
 import ModalEvents from "core/modal_events";
+import * as CoreStr from "core/str";
 
 var progressModalsDict = {};
 let taxonomy = null;
@@ -829,7 +830,7 @@ var renderSunburstWithProgressView = function(courseTaxonomy, sunburstId, progre
                 }
             )
             .on(
-                "click", function(e, d) {
+                "click", async function(e, d) {
                     if (!d.children) {
                         var instanceid = getInstanceId(this);
                         var sunburstId = getSunburstId(this);
@@ -846,35 +847,30 @@ var renderSunburstWithProgressView = function(courseTaxonomy, sunburstId, progre
                         if (modalProgress) {
                             modalProgress.show();
                         } else {
-                            ModalFactory.create(
+                            const modalTitle = await CoreStr.get_string('editprogress', 'mod_learninggoalwidget');
+                            const modal = await ModalSaveCancel.create(
                                 {
-                                    type: ModalFactory.types.SAVE_CANCEL,
-                                    title:
-                                        "Mein Lernfortschritt für das Lernziel '" + d.data.name + "':",
+                                    title: `${modalTitle} '${d.data.name}':`,
                                     body: Templates.render(TEMPLATES.EDIT_PROGRESS_VALUES, context)
                                 }
-                            ).done(
-                                function(modal) {
-                                    progressModalsDict[d.data.name] = modal;
-                                    modal.getRoot().on(
-                                        ModalEvents.save, function(e) {
-                                            e.preventDefault();
-                                            goalProgressValue = document.getElementById("progressvalue-" + modalId).value;
-                                            saveProgress(sunburstId, instanceid, topicId, goalId, goalProgressValue);
-                                            modal.hide();
-                                        }
-                                    );
-
-                                    modal.getRoot().find("progressvalue-" + modalId);
-
-                                    $(modal.getRoot()).on('input', '#progressvalue-' + modalId, function() {
-                                        updateLearningProgress(modalId);
-                                    });
-
-
-                                    modal.show();
+                            );
+                            progressModalsDict[d.data.name] = modal;
+                            modal.getRoot().on(
+                                ModalEvents.save, function(e) {
+                                    e.preventDefault();
+                                    goalProgressValue = document.getElementById("progressvalue-" + modalId).value;
+                                    saveProgress(sunburstId, instanceid, topicId, goalId, goalProgressValue);
+                                    modal.hide();
                                 }
                             );
+
+                            modal.getRoot().find("progressvalue-" + modalId);
+
+                            $(modal.getRoot()).on('input', '#progressvalue-' + modalId, function() {
+                                updateLearningProgress(modalId);
+                            });
+
+                            modal.show();
                         }
                     }
                 }

@@ -26,6 +26,7 @@
 $string['contentview'] = 'Learning goals view';
 $string['examview'] = 'Progress view';
 $string['guestaccess'] = 'You need to login first';
+$string['editprogress'] = 'My progress for the learning goal';
 
 $string['learninggoalwidget:addinstance'] = 'Add a new Learning Goal Widget';
 $string['learninggoalwidget:updateprogress'] = 'Update the progress of a learning goal';
