@@ -22,11 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 $string['contentview'] = 'Learning goals view';
+$string['editprogress'] = 'My progress for the learning goal';
 $string['examview'] = 'Progress view';
 $string['guestaccess'] = 'You need to login first';
-$string['editprogress'] = 'My progress for the learning goal';
 
 $string['learninggoalwidget:addinstance'] = 'Add a new Learning Goal Widget';
 $string['learninggoalwidget:updateprogress'] = 'Update the progress of a learning goal';
@@ -40,6 +39,7 @@ $string['noaccess'] = 'You need to login first';
 $string['pluginadministration'] = 'Learning Goal Widget administration';
 $string['pluginname'] = 'Learning Goal Widget';
 $string['privacy:metadata'] = '';
+
 $string['progressdialogtitle'] = 'Update learning goal orogress';
 $string['progresslabel0'] = 'Low (0%)';
 $string['progresslabel100'] = 'High (100%)';

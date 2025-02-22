@@ -45,7 +45,7 @@ class taxonomy {
      * @return string
      */
     public static function get_taxonomy_as_json($lgwid): string {
-        global $DB, $USER;
+        global $DB;
         $taxonomy = new stdClass;
         $taxonomy->name = '';
         $taxonomy->children = [];
@@ -197,7 +197,6 @@ class taxonomy {
      */
     public static function update_taxonomy($lgwid, &$taxonomy) {
         // Capability check.
-        global $USER;
         $cm = get_coursemodule_from_instance('learninggoalwidget', $lgwid, 0, false, MUST_EXIST);
         require_capability('mod/learninggoalwidget:addinstance', \context_module::instance($cm->id));
 

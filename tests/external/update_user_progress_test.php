@@ -59,7 +59,6 @@ final class update_user_progress_test extends externallib_advanced_testcase {
     public function test_update_user_progress_exc(): void {
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
 
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
@@ -67,7 +66,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
 
         // Teacher cannot get data of user.
         $this->expectException(\required_capability_exception::class);
-        $result = update_user_progress::execute(
+        update_user_progress::execute(
             $lgwid,
             $topic1->topicid,
             $topic1->children[0]->goalid,
@@ -85,14 +84,13 @@ final class update_user_progress_test extends externallib_advanced_testcase {
     public function test_update_user_progress(): void {
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $userid = $res->user->id;
         $this->insert_two_goals($lgwid);
 
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $topic1 = $taxonomy->children[0];
 
         // Update learning goal 1 progess to 99.
-        $student = $this->create_user('student', $res->course->id, true);
+        $this->create_user('student', $res->course->id, true);
         $result = update_user_progress::execute(
             $lgwid,
             $topic1->topicid,

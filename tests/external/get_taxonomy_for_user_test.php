@@ -58,7 +58,6 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
     public function test_get_taxonomy_for_user(): void {
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
-        $teacher = $res->user;
 
         $this->insert_two_goals($lgwid);
 
@@ -76,7 +75,7 @@ final class get_taxonomy_for_user_test extends externallib_advanced_testcase {
         $this->assertFalse($taxonomy->student);
 
         // Students do get progress.
-        $student = $this->create_user('student', $res->course->id, true);
+        $this->create_user('student', $res->course->id, true);
         $result = get_taxonomy_for_user::execute($lgwid);
         $result = external_api::clean_returnvalue(get_taxonomy_for_user::execute_returns(), $result);
 

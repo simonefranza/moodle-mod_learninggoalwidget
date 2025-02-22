@@ -67,8 +67,6 @@ class get_taxonomy extends \core_external\external_api {
      * @return string
      */
     public static function execute($instanceid) {
-        global $USER;
-
         self::validate_parameters(self::execute_parameters(), ['instanceid' => $instanceid]);
 
         // Capability check.

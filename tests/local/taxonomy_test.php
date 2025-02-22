@@ -298,7 +298,7 @@ final class taxonomy_test extends \advanced_testcase {
         $taxonomy->children = $this->create_taxonomy(1, 0);
 
         // Check that students cannot update taxonomy.
-        $student = $this->create_user('student', $res->course->id, true);
+        $this->create_user('student', $res->course->id, true);
         $this->expectException(\required_capability_exception::class);
         taxonomy::update_taxonomy($lgwid, $taxonomy);
     }

@@ -23,8 +23,8 @@
  */
 
 $string['contentview'] = 'Lernziele';
-$string['examview'] = 'Mein Lernfortschritt';
 $string['editprogress'] = 'Mein Lernfortschritt für das Lernziel';
+$string['examview'] = 'Mein Lernfortschritt';
 $string['guestaccess'] = 'Dafür müssen sie angemeldet sein';
 
 $string['learninggoalwidget:addinstance'] = 'Lernziele Widget hinzufügen';

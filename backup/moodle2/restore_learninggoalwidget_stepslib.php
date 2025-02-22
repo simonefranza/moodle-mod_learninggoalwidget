@@ -42,11 +42,11 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
         $userinfo = $this->get_setting_value('userinfo');
 
         $paths[] = new restore_path_element('learninggoalwidget', '/activity/learninggoalwidget');
-        $paths[] = new restore_path_element('topic', '/activity/learninggoalwidget/topics/topic');
-        $paths[] = new restore_path_element('goal', '/activity/learninggoalwidget/topics/topic/goals/goal');
+        $paths[] = new restore_path_element('learninggoalwidget_topic', '/activity/learninggoalwidget/topics/topic');
+        $paths[] = new restore_path_element('learninggoalwidget_goal', '/activity/learninggoalwidget/topics/topic/goals/goal');
         if ($userinfo) {
             $paths[] = new restore_path_element(
-                'userprogress',
+                'learninggoalwidget_userprogress',
                 '/activity/learninggoalwidget/topics/topic/goals/goal/userprogresses/userprogress'
             );
         }
@@ -60,7 +60,7 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
      *
      * @param object $data
      */
-    protected function process_learninggoalwidget($data) {
+    protected function process_learninggoalwidget($data): void {
         global $DB;
 
         $data = (object)$data;
@@ -76,11 +76,11 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
     }
 
     /**
-     * Process a topic element
+     * Process a learninggoalwidget_topic element
      *
      * @param object $data
      */
-    protected function process_topic($data) {
+    protected function process_learninggoalwidget_topic($data): void {
         global $DB;
 
         $data = (object)$data;
@@ -89,45 +89,46 @@ class restore_learninggoalwidget_activity_structure_step extends restore_activit
         $data->learninggoalwidgetid = $this->get_new_parentid('learninggoalwidget');
 
         $newitemid = $DB->insert_record('learninggoalwidget_topics', $data);
-        $this->set_mapping('topic', $oldid, $newitemid);
+        $this->set_mapping('learninggoalwidget_topic', $oldid, $newitemid);
     }
 
     /**
-     * Process a goal element
+     * Process a learninggoalwidget_goal element
      *
      * @param object $data
      */
-    protected function process_goal($data) {
+    protected function process_learninggoalwidget_goal($data): void {
         global $DB;
 
         $data = (object)$data;
         $oldid = $data->id;
 
         $data->learninggoalwidgetid = $this->get_new_parentid('learninggoalwidget');
-        $data->topicid = $this->get_new_parentid('topic');
+        $data->topicid = $this->get_new_parentid('learninggoalwidget_topic');
 
         $newitemid = $DB->insert_record('learninggoalwidget_goals', $data);
-        $this->set_mapping('goal', $oldid, $newitemid);
+        $this->set_mapping('learninggoalwidget_goal', $oldid, $newitemid);
     }
 
     /**
-     * Process a userprogress element
+     * Process a learninggoalwidget_userprogress element
      *
      * @param object $data
      */
-    protected function process_userprogress($data) {
+    protected function process_learninggoalwidget_userprogress($data): void {
         global $DB;
 
         $data = (object)$data;
+        $oldid = $data->id;
 
         $data->learninggoalwidgetid = $this->get_new_parentid('learninggoalwidget');
-        $data->topicid = $this->get_new_parentid('topic');
-        $data->goalid = $this->get_new_parentid('goal');
+        $data->topicid = $this->get_new_parentid('learninggoalwidget_topic');
+        $data->goalid = $this->get_new_parentid('learninggoalwidget_goal');
 
         $data->userid = $this->get_mappingid('user', $data->userid);
 
-        $DB->insert_record('learninggoalwidget_progs', $data);
-        // No need to save this mapping as far as nothing depend on it.
+        $newitemid = $DB->insert_record('learninggoalwidget_progs', $data);
+        $this->set_mapping('learninggoalwidget_userprogress', $oldid, $newitemid);
     }
 
     /**
