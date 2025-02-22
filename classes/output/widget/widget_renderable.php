@@ -100,8 +100,8 @@ class widget_renderable implements renderable, templatable {
             "progresslabel100" => get_string('progresslabel100', 'learninggoalwidget'),
             "progressdialogtitle" => get_string('progressdialogtitle', 'learninggoalwidget'),
             "progresslegendlabel" => get_string('progresslegendlabel', 'learninggoalwidget'),
-            "sunburstthumbnail" => $output->image_url('icon', 'learninggoalwidget'),
-            "treemapthumbnail" => $output->image_url('treemapthumbnail', 'learninggoalwidget'),
+            "sunburstthumbnail" => $output->image_url('sunburst', 'learninggoalwidget'),
+            "treemapthumbnail" => $output->image_url('treemap', 'learninggoalwidget'),
             "textualbulletpointlisttitle" => get_string('textualbulletpointlisttitle', 'learninggoalwidget'),
             "treemapaccessibilitytext" => get_string("treemapaccessibilitytext", 'learninggoalwidget'),
         ];
