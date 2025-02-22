@@ -53,7 +53,7 @@
  * @param string[] $reffields
  * @return void
  */
-function delete_foreign_key($dbman, $tablename, $name, $fields, $reftable, $reffields) {
+function xmldb_learninggoalwidget_delete_foreign_key($dbman, $tablename, $name, $fields, $reftable, $reffields) {
     $table = new xmldb_table($tablename);
     $key = new xmldb_key($name, XMLDB_KEY_FOREIGN, $fields, $reftable, $reffields);
     $dbman->drop_key($table, $key);
@@ -69,7 +69,7 @@ function delete_foreign_key($dbman, $tablename, $name, $fields, $reftable, $reff
  * @param string[] $fields
  * @return void
  */
-function delete_index($dbman, $tablename, $indexname, $unique, $fields) {
+function xmldb_learninggoalwidget_delete_index($dbman, $tablename, $indexname, $unique, $fields) {
     $table = new xmldb_table($tablename);
     $index = new xmldb_index($indexname, $unique, $fields);
 
@@ -87,7 +87,7 @@ function delete_index($dbman, $tablename, $indexname, $unique, $fields) {
  * @param string $fieldname
  * @return void
  */
-function delete_key($dbman, $tablename, $fieldname) {
+function xmldb_learninggoalwidget_delete_key($dbman, $tablename, $fieldname) {
     $table = new xmldb_table($tablename);
     $field = new xmldb_field($fieldname);
 
@@ -104,7 +104,7 @@ function delete_key($dbman, $tablename, $fieldname) {
  * @param object $field
  * @return void
  */
-function add_field($dbman, $tablename, $field) {
+function xmldb_learninggoalwidget_add_field($dbman, $tablename, $field) {
     // Define field learninggoalwidgetid to be added to learninggoalwidget_topics.
     $table = new xmldb_table($tablename);
 
@@ -123,7 +123,7 @@ function add_field($dbman, $tablename, $field) {
  * @param string[] $fields
  * @return void
  */
-function add_notunique_index($dbman, $tablename, $indexname, $fields) {
+function xmldb_learninggoalwidget_add_notunique_index($dbman, $tablename, $indexname, $fields) {
     $table = new xmldb_table($tablename);
     $index = new xmldb_index($indexname, XMLDB_INDEX_NOTUNIQUE, $fields);
 
@@ -141,7 +141,7 @@ function add_notunique_index($dbman, $tablename, $indexname, $fields) {
  * @param string $newname
  * @return void
  */
-function rename_field($dbman, $tablename, $field, $newname) {
+function xmldb_learninggoalwidget_rename_field($dbman, $tablename, $field, $newname) {
     $table = new xmldb_table($tablename);
     if ($dbman->field_exists($table, $field)) {
         $dbman->rename_field($table, $field, $newname);
@@ -156,7 +156,7 @@ function rename_field($dbman, $tablename, $field, $newname) {
  * @param string $newname
  * @return void
  */
-function rename_table($dbman, $tablename, $newname) {
+function xmldb_learninggoalwidget_rename_table($dbman, $tablename, $newname) {
     $table = new xmldb_table($tablename);
     if ($dbman->table_exists($table)) {
         $dbman->rename_table($table, $newname);
@@ -170,7 +170,7 @@ function rename_table($dbman, $tablename, $newname) {
  * @param string $tablename
  * @return void
  */
-function drop_table($dbman, $tablename) {
+function xmldb_learninggoalwidget_drop_table($dbman, $tablename) {
     $table = new xmldb_table($tablename);
     if ($dbman->table_exists($table)) {
         $dbman->drop_table($table);
@@ -203,14 +203,14 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
     if ($oldversion < 2024042202) {
-        upgrade1($dbman);
+        xmldb_learninggoalwidget_upgrade1($dbman);
 
         // Learninggoalwidget savepoint reached.
         upgrade_mod_savepoint(true, 2024042202, 'learninggoalwidget');
     }
 
     if ($oldversion < 2025020500) {
-        upgrade2($dbman);
+        xmldb_learninggoalwidget_upgrade2($dbman);
         // Learninggoalwidget savepoint reached.
         upgrade_mod_savepoint(true, 2025020500, 'learninggoalwidget');
     }
@@ -224,7 +224,7 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
  * @param xmldb $dbman
  * @return void
  */
-function upgrade1($dbman) {
+function xmldb_learninggoalwidget_upgrade1($dbman) {
     // Change learninggoalwidget_i_userpro.user to userid .
     $table = new xmldb_table('learninggoalwidget_i_userpro');
     $field = new xmldb_field('user', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'user');
@@ -270,34 +270,34 @@ function upgrade1($dbman) {
  * @param xmldb $dbman
  * @return void
  */
-function upgrade2_delete_foreign_keys($dbman) {
+function xmldb_learninggoalwidget_upgrade2_delete_foreign_keys($dbman) {
     // Remove all foreign keys.
     // Remove learninggoalwidget_goal->fk_topic.
-    delete_foreign_key($dbman, 'learninggoalwidget_goal', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_goal', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
 
     // Remove learninggoalwidget_i_topics->fk_topic.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_topics', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_topics', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
     // Remove learninggoalwidget_i_topics->fk_course.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_topics', 'fk_course', ['course'], 'course', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_topics', 'fk_course', ['course'], 'course', ['id']);
 
     // Remove learninggoalwidget_i_goals->fk_topic.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_goals', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_goals', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
     // Remove learninggoalwidget_i_goals->fk_goal.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_goals', 'fk_goal', ['goal'], 'learninggoalwidget_goal', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_goals', 'fk_goal', ['goal'], 'learninggoalwidget_goal', ['id']);
     // Remove learninggoalwidget_i_goals->fk_course.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_goals', 'fk_course', ['course'], 'course', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_goals', 'fk_course', ['course'], 'course', ['id']);
 
     // Remove learninggoalwidget_i_userpro->fk_topic.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
     // Remove learninggoalwidget_i_userpro->fk_goal.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_goal', ['goal'], 'learninggoalwidget_goal', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_goal', ['goal'], 'learninggoalwidget_goal', ['id']);
     // Remove learninggoalwidget_i_userpro->fk_course.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_course', ['course'], 'course', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_course', ['course'], 'course', ['id']);
     // Remove learninggoalwidget_i_userpro->fk_userid.
-    delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_userid', ['userid'], 'user', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_userpro', 'fk_userid', ['userid'], 'user', ['id']);
 
     // Remove learninggoalwidget->fk_course .
-    delete_foreign_key($dbman, 'learninggoalwidget', 'fk_course', ['course'], 'course', ['id']);
+    xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget', 'fk_course', ['course'], 'course', ['id']);
 }
 
 /**
@@ -307,35 +307,35 @@ function upgrade2_delete_foreign_keys($dbman) {
  * @param xmldb $dbman
  * @return void
  */
-function upgrade2_delete_indexes($dbman) {
+function xmldb_learninggoalwidget_upgrade2_delete_indexes($dbman) {
     // Remove all indexes.
     // Remove index learninggoalwidget_goal->topic.
-    delete_index($dbman, 'learninggoalwidget_goal', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_goal', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
 
     // Remove index learninggoalwidget_i_topics->topic.
-    delete_index($dbman, 'learninggoalwidget_i_topics', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_topics', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
     // Remove index learninggoalwidget_i_topics->course.
-    delete_index($dbman, 'learninggoalwidget_i_topics', 'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_topics', 'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
     // Remove index learninggoalwidget_i_topics->coursemodule.
-    delete_index($dbman, 'learninggoalwidget_i_topics', 'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_topics', 'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
 
     // Remove index learninggoalwidget_i_goals->topic.
-    delete_index($dbman, 'learninggoalwidget_i_goals', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_goals', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
     // Remove index learninggoalwidget_i_goals->goal.
-    delete_index($dbman, 'learninggoalwidget_i_goals', 'goal', XMLDB_INDEX_NOTUNIQUE, ['goal']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_goals', 'goal', XMLDB_INDEX_NOTUNIQUE, ['goal']);
     // Remove index learninggoalwidget_i_goals->course.
-    delete_index($dbman, 'learninggoalwidget_i_goals', 'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_goals', 'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
     // Remove index learninggoalwidget_i_goals->coursemodule.
-    delete_index($dbman, 'learninggoalwidget_i_goals', 'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_goals', 'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
 
     // Remove index learninggoalwidget_i_userpro->topic.
-    delete_index($dbman, 'learninggoalwidget_i_userpro', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_userpro', 'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
     // Remove index learninggoalwidget_i_userpro->goal.
-    delete_index($dbman, 'learninggoalwidget_i_userpro', 'goal', XMLDB_INDEX_NOTUNIQUE, ['goal']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_userpro', 'goal', XMLDB_INDEX_NOTUNIQUE, ['goal']);
     // Remove index learninggoalwidget_i_userpro->course.
-    delete_index($dbman, 'learninggoalwidget_i_userpro', 'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_userpro', 'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
     // Remove index learninggoalwidget_i_userpro->coursemodule.
-    delete_index($dbman, 'learninggoalwidget_i_userpro', 'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
+    xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_userpro', 'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
 }
 
 /**
@@ -345,13 +345,13 @@ function upgrade2_delete_indexes($dbman) {
  * @param xmldb $dbman
  * @return void
  */
-function upgrade2_rename_tables($dbman) {
+function xmldb_learninggoalwidget_upgrade2_rename_tables($dbman) {
     // Rename learninggoalwidget_topic -> learninggoalwidget_topics.
-    rename_table($dbman, 'learninggoalwidget_topic', 'learninggoalwidget_topics');
+    xmldb_learninggoalwidget_rename_table($dbman, 'learninggoalwidget_topic', 'learninggoalwidget_topics');
     // Rename learninggoalwidget_goal -> learninggoalwidget_goals.
-    rename_table($dbman, 'learninggoalwidget_goal', 'learninggoalwidget_goals');
+    xmldb_learninggoalwidget_rename_table($dbman, 'learninggoalwidget_goal', 'learninggoalwidget_goals');
     // Rename learninggoalwidget_i_userpro -> learninggoalwidget_progs.
-    rename_table($dbman, 'learninggoalwidget_i_userpro', 'learninggoalwidget_progs');
+    xmldb_learninggoalwidget_rename_table($dbman, 'learninggoalwidget_i_userpro', 'learninggoalwidget_progs');
 }
 
 /**
@@ -361,33 +361,33 @@ function upgrade2_rename_tables($dbman) {
  * @param xmldb $dbman
  * @return void
  */
-function upgrade2_new_fields($dbman) {
+function xmldb_learninggoalwidget_upgrade2_new_fields($dbman) {
     // Add field learninggoalwidget_topics->learninggoalwidgetid.
     $field = new xmldb_field('learninggoalwidgetid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'id');
-    add_field($dbman, 'learninggoalwidget_topics', $field);
+    xmldb_learninggoalwidget_add_field($dbman, 'learninggoalwidget_topics', $field);
     // Add field learninggoalwidget_topics->ranking.
     $field = new xmldb_field('ranking', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'url');
-    add_field($dbman, 'learninggoalwidget_topics', $field);
+    xmldb_learninggoalwidget_add_field($dbman, 'learninggoalwidget_topics', $field);
 
     // Add field learninggoalwidget_goals->learninggoalwidgetid.
     $field = new xmldb_field('learninggoalwidgetid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'id');
-    add_field($dbman, 'learninggoalwidget_goals', $field);
+    xmldb_learninggoalwidget_add_field($dbman, 'learninggoalwidget_goals', $field);
     // Rename field learninggoalwidget_goals->topic -> topicid.
     $field = new xmldb_field('topic', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'learninggoalwidgetid');
-    rename_field($dbman, 'learninggoalwidget_goals', $field, 'topicid');
+    xmldb_learninggoalwidget_rename_field($dbman, 'learninggoalwidget_goals', $field, 'topicid');
     // Add field learninggoalwidget_goals->ranking.
     $field = new xmldb_field('ranking', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'url');
-    add_field($dbman, 'learninggoalwidget_goals', $field);
+    xmldb_learninggoalwidget_add_field($dbman, 'learninggoalwidget_goals', $field);
 
     // Add field learninggoalwidget_progs->learninggoalwidgetid.
     $field = new xmldb_field('instance', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'coursemodule');
-    rename_field($dbman, 'learninggoalwidget_progs', $field, 'learninggoalwidgetid');
+    xmldb_learninggoalwidget_rename_field($dbman, 'learninggoalwidget_progs', $field, 'learninggoalwidgetid');
     // Rename field learninggoalwidget_progs->topic -> topicid.
     $field = new xmldb_field('topic', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'learninggoalwidgetid');
-    rename_field($dbman, 'learninggoalwidget_progs', $field, 'topicid');
+    xmldb_learninggoalwidget_rename_field($dbman, 'learninggoalwidget_progs', $field, 'topicid');
     // Rename field learninggoalwidget_progs->goal -> goalid.
     $field = new xmldb_field('goal', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'topicid');
-    rename_field($dbman, 'learninggoalwidget_progs', $field, 'goalid');
+    xmldb_learninggoalwidget_rename_field($dbman, 'learninggoalwidget_progs', $field, 'goalid');
 }
 
 /**
@@ -396,18 +396,18 @@ function upgrade2_new_fields($dbman) {
  * @param xmldb $dbman
  * @return void
  */
-function upgrade2($dbman) {
+function xmldb_learninggoalwidget_upgrade2($dbman) {
     // Delete unneded foreign keys.
-    upgrade2_delete_foreign_keys($dbman);
+    xmldb_learninggoalwidget_upgrade2_delete_foreign_keys($dbman);
 
     // Delete unneded indexes.
-    upgrade2_delete_indexes($dbman);
+    xmldb_learninggoalwidget_upgrade2_delete_indexes($dbman);
 
     // Rename tables.
-    upgrade2_rename_tables($dbman);
+    xmldb_learninggoalwidget_upgrade2_rename_tables($dbman);
 
     // Add/rename new fields.
-    upgrade2_new_fields($dbman);
+    xmldb_learninggoalwidget_upgrade2_new_fields($dbman);
 
     // Consolidate topics.
     $sqlstmt = "SELECT id, instance, topic, ranking
@@ -447,32 +447,32 @@ function upgrade2($dbman) {
 
     // Add new indexes.
     // Add index learninggoalwidget_topics->learninggoalwidgetid.
-    add_notunique_index($dbman, 'learninggoalwidget_topics', 'learninggoalwidgetid', ['learninggoalwidgetid']);
+    xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_topics', 'learninggoalwidgetid', ['learninggoalwidgetid']);
 
     // Add index learninggoalwidget_goals->learninggoalwidgetid.
-    add_notunique_index($dbman, 'learninggoalwidget_goals', 'learninggoalwidgetid', ['learninggoalwidgetid']);
+    xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_goals', 'learninggoalwidgetid', ['learninggoalwidgetid']);
     // Add index learninggoalwidget_goals->topicid.
-    add_notunique_index($dbman, 'learninggoalwidget_goals', 'topicid', ['topicid']);
+    xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_goals', 'topicid', ['topicid']);
 
     // Add index learninggoalwidget_progs->learninggoalwidgetid.
-    add_notunique_index($dbman, 'learninggoalwidget_progs', 'learninggoalwidgetid', ['learninggoalwidgetid']);
+    xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_progs', 'learninggoalwidgetid', ['learninggoalwidgetid']);
     // Add index learninggoalwidget_progs->topicid.
-    add_notunique_index($dbman, 'learninggoalwidget_progs', 'topicid', ['topicid']);
+    xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_progs', 'topicid', ['topicid']);
     // Add index learninggoalwidget_progs->goalid.
-    add_notunique_index($dbman, 'learninggoalwidget_progs', 'goalid', ['goalid']);
+    xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_progs', 'goalid', ['goalid']);
     // Add index learninggoalwidget_progs->userid.
-    add_notunique_index($dbman, 'learninggoalwidget_progs', 'userid', ['userid']);
+    xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_progs', 'userid', ['userid']);
 
     // Delete unneeded fields
     // Delete learninggoalwidget_progs->course.
-    delete_key($dbman, 'learninggoalwidget_progs', 'course');
+    xmldb_learninggoalwidget_delete_key($dbman, 'learninggoalwidget_progs', 'course');
     // Delete learninggoalwidget_progs->coursemodule.
-    delete_key($dbman, 'learninggoalwidget_progs', 'coursemodule');
+    xmldb_learninggoalwidget_delete_key($dbman, 'learninggoalwidget_progs', 'coursemodule');
 
     // Delete unneeded tables.
     // Delete learninggoalwidget_i_topics.
-    drop_table($dbman, 'learninggoalwidget_i_topics');
+    xmldb_learninggoalwidget_drop_table($dbman, 'learninggoalwidget_i_topics');
 
     // Delete learninggoalwidget_i_goals.
-    drop_table($dbman, 'learninggoalwidget_i_goals');
+    xmldb_learninggoalwidget_drop_table($dbman, 'learninggoalwidget_i_goals');
 }
