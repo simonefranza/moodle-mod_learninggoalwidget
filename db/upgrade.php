@@ -111,6 +111,8 @@ function xmldb_learninggoalwidget_add_field($dbman, $tablename, $field) {
     // Conditionally launch add field learninggoalwidgetid.
     if (!$dbman->field_exists($table, $field)) {
         $dbman->add_field($table, $field);
+    } else {
+        throw new Exception("Cannot add field to '" . $tablename . "'");
     }
 }
 
@@ -129,6 +131,8 @@ function xmldb_learninggoalwidget_add_notunique_index($dbman, $tablename, $index
 
     if (!$dbman->index_exists($table, $index)) {
         $dbman->add_index($table, $index);
+    } else {
+        throw new Exception("Index '" . $indexname . "' exists already in '" . $tablename . "'");
     }
 }
 
@@ -145,6 +149,8 @@ function xmldb_learninggoalwidget_rename_field($dbman, $tablename, $field, $newn
     $table = new xmldb_table($tablename);
     if ($dbman->field_exists($table, $field)) {
         $dbman->rename_field($table, $field, $newname);
+    } else {
+        throw new Exception("Cannot rename field to '" . $newname. "' in '" . $tablename . "'");
     }
 }
 
@@ -160,6 +166,8 @@ function xmldb_learninggoalwidget_rename_table($dbman, $tablename, $newname) {
     $table = new xmldb_table($tablename);
     if ($dbman->table_exists($table)) {
         $dbman->rename_table($table, $newname);
+    } else {
+        throw new Exception("Cannot rename table '" . $tablename . "'. It does not exist");
     }
 }
 
@@ -174,6 +182,8 @@ function xmldb_learninggoalwidget_drop_table($dbman, $tablename) {
     $table = new xmldb_table($tablename);
     if ($dbman->table_exists($table)) {
         $dbman->drop_table($table);
+    } else {
+        throw new Exception("Cannot drop table '" . $tablename . "'. It does not exist");
     }
 }
 
@@ -201,18 +211,33 @@ function xmldb_learninggoalwidget_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
+    $transaction = null;
+    try {
+        if ($oldversion < 2024042202) {
+            $transaction = $DB->start_delegated_transaction();
+            xmldb_learninggoalwidget_upgrade1($dbman);
+            $transaction->allow_commit();
+            $transaction = null;
 
-    if ($oldversion < 2024042202) {
-        xmldb_learninggoalwidget_upgrade1($dbman);
+            // Learninggoalwidget savepoint reached.
+            upgrade_mod_savepoint(true, 2024042202, 'learninggoalwidget');
+        }
 
-        // Learninggoalwidget savepoint reached.
-        upgrade_mod_savepoint(true, 2024042202, 'learninggoalwidget');
-    }
+        if ($oldversion < 2025020500) {
+            $transaction = $DB->start_delegated_transaction();
+            xmldb_learninggoalwidget_upgrade2($dbman);
+            $transaction->allow_commit();
+            $transaction = null;
 
-    if ($oldversion < 2025020500) {
-        xmldb_learninggoalwidget_upgrade2($dbman);
-        // Learninggoalwidget savepoint reached.
-        upgrade_mod_savepoint(true, 2025020500, 'learninggoalwidget');
+            // Learninggoalwidget savepoint reached.
+            upgrade_mod_savepoint(true, 2025020500, 'learninggoalwidget');
+        }
+    } catch (Exception $e) {
+        if ($transaction) {
+            // Roll back the transaction in case of an error.
+            $transaction->rollback($e);
+        }
+        throw $e;
     }
 
     return true;
@@ -397,6 +422,8 @@ function xmldb_learninggoalwidget_upgrade2_new_fields($dbman) {
  * @return void
  */
 function xmldb_learninggoalwidget_upgrade2($dbman) {
+    global $DB;
+
     // Delete unneded foreign keys.
     xmldb_learninggoalwidget_upgrade2_delete_foreign_keys($dbman);
 
