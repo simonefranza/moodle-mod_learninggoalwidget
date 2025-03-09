@@ -93,8 +93,6 @@ function learninggoalwidget_update_instance(stdClass $data): bool {
     }
 
     $taxonomy = json_decode($data->taxonomy);
-    var_dump($data);
-    var_dump($taxonomy);
 
     taxonomy::update_taxonomy($data->id, $taxonomy);
 
