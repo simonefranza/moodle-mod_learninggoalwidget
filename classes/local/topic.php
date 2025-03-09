@@ -64,6 +64,7 @@ final class topic {
     public static function update_topic($lgwid, $topic) {
         global $DB;
         if (!self::validate_topic($topic)) {
+            var_dump("Invalid");
             // Topic is invalid.
             return -2;
         }
@@ -73,6 +74,7 @@ final class topic {
             'id' => $lgwid,
         ];
         if (!$DB->record_exists('learninggoalwidget', $params)) {
+            var_dump("No lgw");
             return -1;
         }
 
@@ -88,6 +90,7 @@ final class topic {
 
         if ($topicnew) {
             $newtopic->id = $DB->insert_record('learninggoalwidget_topics', $newtopic);
+            var_dump("inserted");
             return $newtopic->id;
         }
         // Topic should exist already, check if id exists.

@@ -27,6 +27,7 @@
     * none
 
     Context variables required for this template:
+    * instancename
     * courseid
     * coursemoduleid
     * instanceid
@@ -39,10 +40,12 @@
     * progresslegendlabel
     * treemapthumbnail
     * sunburstthumbnail
+    * logothumbnail
     * textualbulletpointlisttitle
 
     Example context (json):
     {
+        "instancename": "LGW",
         "courseid": "1",
         "coursemoduleid": "2",
         "instanceid": "3",
@@ -55,6 +58,7 @@
         "progresslegendlabel": "Lernfortschritt",
         "treemapthumbnail": "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7",
         "sunburstthumbnail": "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7",
+        "logothumbnail": "data:image/gif;base64,R0lGODlhEAAOALMAAOazToeHh0tLS/7LZv/0jvb29t/f3//Ub//ge8WSLf/rhf/3kdbW1mxsbP//mf///yH5BAAAAAAALAAAAAAQAA4AAARe8L1Ekyky67QZ1hLnjM5UUde0ECwLJoExKcppV0aCcGCmTIHEIUEqjgaORCMxIC6e0CcguWw6aFjsVMkkIr7g77ZKPJjPZqIyd7sJAgVGoEGv2xsBxqNgYPj/gAwXEQA7",
         "textualbulletpointlisttitle": "Überblick über die Themenbereiche und Lernziele"
     }
 }}
@@ -76,14 +80,22 @@
     data-treemap-id="learninggoals-treemap-{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}"
     data-treemapaccessibilitytext="{{treemapaccessibilitytext}}">
 
-    <div class="d-flex flex-row-reverse bd-highlight">
-        <div class="d-flex flex-column justify-center">
-            <img id="{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-treemap-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{treemapthumbnail}}}" alt="">
-            {{! <div class="p-2 bd-highlight">Treemap</div> }}
+    <div class="d-flex flex-row pb-4" style="justify-content: space-between">
+        <div class="d-flex flex-row align-items-center" style="gap: 0.5rem;">
+            <div class="activity-icon">
+              <img class="img-fluid" style="height: 48px; width:auto;" src="{{{logothumbnail}}}" alt="">
+            </div>
+            <span class="bold h4 m-0">{{{instancename}}}</span>
         </div>
-        <div class="d-flex flex-column justify-center pr-3">
-            <img id="{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-sunburst-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{sunburstthumbnail}}}" alt="">
-            {{! <div class="p-2 bd-highlight">Sunburst</div> }}
+        <div class="d-flex flex-row justify-center">
+            <div class="d-flex flex-column justify-center pr-3">
+                <img id="{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-sunburst-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{sunburstthumbnail}}}" alt="">
+                {{! <div class="p-2 bd-highlight">Sunburst</div> }}
+            </div>
+            <div class="d-flex flex-column justify-center">
+                <img id="{{{courseid}}}-{{{coursemoduleid}}}-{{{instanceid}}}-treemap-thumbnail" class="img-fluid" style="height: 48px; width:auto; cursor: pointer;" src="{{{treemapthumbnail}}}" alt="">
+                {{! <div class="p-2 bd-highlight">Treemap</div> }}
+            </div>
         </div>
     </div>
 

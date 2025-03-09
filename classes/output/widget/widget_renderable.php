@@ -87,8 +87,12 @@ class widget_renderable implements renderable, templatable {
      * @return array Context variables for the template
      */
     public function export_for_template(renderer_base $output) {
+        global $DB;
+
+        $instancename = $DB->get_field('learninggoalwidget', 'name', ['id' => $this->instanceid]);
 
         $contextvariables = [
+            "instancename" => $instancename,
             "courseid" => $this->courseid,
             "userid" => $this->userid,
             "coursemoduleid" => $this->coursemoduleid,
@@ -102,6 +106,7 @@ class widget_renderable implements renderable, templatable {
             "progresslegendlabel" => get_string('progresslegendlabel', 'learninggoalwidget'),
             "sunburstthumbnail" => $output->image_url('sunburst', 'learninggoalwidget'),
             "treemapthumbnail" => $output->image_url('treemap', 'learninggoalwidget'),
+            "logothumbnail" => $output->image_url('icon', 'learninggoalwidget'),
             "textualbulletpointlisttitle" => get_string('textualbulletpointlisttitle', 'learninggoalwidget'),
             "treemapaccessibilitytext" => get_string("treemapaccessibilitytext", 'learninggoalwidget'),
         ];

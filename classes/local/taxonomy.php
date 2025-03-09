@@ -161,14 +161,18 @@ class taxonomy {
      * @param stdClass $taxonomy Taxonomy to validate
      */
     public static function validate_taxonomy(&$taxonomy) {
+        var_dump("validate");
         if (!property_exists($taxonomy, 'children') || !is_array($taxonomy->children)) {
+            var_dump("no children");
             $taxonomy->children = [];
         }
 
         for ($i = count($taxonomy->children) - 1; $i >= 0; $i--) {
             $topic = &$taxonomy->children[$i];
+            var_dump($topic);
             // Validate topic.
             if (!topic::validate_topic($topic)) {
+                var_dump("topic invalid");
                 // Topic is not valid. Remove and skip.
                 array_splice($taxonomy->children, $i, 1);
                 continue;
@@ -176,8 +180,11 @@ class taxonomy {
 
             for ($ii = count($topic->children) - 1; $ii >= 0; $ii--) {
                 $goal = &$topic->children[$ii];
+                var_dump("goal");
+                var_dump($goal);
                 // Validate goals.
                 if (!goal::validate_goal($goal)) {
+                    var_dump("invalid goal");
                     // Goal is not valid, remove.
                     array_splice($topic->children, $ii, 1);
                 }
@@ -212,21 +219,29 @@ class taxonomy {
     public static function manage_taxonomy($lgwid, &$taxonomy) {
         // Capability check.
         self::validate_taxonomy($taxonomy);
+        var_dump("valid");
+        var_dump($taxonomy);
+        var_dump($lgwid);
 
         // Add all topics and goals to db.
         foreach ($taxonomy->children as $topic) {
+            var_dump($topic);
             // Check if topic is deleted or added.
             $topicdeleted = isset($topic->deleted) && $topic->deleted;
             $topicnew = isset($topic->new) && $topic->new;
 
             // New + deleted = was never in the DB -> ignore.
             if ($topicdeleted && $topicnew) {
+                var_dump("del and new");
                 continue;
             }
             if ($topicdeleted) {
+                var_dump("del");
                 topic::delete_topic($lgwid, $topic->topicid);
                 continue;
             }
+            var_dump("Add");
+            var_dump($topic);
 
             // Add/update topic.
             $topic->id = topic::update_topic($lgwid, $topic);

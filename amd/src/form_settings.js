@@ -66,10 +66,9 @@ var selectedTopicElement = null;
 
 /**
  * Initialise all of the modules for the Learning Goals Widget.
- * @param {string} paramTaxonomy The learning goal taxonomy as string
  */
-const init = (paramTaxonomy) => {
-  taxonomy = JSON.parse(paramTaxonomy);
+const init = () => {
+  taxonomy = JSON.parse(document.querySelector("input[name='taxonomy']").value);
 
   loadTopics();
 
@@ -1120,9 +1119,9 @@ const getNextGoalId = () => {
  */
 const addLocalTopic = (name, shortname, url) => {
   let newTopic = {
-    name: name,
-    shortname: shortname,
-    url: url,
+    name: name ?? "",
+    shortname: shortname ?? "",
+    url: url ?? "",
     ranking: getNextTopicRanking(),
     topicid: getNextTopicId(),
     children: [],
@@ -1176,9 +1175,9 @@ const deleteLocalTopic = (topicToDelete, reorder) => {
  */
 const addLocalGoal = (topic, name, shortname, url) => {
   let newGoal = {
-    name: name,
-    shortname: shortname,
-    url: url,
+    name: name ?? "",
+    shortname: shortname ?? "",
+    url: url ?? "",
     ranking: getNextGoalRanking(topic),
     goalid: getNextGoalId(),
     type: 'goal',
