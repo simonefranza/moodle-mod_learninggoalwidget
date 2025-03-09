@@ -354,3 +354,7 @@
   align-items: stretch;
   flex-direction: column;
 }
+
+.learninggoalwidget a.no-underline:hover {
+  text-decoration: none;
+}

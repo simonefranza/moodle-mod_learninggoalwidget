@@ -65,7 +65,7 @@ class mod_learninggoalwidget_mod_form extends moodleform_mod {
           get_string('settings:header', 'mod_learninggoalwidget'));
 
         // Load topics and goals.
-        $jsontaxonomy = addslashes(taxonomy::get_taxonomy_as_json($this->_instance));
+        $jsontaxonomy = taxonomy::get_taxonomy_as_json($this->_instance);
 
         $mform->addElement('hidden', 'taxonomy', $jsontaxonomy);
         $mform->setType('taxonomy', PARAM_RAW);

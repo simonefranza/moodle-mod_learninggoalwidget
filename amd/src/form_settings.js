@@ -36,7 +36,6 @@
  */
 
 import $ from "jquery";
-import Controller from "mod_learninggoalwidget/controller";
 import Templates from "core/templates";
 import ModalSaveCancel from "core/modal_save_cancel";
 import ModalEvents from "core/modal_events";
@@ -61,18 +60,15 @@ const ADD_KEY = 'new';
 const DELETE_KEY = 'deleted';
 const EDIT_KEY = 'edit';
 
-var instance = null;
 var taxonomy = null;
 var selectedTopic = null;
 var selectedTopicElement = null;
 
 /**
  * Initialise all of the modules for the Learning Goals Widget.
- * @param {string} paramInstance The course module instance ID
  * @param {string} paramTaxonomy The learning goal taxonomy as string
  */
-const init = (paramInstance, paramTaxonomy) => {
-  instance = paramInstance;
+const init = (paramTaxonomy) => {
   taxonomy = JSON.parse(paramTaxonomy);
 
   loadTopics();
@@ -91,13 +87,12 @@ const loadTopics = async () => {
   $("#topics-list").children().remove();
   taxonomy.children.sort((a, b) => a.ranking - b.ranking);
 
-  if (taxonomy.children.length === 0) {
-    $("#notopics").removeClass("d-none");
-  }
+  let nTopics = 0;
   for (let topic of taxonomy.children) {
     if (DELETE_KEY in topic && topic[DELETE_KEY]) {
       continue;
     }
+    nTopics++;
 
     const topicContext = {
       topicname: topic.name,
@@ -116,7 +111,10 @@ const loadTopics = async () => {
     $(baseID + "moveup").click(clickedMoveupTopic);
     $(baseID + "movedown").click(clickedMovedownTopic);
   }
-  if (!selectedTopic) {
+  if (nTopics === 0) {
+    $("#notopics").removeClass("d-none");
+  }
+  if (!selectedTopic || selectedTopic == -1) {
     const showGoalStr = await CoreStr.get_string('settings:showgoals', 'mod_learninggoalwidget');
     $('#learninggoals-list').children().remove();
     $("#goalsfortopic").removeClass("d-none");
@@ -124,6 +122,8 @@ const loadTopics = async () => {
     return;
   }
   const selectedTopicObj = getTopicById(selectedTopic);
+  selectedTopicElement = document.querySelector(`#topic-item-${selectedTopic}`);
+  selectedTopicElement.style.backgroundColor = 'gainsboro';
   loadGoals(selectedTopicObj);
 };
 
@@ -134,19 +134,15 @@ const loadTopics = async () => {
 const loadGoals = async (topic) => {
   $('#learninggoals-list').children().remove();
   topic.children.sort((a, b) => a.ranking - b.ranking);
-  if (!topic.children.length) {
-    const noGoalStr = await CoreStr.get_string('settings:nogoals', 'mod_learninggoalwidget');
-    $("#goalsfortopic").removeClass("d-none");
-    $("#goalsfortopicstatusmessage").html(noGoalStr);
-    return;
-  }
 
   $("#goalsfortopic").addClass("d-none");
   const topicid = topic.topicid;
+  let nGoals = 0;
   for (let goal of topic.children) {
     if (DELETE_KEY in goal && goal[DELETE_KEY]) {
       continue;
     }
+    nGoals++;
 
     const goalid = goal.goalid;
 
@@ -164,6 +160,12 @@ const loadGoals = async (topic) => {
     $(baseID + "delete").click(clickedDeleteGoal);
     $(baseID + "moveup").click(clickedMoveupGoal);
     $(baseID + "movedown").click(clickedMovedownGoal);
+  }
+  if (!nGoals) {
+    const noGoalStr = await CoreStr.get_string('settings:nogoals', 'mod_learninggoalwidget');
+    $("#goalsfortopic").removeClass("d-none");
+    $("#goalsfortopicstatusmessage").html(noGoalStr);
+    return;
   }
 };
 
@@ -184,10 +186,10 @@ const clickedTopicName = (e) => {
 
   selectedTopic = topicId;
   if (selectedTopicElement !== null) {
-    selectedTopicElement.css('background-color', 'white');
+    selectedTopicElement.style.backgroundColor = 'white';
   }
-  selectedTopicElement = $(e.currentTarget);
-  selectedTopicElement.css('background-color', 'gainsboro');
+  selectedTopicElement = e.currentTarget;
+  selectedTopicElement.style.backgroundColor = 'gainsboro';
 };
 
 /**
@@ -312,9 +314,28 @@ const clickedDeleteTopic = async (e) => {
     modal.hide();
 
     // Mark topic as deleted
+    let newSelectedTopicId = -1;
+    let newSelectedTopicRanking = -1;
+    for (let i = taxonomy.children.length - 1; i >= 0; i--) {
+      const topic = taxonomy.children[i];
+      if (DELETE_KEY in topic || topic[DELETE_KEY]
+        || topic.topicid === topicToDelete.topicid) {
+        continue;
+      }
+      if (newSelectedTopicRanking < topicToDelete.ranking &&
+        topic.ranking < newSelectedTopicRanking && newSelectedTopicRanking !== -1) {
+        continue;
+      }
+      if (topic.ranking > newSelectedTopicRanking && newSelectedTopicRanking !== -1) {
+        continue;
+      }
+      newSelectedTopicId = topic.topicid;
+      newSelectedTopicRanking = topic.ranking;
+    }
     deleteLocalTopic(topicToDelete);
     updateTaxonomyValue();
 
+    selectedTopic = newSelectedTopicId;
     loadTopics();
   } catch (e) {
     // A console.error("Failed to delete topic", e);
@@ -871,7 +892,9 @@ const clickedJSONUpload = () => {
         });
       });
       updateTaxonomyValue();
-      // A console.log(parsed, taxonomy);
+      document.querySelector("input[name='name']").value = parsed.name;
+      selectedTopic = null;
+      selectedTopicElement = null;
 
       loadTopics();
     } catch (e) {
@@ -884,36 +907,35 @@ const clickedJSONUpload = () => {
  * Download current JSON Taxonomy
  */
 const clickedJSONDownload = async () => {
+  const jsonTaxonomy = JSON.parse(
+    document.querySelector("input[name='taxonomy']").value
+  );
+  const taxonomyName = document.querySelector("input[name='name']").value;
 
-  const strTaxonomy = await Controller.getTaxonomy({ instance: instance });
-  const jsonTaxonomy = JSON.parse(strTaxonomy);
-
-  let newTaxonomy = { name: jsonTaxonomy.name, children: [] };
+  let newTaxonomy = { name: taxonomyName, children: [] };
+  jsonTaxonomy.children.sort((a, b) => a.ranking - b.ranking);
   jsonTaxonomy.children.forEach((topic) => {
+    if (DELETE_KEY in topic && topic[DELETE_KEY]) {
+      return;
+    }
     let goals = [];
-    let topicObj = {};
-    if ('name' in topic) {
-      topicObj.name = topic.name;
-    }
-    if ('shortname' in topic) {
-      topicObj.shortname= topic.shortname;
-    }
-    if ('url' in topic) {
-      topicObj.url = topic.url;
-    }
+    let topicObj = {
+      name: topic.name ?? "",
+      shortname: topic.shortname ?? "",
+      url: topic.url ?? "",
+    };
 
     if ('children' in topic) {
+      topic.children.sort((a, b) => a.ranking - b.ranking);
       topic.children.forEach((goal) => {
-        goals.push({});
-        if ('name' in goal) {
-          goals[goals.length - 1].name = goal.name;
+        if (DELETE_KEY in goal && goal[DELETE_KEY]) {
+          return;
         }
-        if ('shortname' in goal) {
-          goals[goals.length - 1].shortname = goal.shortname;
-        }
-        if ('url' in goal) {
-          goals[goals.length - 1].url = goal.url;
-        }
+        goals.push({
+          name: goal.name ?? "",
+          shortname: goal.shortname ?? "",
+          url: goal.url ?? "",
+        });
       });
     }
     topicObj.children = goals;
