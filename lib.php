@@ -24,12 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/taxonomy.php');
-require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/topic.php');
-require_once($CFG->dirroot . '/mod/learninggoalwidget/classes/local/goal.php');
 use mod_learninggoalwidget\local\taxonomy;
-use mod_learninggoalwidget\local\topic;
-use mod_learninggoalwidget\local\goal;
+use mod_learninggoalwidget\output\widget\widget_renderable;
 
 /**
  * This function is necessary for the plugin to be classified in the right
@@ -88,9 +84,10 @@ function learninggoalwidget_update_instance(stdClass $data): bool {
 
     $data->timemodified = time();
     $data->id = $data->instance;
-    if (!$DB->update_record('learninggoalwidget', $data)) {
+    if (!$DB->record_exists('learninggoalwidget', ['id' => $data->id])) {
         return false;
     }
+    $DB->update_record('learninggoalwidget', $data);
 
     $taxonomy = json_decode($data->taxonomy);
 
@@ -136,7 +133,7 @@ function learninggoalwidget_cm_info_view(cm_info $cm) {
 
     if ($canview) {
 
-        $widgetrenderable = new \mod_learninggoalwidget\output\widget\widget_renderable(
+        $widgetrenderable = new widget_renderable(
             $cm->get_modinfo()->get_course_id(),
             $cm->get_modinfo()->get_user_id(),
             $cm->get_course_module_record()->id,

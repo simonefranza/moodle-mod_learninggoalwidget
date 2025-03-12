@@ -831,47 +831,48 @@ var renderSunburstWithProgressView = function(courseTaxonomy, sunburstId, progre
             )
             .on(
                 "click", async function(e, d) {
-                    if (!d.children) {
-                        var instanceid = getInstanceId(this);
-                        var sunburstId = getSunburstId(this);
-                        var goalId = d.data.goalid;
-                        var goalProgressValue = 0;
-                        var topicId = d.parent.data.topicid;
-                        var modalId = new Date().getTime();
-                        var context = {
-                            progressValue: d.data.pro,
-                            modalId: modalId
-                        };
+                    if (d.depth !== 2) {
+                        return;
+                    }
+                    var instanceid = getInstanceId(this);
+                    var sunburstId = getSunburstId(this);
+                    var goalId = d.data.goalid;
+                    var goalProgressValue = 0;
+                    var topicId = d.parent.data.topicid;
+                    var modalId = new Date().getTime();
+                    var context = {
+                        progressValue: d.data.pro,
+                        modalId: modalId
+                    };
 
-                        var modalProgress = progressModalsDict[d.data.name];
-                        if (modalProgress) {
-                            modalProgress.show();
-                        } else {
-                            const modalTitle = await CoreStr.get_string('editprogress', 'mod_learninggoalwidget');
-                            const modal = await ModalSaveCancel.create(
-                                {
-                                    title: `${modalTitle} '${d.data.name}':`,
-                                    body: Templates.render(TEMPLATES.EDIT_PROGRESS_VALUES, context)
-                                }
-                            );
-                            progressModalsDict[d.data.name] = modal;
-                            modal.getRoot().on(
-                                ModalEvents.save, function(e) {
-                                    e.preventDefault();
-                                    goalProgressValue = document.getElementById("progressvalue-" + modalId).value;
-                                    saveProgress(sunburstId, instanceid, topicId, goalId, goalProgressValue);
-                                    modal.hide();
-                                }
-                            );
+                    var modalProgress = progressModalsDict[d.data.name];
+                    if (modalProgress) {
+                        modalProgress.show();
+                    } else {
+                        const modalTitle = await CoreStr.get_string('editprogress', 'mod_learninggoalwidget');
+                        const modal = await ModalSaveCancel.create(
+                            {
+                                title: `${modalTitle} '${d.data.name}':`,
+                                body: Templates.render(TEMPLATES.EDIT_PROGRESS_VALUES, context)
+                            }
+                        );
+                        progressModalsDict[d.data.name] = modal;
+                        modal.getRoot().on(
+                            ModalEvents.save, function(e) {
+                                e.preventDefault();
+                                goalProgressValue = document.getElementById("progressvalue-" + modalId).value;
+                                saveProgress(sunburstId, instanceid, topicId, goalId, goalProgressValue);
+                                modal.hide();
+                            }
+                        );
 
-                            modal.getRoot().find("progressvalue-" + modalId);
+                        modal.getRoot().find("progressvalue-" + modalId);
 
-                            $(modal.getRoot()).on('input', '#progressvalue-' + modalId, function() {
-                                updateLearningProgress(modalId);
-                            });
+                        $(modal.getRoot()).on('input', '#progressvalue-' + modalId, function() {
+                            updateLearningProgress(modalId);
+                        });
 
-                            modal.show();
-                        }
+                        modal.show();
                     }
                 }
             );
@@ -1196,6 +1197,9 @@ var getColorForPercentage = function(pct) {
  * @returns {string} The color hex code
  */
 var getColor = function(value) {
+    if (value === null || value === undefined) {
+        return "";
+    }
     if (!taxonomy.student) {
         return "#e5e5e5";
     }
