@@ -36,7 +36,7 @@ use mod_learninggoalwidget\local\taxonomy;
  * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_learninggoalwidget_mod_form extends moodleform_mod {
+class mod_learninggoalwidget_mod_form extends \moodleform_mod {
 
     /**
      * setup the form

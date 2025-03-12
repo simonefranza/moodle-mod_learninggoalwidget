@@ -22,15 +22,17 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_learninggoalwidget;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/mod_form.php');
-require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+#require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use core_external\external_api;
+use mod_learninggoalwidget_mod_form;
 
 /**
  * Learning Goal Taxonomy Mod Form Test
@@ -41,11 +43,14 @@ use core_external\external_api;
  *
  * @runTestsInSeparateProcesses
  */
-final class mod_form_test extends externallib_advanced_testcase {
+final class mod_form_test extends \advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
      * testing class mod_learninggoalwidget_mod_form
      * @return void
+     *
+     * @covers \mod_learninggoalwidget_mod_form::__construct
+     * @covers \mod_learninggoalwidget_mod_form::definition
      */
     public function test_definition(): void {
         global $COURSE;
@@ -59,7 +64,8 @@ final class mod_form_test extends externallib_advanced_testcase {
 
         $data = new \stdClass();
         $data->instance = $lgwid;
-        new mod_learninggoalwidget_mod_form($data, $cm->sectionnum, $cm, $course);
+        $modform = new mod_learninggoalwidget_mod_form($data, $cm->sectionnum, $cm, $course);
         $this->assertDebuggingNotCalled();
+        $modform->definition();
     }
 }

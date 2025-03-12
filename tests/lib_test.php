@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace mod_learninggoalwidget;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -48,7 +50,7 @@ final class lib_test extends \advanced_testcase {
      * testing method learninggoalwidget_supports
      * @return void
      *
-     * @covers learninggoalwidget_supports
+     * @covers ::learninggoalwidget_supports
      */
     public function test_supports(): void {
         $this->assertSame(learninggoalwidget_supports(FEATURE_MOD_PURPOSE),
@@ -65,8 +67,8 @@ final class lib_test extends \advanced_testcase {
      * testing method learninggoalwidget_update_instance
      * @return void
      *
-     * @covers learninggoalwidget_add_instance
-     * @covers learninggoalwidget_update_instance
+     * @covers ::learninggoalwidget_add_instance
+     * @covers ::learninggoalwidget_update_instance
      */
     public function test_update(): void {
         global $DB;
@@ -104,9 +106,9 @@ final class lib_test extends \advanced_testcase {
      * testing method learninggoalwidget_delete_instance
      * @return void
      *
-     * @covers learninggoalwidget_add_instance
-     * @covers learninggoalwidget_update_instance
-     * @covers learninggoalwidget_delete_instance
+     * @covers ::learninggoalwidget_add_instance
+     * @covers ::learninggoalwidget_update_instance
+     * @covers ::learninggoalwidget_delete_instance
      */
     public function test_delete(): void {
         global $DB;
@@ -174,9 +176,9 @@ final class lib_test extends \advanced_testcase {
      * testing method learninggoalwidget_cm_info_view as guest
      * @return void
      *
-     * @covers learninggoalwidget_add_instance
-     * @covers learninggoalwidget_update_instance
-     * @covers learninggoalwidget_cm_info_view
+     * @covers ::learninggoalwidget_add_instance
+     * @covers ::learninggoalwidget_update_instance
+     * @covers ::learninggoalwidget_cm_info_view
      */
     public function test_cm_info_view_as_guest(): void {
         global $DB;
@@ -197,9 +199,9 @@ final class lib_test extends \advanced_testcase {
      * testing method learninggoalwidget_cm_info_view as user without access
      * @return void
      *
-     * @covers learninggoalwidget_add_instance
-     * @covers learninggoalwidget_update_instance
-     * @covers learninggoalwidget_cm_info_view
+     * @covers ::learninggoalwidget_add_instance
+     * @covers ::learninggoalwidget_update_instance
+     * @covers ::learninggoalwidget_cm_info_view
      */
     public function test_cm_info_view_as_user_without_access(): void {
         global $DB;
@@ -223,9 +225,9 @@ final class lib_test extends \advanced_testcase {
      * testing method learninggoalwidget_cm_info_view as user with access
      * @return void
      *
-     * @covers learninggoalwidget_add_instance
-     * @covers learninggoalwidget_update_instance
-     * @covers learninggoalwidget_cm_info_view
+     * @covers ::learninggoalwidget_add_instance
+     * @covers ::learninggoalwidget_update_instance
+     * @covers ::learninggoalwidget_cm_info_view
      */
     public function test_cm_info_view_as_user_with_access(): void {
         global $DB;
