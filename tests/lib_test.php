@@ -181,7 +181,6 @@ final class lib_test extends \advanced_testcase {
      * @covers ::learninggoalwidget_cm_info_view
      */
     public function test_cm_info_view_as_guest(): void {
-        global $DB;
         $res = $this->setup_widget();
         // Switch to guest user.
         $this->setGuestUser();
@@ -204,7 +203,6 @@ final class lib_test extends \advanced_testcase {
      * @covers ::learninggoalwidget_cm_info_view
      */
     public function test_cm_info_view_as_user_without_access(): void {
-        global $DB;
         $res = $this->setup_widget();
 
         // Create a user without capability.
@@ -230,7 +228,6 @@ final class lib_test extends \advanced_testcase {
      * @covers ::learninggoalwidget_cm_info_view
      */
     public function test_cm_info_view_as_user_with_access(): void {
-        global $DB;
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
 

@@ -30,7 +30,6 @@ global $CFG;
 
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/mod_form.php');
-#require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use mod_learninggoalwidget_mod_form;
 
