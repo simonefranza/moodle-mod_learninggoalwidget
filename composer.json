@@ -1,6 +1,6 @@
 {
 	"name": "llt-plugindev/moodle-mod_learninggoalwidget",
-    "description": "Learning Goals ...",
+    "description": "Learning Goals Widget",
     "license": "GPL-3.0-or-later",
     "authors": [
         {
@@ -18,6 +18,6 @@
         "learninggoals"
     ],
 	"require": {
-		"moodle/moodle": "4.2.*"
-    }
+		"moodle/moodle": "4.3.*"
+  }
 }
