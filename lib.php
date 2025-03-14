@@ -130,7 +130,6 @@ function learninggoalwidget_cm_info_view(cm_info $cm) {
     );
 
     if ($canview) {
-
         $widgetrenderable = new widget_renderable(
             $cm->get_modinfo()->get_course_id(),
             $cm->get_modinfo()->get_user_id(),
@@ -141,12 +140,9 @@ function learninggoalwidget_cm_info_view(cm_info $cm) {
         $widgetrenderer = $PAGE->get_renderer('mod_learninggoalwidget', 'widget');
 
         $cm->set_content($widgetrenderer->render($widgetrenderable), true);
+    } else if (isguestuser()) {
+        $cm->set_content(get_string('guestaccess', 'mod_learninggoalwidget'), false);
     } else {
-
-        if (isguestuser()) {
-            $cm->set_content(get_string('guestaccess', 'mod_learninggoalwidget'), false);
-        } else {
-            $cm->set_content(get_string('noaccess', 'mod_learninggoalwidget'), false);
-        }
+        $cm->set_content(get_string('noaccess', 'mod_learninggoalwidget'), false);
     }
 }

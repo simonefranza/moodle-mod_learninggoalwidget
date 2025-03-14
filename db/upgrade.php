@@ -18,7 +18,7 @@
  * learninggoalwidget module upgrade
  *
  * @package   mod_learninggoalwidget
- * @copyright 2021 Know Cener GmbH
+ * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -253,8 +253,8 @@ function xmldb_learninggoalwidget_upgrade1($dbman) {
     // Change learninggoalwidget_i_userpro.user to userid .
     $table = new xmldb_table('learninggoalwidget_i_userpro');
     $field = new xmldb_field('user', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'user');
-    if ($dbman->field_exists($table, $field)) {
 
+    if ($dbman->field_exists($table, $field)) {
         // Remove index user .
         $index = new xmldb_index('user', XMLDB_INDEX_NOTUNIQUE, ['user']);
         if ($dbman->index_exists($table, $index)) {
@@ -299,41 +299,41 @@ function xmldb_learninggoalwidget_upgrade2_delete_foreign_keys($dbman) {
     // Remove all foreign keys.
     // Remove learninggoalwidget_goal->fk_topic.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_goal',
-      'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
+        'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
 
     // Remove learninggoalwidget_i_topics->fk_topic.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_topics',
-      'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
+        'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
     // Remove learninggoalwidget_i_topics->fk_course.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_topics',
-      'fk_course', ['course'], 'course', ['id']);
+        'fk_course', ['course'], 'course', ['id']);
 
     // Remove learninggoalwidget_i_goals->fk_topic.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_goals',
-      'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
+        'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
     // Remove learninggoalwidget_i_goals->fk_goal.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_goals',
-      'fk_goal', ['goal'], 'learninggoalwidget_goal', ['id']);
+        'fk_goal', ['goal'], 'learninggoalwidget_goal', ['id']);
     // Remove learninggoalwidget_i_goals->fk_course.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_goals',
-      'fk_course', ['course'], 'course', ['id']);
+        'fk_course', ['course'], 'course', ['id']);
 
     // Remove learninggoalwidget_i_userpro->fk_topic.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_userpro',
-      'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
+        'fk_topic', ['topic'], 'learninggoalwidget_topic', ['id']);
     // Remove learninggoalwidget_i_userpro->fk_goal.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_userpro',
-      'fk_goal', ['goal'], 'learninggoalwidget_goal', ['id']);
+        'fk_goal', ['goal'], 'learninggoalwidget_goal', ['id']);
     // Remove learninggoalwidget_i_userpro->fk_course.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_userpro',
-      'fk_course', ['course'], 'course', ['id']);
+        'fk_course', ['course'], 'course', ['id']);
     // Remove learninggoalwidget_i_userpro->fk_userid.
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget_i_userpro',
-      'fk_userid', ['userid'], 'user', ['id']);
+        'fk_userid', ['userid'], 'user', ['id']);
 
     // Remove learninggoalwidget->fk_course .
     xmldb_learninggoalwidget_delete_foreign_key($dbman, 'learninggoalwidget',
-      'fk_course', ['course'], 'course', ['id']);
+        'fk_course', ['course'], 'course', ['id']);
 }
 
 /**
@@ -347,43 +347,43 @@ function xmldb_learninggoalwidget_upgrade2_delete_indexes($dbman) {
     // Remove all indexes.
     // Remove index learninggoalwidget_goal->topic.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_goal',
-      'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
+        'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
 
     // Remove index learninggoalwidget_i_topics->topic.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_topics',
-      'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
+        'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
     // Remove index learninggoalwidget_i_topics->course.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_topics',
-      'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
+        'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
     // Remove index learninggoalwidget_i_topics->coursemodule.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_topics',
-      'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
+        'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
 
     // Remove index learninggoalwidget_i_goals->topic.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_goals',
-      'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
+        'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
     // Remove index learninggoalwidget_i_goals->goal.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_goals',
-      'goal', XMLDB_INDEX_NOTUNIQUE, ['goal']);
+        'goal', XMLDB_INDEX_NOTUNIQUE, ['goal']);
     // Remove index learninggoalwidget_i_goals->course.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_goals',
-      'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
+        'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
     // Remove index learninggoalwidget_i_goals->coursemodule.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_goals',
-      'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
+        'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
 
     // Remove index learninggoalwidget_i_userpro->topic.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_userpro',
-      'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
+        'topic', XMLDB_INDEX_NOTUNIQUE, ['topic']);
     // Remove index learninggoalwidget_i_userpro->goal.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_userpro',
-      'goal', XMLDB_INDEX_NOTUNIQUE, ['goal']);
+        'goal', XMLDB_INDEX_NOTUNIQUE, ['goal']);
     // Remove index learninggoalwidget_i_userpro->course.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_userpro',
-      'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
+        'course', XMLDB_INDEX_NOTUNIQUE, ['course']);
     // Remove index learninggoalwidget_i_userpro->coursemodule.
     xmldb_learninggoalwidget_delete_index($dbman, 'learninggoalwidget_i_userpro',
-      'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
+        'coursemodule', XMLDB_INDEX_NOTUNIQUE, ['coursemodule']);
 }
 
 /**
@@ -498,17 +498,17 @@ function xmldb_learninggoalwidget_upgrade2($dbman) {
     // Add new indexes.
     // Add index learninggoalwidget_topics->learninggoalwidgetid.
     xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_topics',
-      'learninggoalwidgetid', ['learninggoalwidgetid']);
+        'learninggoalwidgetid', ['learninggoalwidgetid']);
 
     // Add index learninggoalwidget_goals->learninggoalwidgetid.
     xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_goals',
-      'learninggoalwidgetid', ['learninggoalwidgetid']);
+        'learninggoalwidgetid', ['learninggoalwidgetid']);
     // Add index learninggoalwidget_goals->topicid.
     xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_goals', 'topicid', ['topicid']);
 
     // Add index learninggoalwidget_progs->learninggoalwidgetid.
     xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_progs',
-      'learninggoalwidgetid', ['learninggoalwidgetid']);
+        'learninggoalwidgetid', ['learninggoalwidgetid']);
     // Add index learninggoalwidget_progs->topicid.
     xmldb_learninggoalwidget_add_notunique_index($dbman, 'learninggoalwidget_progs', 'topicid', ['topicid']);
     // Add index learninggoalwidget_progs->goalid.

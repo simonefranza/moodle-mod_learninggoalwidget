@@ -63,8 +63,8 @@ class get_taxonomy_for_user extends \core_external\external_api {
     /**
      * Get taxonomy as JSON for a user
      *
-     * @param number $instanceid
-     * @return void
+     * @param int $instanceid
+     * @return string
      */
     public static function execute($instanceid) {
         self::validate_parameters(self::execute_parameters(), ['instanceid' => $instanceid]);

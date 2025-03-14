@@ -126,8 +126,8 @@ class mod_learninggoalwidget_mod_form extends \moodleform_mod {
                 $topicsnochild .= ", '";
             }
             $topicsnochild .= "'" . $topic->name . "'";
-
         }
+
         if ($topicsnochild !== '') {
             $errors["errorfield"] = get_string('validation:missinggoal', 'mod_learninggoalwidget', $topicsnochild);
         }

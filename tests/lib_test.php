@@ -53,14 +53,10 @@ final class lib_test extends \advanced_testcase {
      * @covers ::learninggoalwidget_supports
      */
     public function test_supports(): void {
-        $this->assertSame(learninggoalwidget_supports(FEATURE_MOD_PURPOSE),
-                      MOD_PURPOSE_ASSESSMENT);
-        $this->assertSame(learninggoalwidget_supports(FEATURE_BACKUP_MOODLE2),
-                                    true);
-        $this->assertSame(learninggoalwidget_supports(FEATURE_NO_VIEW_LINK),
-                                    true);
-        $this->assertSame(learninggoalwidget_supports('test'),
-                                    null);
+        $this->assertSame(learninggoalwidget_supports(FEATURE_MOD_PURPOSE), MOD_PURPOSE_ASSESSMENT);
+        $this->assertSame(learninggoalwidget_supports(FEATURE_BACKUP_MOODLE2), true);
+        $this->assertSame(learninggoalwidget_supports(FEATURE_NO_VIEW_LINK), true);
+        $this->assertSame(learninggoalwidget_supports('test'), null);
     }
 
     /**
@@ -81,9 +77,9 @@ final class lib_test extends \advanced_testcase {
         $taxonomy->children = $this->create_taxonomy(1, 1);
 
         $data = (object)[
-            "instance" => $lgwid + 342,
-            "name" => $newname,
-            "taxonomy" => json_encode($taxonomy),
+            'instance' => $lgwid + 342,
+            'name' => $newname,
+            'taxonomy' => json_encode($taxonomy),
         ];
         $this->assertFalse(learninggoalwidget_update_instance($data));
         $record = $DB->get_record('learninggoalwidget', ['id' => $lgwid]);
@@ -121,9 +117,9 @@ final class lib_test extends \advanced_testcase {
         $taxonomy->children = $this->create_taxonomy(1, 1);
 
         $data = (object)[
-            "instance" => $lgwid,
-            "name" => $newname,
-            "taxonomy" => json_encode($taxonomy),
+            'instance' => $lgwid,
+            'name' => $newname,
+            'taxonomy' => json_encode($taxonomy),
         ];
 
         $this->assertTrue(learninggoalwidget_update_instance($data));
@@ -147,11 +143,11 @@ final class lib_test extends \advanced_testcase {
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
         $this->assertTrue($DB->record_exists('learninggoalwidget', ['id' => $lgwid]));
         $this->assertTrue($DB->record_exists('learninggoalwidget_topics',
-          ['learninggoalwidgetid' => $lgwid]));
+            ['learninggoalwidgetid' => $lgwid]));
         $this->assertTrue($DB->record_exists('learninggoalwidget_goals',
-          ['learninggoalwidgetid' => $lgwid]));
+            ['learninggoalwidgetid' => $lgwid]));
         $this->assertTrue($DB->record_exists('learninggoalwidget_progs',
-          ['learninggoalwidgetid' => $lgwid]));
+            ['learninggoalwidgetid' => $lgwid]));
 
         $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
         $this->assertSame($taxonomy->name, $newname);
@@ -162,11 +158,11 @@ final class lib_test extends \advanced_testcase {
         $this->assertTrue(learninggoalwidget_delete_instance($lgwid));
         $this->assertFalse($DB->record_exists('learninggoalwidget', ['id' => $lgwid]));
         $this->assertFalse($DB->record_exists('learninggoalwidget_topics',
-          ['learninggoalwidgetid' => $lgwid]));
+            ['learninggoalwidgetid' => $lgwid]));
         $this->assertFalse($DB->record_exists('learninggoalwidget_goals',
-          ['learninggoalwidgetid' => $lgwid]));
+            ['learninggoalwidgetid' => $lgwid]));
         $this->assertFalse($DB->record_exists('learninggoalwidget_progs',
-          ['learninggoalwidgetid' => $lgwid]));
+            ['learninggoalwidgetid' => $lgwid]));
 
         // Try to delete instance again.
         $this->assertFalse(learninggoalwidget_delete_instance($lgwid));
@@ -237,9 +233,9 @@ final class lib_test extends \advanced_testcase {
         $taxonomy->children = $this->create_taxonomy(1, 1);
 
         $data = (object)[
-            "instance" => $lgwid,
-            "name" => $newname,
-            "taxonomy" => json_encode($taxonomy),
+            'instance' => $lgwid,
+            'name' => $newname,
+            'taxonomy' => json_encode($taxonomy),
         ];
 
         $this->assertTrue(learninggoalwidget_update_instance($data));
@@ -259,22 +255,22 @@ final class lib_test extends \advanced_testcase {
         $this->assertNotEmpty($cm->content);
         $this->assertStringContainsString($newname, $cm->content);
         $this->assertStringContainsString(
-          "learninggoals-widget-{$res->course->id}-{$res->instance->cmid}-{$lgwid}",
-          $cm->content);
+            "learninggoals-widget-{$res->course->id}-{$res->instance->cmid}-{$lgwid}",
+            $cm->content);
         $this->assertStringContainsString(
-          get_string('progresslabel0', 'learninggoalwidget'),
-          $cm->content);
+            get_string('progresslabel0', 'learninggoalwidget'),
+            $cm->content);
         $this->assertStringContainsString(
-          get_string('progresslabel50', 'learninggoalwidget'),
-          $cm->content);
+            get_string('progresslabel50', 'learninggoalwidget'),
+            $cm->content);
         $this->assertStringContainsString(
-          get_string('progresslabel100', 'learninggoalwidget'),
-          $cm->content);
+            get_string('progresslabel100', 'learninggoalwidget'),
+            $cm->content);
         $this->assertStringContainsString(
-          get_string('contentview', 'learninggoalwidget'),
-          $cm->content);
+            get_string('contentview', 'learninggoalwidget'),
+            $cm->content);
         $this->assertStringContainsString(
-          get_string('examview', 'learninggoalwidget'),
-          $cm->content);
+            get_string('examview', 'learninggoalwidget'),
+            $cm->content);
     }
 }

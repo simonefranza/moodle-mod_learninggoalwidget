@@ -113,16 +113,16 @@ class provider implements
     public static function get_users_in_context(userlist $userlist) {
         $context = $userlist->get_context();
 
-        $sql = "SELECT DISTINCT p.userid as userid
-                           FROM {context} c
-                           JOIN {course_modules} cm
-                             ON cm.id = c.instanceid
-                           JOIN {modules} m
-                             ON cm.module = m.id
-                           JOIN {learninggoalwidget_progs} p
-                             ON p.learninggoalwidgetid = cm.instance
-                          WHERE m.name = :modname
-                            AND cm.id = :cmid";
+        $sql = "SELECT DISTINCT p.userid AS userid
+                  FROM {context} c
+                  JOIN {course_modules} cm
+                    ON cm.id = c.instanceid
+                  JOIN {modules} m
+                    ON cm.module = m.id
+                  JOIN {learninggoalwidget_progs} p
+                    ON p.learninggoalwidgetid = cm.instance
+                 WHERE m.name = :modname
+                   AND cm.id = :cmid";
         $params = [
             'cmid' => $context->instanceid,
             'modname' => 'learninggoalwidget',
@@ -160,9 +160,9 @@ class provider implements
                        c.id AS contextid,
                        cm.id AS cmid
                   FROM {context} c
-            INNER JOIN {course_modules} cm
+                  JOIN {course_modules} cm
                     ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
-            INNER JOIN {modules} m
+                  JOIN {modules} m
                     ON m.id = cm.module AND m.name = :modname
                   JOIN {learninggoalwidget_progs} lgwup
                     ON lgwup.learninggoalwidgetid = cm.instance AND lgwup.userid = :userid

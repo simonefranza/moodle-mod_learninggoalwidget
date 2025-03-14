@@ -60,7 +60,7 @@ final class topic_test extends \advanced_testcase {
         $this->validate_and_reset_topic($topic, false);
 
         // Topic name is string, but no shortname.
-        $topic->name = "Name";
+        $topic->name = 'Name';
         $this->validate_and_reset_topic($topic, false);
 
         // Topic name is string, but shortname is not.
@@ -68,7 +68,7 @@ final class topic_test extends \advanced_testcase {
         $this->validate_and_reset_topic($topic, false);
 
         // Topic name, shortname is string, but no url.
-        $topic->shortname = "Shortname";
+        $topic->shortname = 'Shortname';
         $this->validate_and_reset_topic($topic, false);
 
         // Topic name, shortname is string, but url is not.

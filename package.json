@@ -9,7 +9,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^22.13.2",
-    "eslint": "^8.44.0",
+    "eslint": "^8.57.1",
     "eslint-plugin-jsdoc": "^46.4.3",
     "eslint-plugin-promise": "^6.1.1",
     "grunt": "^1.6.1",
@@ -24,6 +24,8 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
+    "@babel/eslint-parser": "^7.26.10",
+    "@babel/eslint-plugin": "^7.26.10",
     "@types/d3": "^7.4.3",
     "grunt-contrib-sass": "^1.0.0",
     "grunt-eslint": "^22.0.0",

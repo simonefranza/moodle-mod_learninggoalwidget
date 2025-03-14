@@ -216,7 +216,7 @@ final class provider_test extends provider_testcase {
         $this->assertEquals(count($progressexport), 1);
         $this->assertEquals($progressexport[0]->topictitle, $topic->name);
         $this->assertEquals($progressexport[0]->goaltitle, $goal->name);
-        $this->assertEquals($progressexport[0]->progress, "50.00");
+        $this->assertEquals($progressexport[0]->progress, '50.00');
     }
 
     /**
@@ -240,7 +240,7 @@ final class provider_test extends provider_testcase {
 
         // Test with non LGW module context.
         $forum = $this->getDataGenerator()->create_module('forum',
-          ['course' => $res->course->id]);
+            ['course' => $res->course->id]);
         $context = \context_module::instance($forum->cmid);
         provider::delete_data_for_all_users_in_context($context);
 
@@ -281,7 +281,7 @@ final class provider_test extends provider_testcase {
 
         // Use non LGW context module.
         $forum = $this->getDataGenerator()->create_module('forum',
-          ['course' => $res->course->id]);
+            ['course' => $res->course->id]);
         $forumcontext = \context_module::instance($forum->cmid);
 
         // Reset all changes automatically after this test.
@@ -299,7 +299,7 @@ final class provider_test extends provider_testcase {
 
         // Delete user 1's data.
         $approvedlist = new approved_contextlist($student, 'learninggoalwidget',
-          [$cmcontext->id, $coursecontext->id, $forumcontext->id]);
+            [$cmcontext->id, $coursecontext->id, $forumcontext->id]);
         provider::delete_data_for_user($approvedlist);
 
         // Check all relevant tables.
@@ -355,19 +355,19 @@ final class provider_test extends provider_testcase {
 
         // Delete with wrong context.
         $userlist = new approved_userlist($coursecontext, 'learninggoalwidget',
-          [$user2->id, $user3->id]);
+            [$user2->id, $user3->id]);
         provider::delete_data_for_users($userlist);
 
         // Use non LGW context module.
         $forum = $this->getDataGenerator()->create_module('forum',
-          ['course' => $res->course->id]);
+            ['course' => $res->course->id]);
         $forumcontext = \context_module::instance($forum->cmid);
         $userlist = new approved_userlist($forumcontext, 'learninggoalwidget',
-          [$user2->id, $user3->id]);
+            [$user2->id, $user3->id]);
         provider::delete_data_for_users($userlist);
 
         $userlist = new approved_userlist($cmcontext1, 'learninggoalwidget',
-          [$user2->id, $user3->id]);
+            [$user2->id, $user3->id]);
         provider::delete_data_for_users($userlist);
 
         // Check all relevant tables.

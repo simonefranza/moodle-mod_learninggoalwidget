@@ -37,11 +37,11 @@ if ($id) {
         throw new moodle_exception('invalidcoursemodule');
     }
 
-    if (!$course = $DB->get_record("course", ["id" => $cm->course])) {
+    if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
         throw new moodle_exception('coursemisconf');
     }
 
-    if (!$label = $DB->get_record("learninggoalwidget", ["id" => $cm->instance])) {
+    if (!$label = $DB->get_record('learninggoalwidget', ['id' => $cm->instance])) {
         throw new moodle_exception('invalidcoursemodule');
     }
 }

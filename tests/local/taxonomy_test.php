@@ -109,7 +109,7 @@ final class taxonomy_test extends \advanced_testcase {
      */
     public function test_get_taxonomy_as_json(): void {
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json(null));
-        $this->assertSame($taxonomy->name, "");
+        $this->assertSame($taxonomy->name, '');
         $this->assertSame(count($taxonomy->children), 0);
         // Create instance.
         $res = $this->setup_widget();
@@ -117,7 +117,7 @@ final class taxonomy_test extends \advanced_testcase {
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $this->assertNotNull($taxonomy);
         $this->assertTrue(isset($taxonomy->name) && is_string($taxonomy->name));
-        $this->assertSame($taxonomy->name, "name");
+        $this->assertSame($taxonomy->name, 'name');
         $this->assertTrue(isset($taxonomy->children) && is_array($taxonomy->children));
         $this->assertTrue(count($taxonomy->children) == 0);
         $numtopics = 50;
@@ -139,7 +139,7 @@ final class taxonomy_test extends \advanced_testcase {
         $taxonomy = json_decode(taxonomy::get_taxonomy_as_json($lgwid));
         $this->assertNotNull($taxonomy);
         $this->assertTrue(isset($taxonomy->name) && is_string($taxonomy->name));
-        $this->assertSame($taxonomy->name, "name");
+        $this->assertSame($taxonomy->name, 'name');
         $this->assertTrue(isset($taxonomy->children) && is_array($taxonomy->children));
         $this->assertTrue(count($taxonomy->children) == $numtopics);
         for ($i = 0; $i < $numtopics; $i++) {

@@ -35,14 +35,14 @@ class mod_learninggoalwidget_generator extends testing_module_generator {
     /**
      * create_instance
      *
-     * @param object $record
+     * @param stdClass $record
      * @param array|null $options
      * @return void
      */
     public function create_instance($record = null, ?array $options = null) {
-        $record = (object) (array) $record;
+        $record = (object) [$record];
         $taxonomy = new \stdClass;
-        $taxonomy->name = "name";
+        $taxonomy->name = 'name';
         $taxonomy->children = [];
 
         $defaultsettings = [

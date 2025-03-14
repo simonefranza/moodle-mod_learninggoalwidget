@@ -39,7 +39,7 @@ final class goal {
      * Check that a goal is valid, i.e. it is a valid child and has goalid (int)
      *
      * @param stdClass $goal Goal to check
-     * @return is goal valid
+     * @return bool is goal valid
      */
     public static function validate_goal(&$goal) {
         self::validate_children_properties($goal);
@@ -56,7 +56,7 @@ final class goal {
      * @param int $lgwid ID of the LGW instance
      * @param int $topicid ID of the parent topic
      * @param stdClass $goal Goal to insert into the DB
-     * @return id of the updated goal or -1
+     * @return int id of the updated goal or error
      */
     public static function update_goal($lgwid, $topicid, $goal) {
         global $DB;
@@ -109,9 +109,9 @@ final class goal {
      * Deletes a goal and all the progresses from the DB
      * NOTE: Only call from taxonomy class. There are no capability checks in here
      *
-     * @param number $lgwid ID of the LGW instance
-     * @param number $topicid ID of the topic to delete
-     * @param number $goalid ID of the goal to delete
+     * @param int $lgwid ID of the LGW instance
+     * @param int $topicid ID of the topic to delete
+     * @param int $goalid ID of the goal to delete
      * @return bool whether deletion was successful or not
      */
     public static function delete_goal($lgwid, $topicid, $goalid): bool {

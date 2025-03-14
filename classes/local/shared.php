@@ -40,7 +40,7 @@ trait shared {
      * - ranking (int)
      *
      * @param stdClass $child Child to check
-     * @return is child valid
+     * @return bool is child valid
      */
     public static function validate_children_properties(&$child) {
         // Ensure required properties exist and have correct types.

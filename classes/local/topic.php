@@ -41,7 +41,7 @@ final class topic {
      * Check that a topic is valid, i.e. it is a valid child and has topicid (int)
      *
      * @param stdClass $topic Topic to check
-     * @return is topic valid
+     * @return bool is topic valid
      */
     public static function validate_topic(&$topic) {
         self::validate_children_properties($topic);
@@ -59,7 +59,7 @@ final class topic {
      *
      * @param int $lgwid ID of the LGW instance
      * @param stdClass $topic Topic to insert into the DB
-     * @return id of the updated topic or -1
+     * @return int id of the updated topic or -1
      */
     public static function update_topic($lgwid, $topic) {
         global $DB;
@@ -109,8 +109,9 @@ final class topic {
      * Deletes a topic and all the goals and progress from the DB
      * NOTE: Only call from taxonomy class. There are no capability checks in here
      *
-     * @param number $lgwid ID of the LGW instance
-     * @param number $topicid ID of the topic to delete
+     * @param int $lgwid ID of the LGW instance
+     * @param int $topicid ID of the topic to delete
+     * @return bool
      */
     public static function delete_topic($lgwid, $topicid) {
         global $DB;

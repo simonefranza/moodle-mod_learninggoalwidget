@@ -61,7 +61,7 @@ final class goal_test extends \advanced_testcase {
         $this->validate_and_reset_goal($goal, false);
 
         // Goal name is string, but no shortname.
-        $goal->name = "Name";
+        $goal->name = 'Name';
         $this->validate_and_reset_goal($goal, false);
 
         // Goal name is string, but shortname is not.
@@ -69,7 +69,7 @@ final class goal_test extends \advanced_testcase {
         $this->validate_and_reset_goal($goal, false);
 
         // Goal name, shortname is string, but no url.
-        $goal->shortname = "Shortname";
+        $goal->shortname = 'Shortname';
         $this->validate_and_reset_goal($goal, false);
 
         // Goal name, shortname is string, but url is not.

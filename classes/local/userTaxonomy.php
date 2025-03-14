@@ -47,7 +47,7 @@ class userTaxonomy {
         global $DB, $USER;
 
         if ($lgwid === null) {
-            return "{}";
+            return '{}';
         }
 
         // Capability check.
@@ -79,12 +79,12 @@ class userTaxonomy {
         $topics = [];
         global $DB;
         // CONCAT to create unique column.
-        $sqlstmt = "SELECT CONCAT(COALESCE(t.id, -1), '-', COALESCE(g.id, -1), '-', COALESCE(p.id, -1)) as id,
-                           t.id as tid, t.learninggoalwidgetid,
-                           t.title as ttitle, t.shortname as tshortname,
-                           t.url as turl, t.ranking as tranking,
-                           g.id as gid, g.title as gtitle, g.shortname as gshortname,
-                           g.url as gurl, g.ranking as granking,
+        $sqlstmt = "SELECT CONCAT(COALESCE(t.id, -1), '-', COALESCE(g.id, -1), '-', COALESCE(p.id, -1)) AS id,
+                           t.id AS tid, t.learninggoalwidgetid,
+                           t.title AS ttitle, t.shortname AS tshortname,
+                           t.url AS turl, t.ranking AS tranking,
+                           g.id AS gid, g.title AS gtitle, g.shortname AS gshortname,
+                           g.url AS gurl, g.ranking AS granking,
                            p.userid, p.progress
                       FROM {learninggoalwidget_topics} t
                  LEFT JOIN {learninggoalwidget_goals} g
@@ -112,7 +112,7 @@ class userTaxonomy {
                 $topic->shortname = $topicrecord->tshortname;
                 $topic->url = $topicrecord->turl;
                 $topic->ranking = $topicrecord->tranking;
-                $topic->type = "topic";
+                $topic->type = 'topic';
                 $topic->children = [];
                 $topics[] = $topic;
                 $numtopics++;
@@ -128,7 +128,7 @@ class userTaxonomy {
             $goal->shortname = $topicrecord->gshortname;
             $goal->url = $topicrecord->gurl;
             $goal->ranking = $topicrecord->granking;
-            $goal->type = "goal";
+            $goal->type = 'goal';
             if ($isstudent) {
                 $goal->pro = $topicrecord->progress ?? 0;
             }

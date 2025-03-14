@@ -75,12 +75,12 @@ class taxonomy {
         $topics = [];
         global $DB;
         // CONCAT to create unique column.
-        $sqlstmt = "SELECT CONCAT(COALESCE(t.id, -1), '-', COALESCE(g.id, -1)) as id,
-                           g.id as gid, t.id as tid, t.learninggoalwidgetid,
-                           t.title as ttitle, t.shortname as tshortname,
-                           t.url as turl, t.ranking as tranking,
-                           g.title as gtitle, g.shortname as gshortname,
-                           g.url as gurl, g.ranking as granking
+        $sqlstmt = "SELECT CONCAT(COALESCE(t.id, -1), '-', COALESCE(g.id, -1)) AS id,
+                           g.id AS gid, t.id AS tid, t.learninggoalwidgetid,
+                           t.title AS ttitle, t.shortname AS tshortname,
+                           t.url AS turl, t.ranking AS tranking,
+                           g.title AS gtitle, g.shortname AS gshortname,
+                           g.url AS gurl, g.ranking AS granking
                       FROM {learninggoalwidget_topics} t
                  LEFT JOIN {learninggoalwidget_goals} g
                         ON t.id = g.topicid
@@ -104,7 +104,7 @@ class taxonomy {
                 $topic->shortname = $topicrecord->tshortname;
                 $topic->url = $topicrecord->turl;
                 $topic->ranking = $topicrecord->tranking;
-                $topic->type = "topic";
+                $topic->type = 'topic';
                 $topic->children = [];
                 $topics[] = $topic;
                 $numtopics++;
@@ -120,7 +120,7 @@ class taxonomy {
             $goal->shortname = $topicrecord->gshortname;
             $goal->url = $topicrecord->gurl;
             $goal->ranking = $topicrecord->granking;
-            $goal->type = "goal";
+            $goal->type = 'goal';
             $topic->children[] = $goal;
         }
         return $topics;
@@ -192,7 +192,7 @@ class taxonomy {
     /**
      * Updates the taxonomy in the DB given an ID and a new taxonomy
      *
-     * @param number $lgwid Instance id to update
+     * @param int $lgwid Instance id to update
      * @param stdClass $taxonomy New taxonomy
      */
     public static function update_taxonomy($lgwid, &$taxonomy) {
@@ -206,7 +206,7 @@ class taxonomy {
      * Manages the taxonomy in the DB given an ID and a new taxonomy
      * without capability check because used by "add_instance"
      *
-     * @param number $lgwid Instance id to update
+     * @param int $lgwid Instance id to update
      * @param stdClass $taxonomy New taxonomy
      */
     public static function manage_taxonomy($lgwid, &$taxonomy) {
@@ -237,7 +237,7 @@ class taxonomy {
     /**
      * Updates the taxonomy in the DB given the children of a topic
      *
-     * @param number $lgwid Instance id to update
+     * @param int $lgwid Instance id to update
      * @param stdClass $topic Topic whose goals should be added
      */
     private static function update_topic_goals($lgwid, &$topic) {

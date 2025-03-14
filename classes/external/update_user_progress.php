@@ -65,11 +65,11 @@ class update_user_progress extends \core_external\external_api {
     /**
      * Updates the progress of a learning goal for the chosen user
      *
-     * @param number $instanceid
-     * @param number $topicid
-     * @param number $goalid
-     * @param number $progress
-     * @return [string] taxonomy
+     * @param int $instanceid
+     * @param int $topicid
+     * @param int $goalid
+     * @param int $progress
+     * @return string taxonomy
      */
     public static function execute($instanceid, $topicid, $goalid, $progress) {
         global $USER, $DB;

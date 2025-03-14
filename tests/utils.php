@@ -72,7 +72,7 @@ trait utils {
      * helper function to create a user with the desired role
      *
      * @param string $role of the user to be created
-     * @param number $courseid id of the course where the user should be enrolled
+     * @param int $courseid id of the course where the user should be enrolled
      * @param bool $activate whether the user should be set as current user
      * @return \stdClass
      */
@@ -89,7 +89,7 @@ trait utils {
     /**
      * helper function, create course with topics and two learning goals
      *
-     * @param number $lgwid ID of LGW
+     * @param int $lgwid ID of LGW
      * @return array
      */
     protected function insert_two_goals($lgwid) {
@@ -142,9 +142,9 @@ trait utils {
      * The data must be generated with create_taxonomy
      *
      * @param stdClass $topic Topic to check
-     * @param number $i Value to use for the check
-     * @param number $newranking New ranking of the topic
-     * @param number $numgoals Number of goals that the topic should contain
+     * @param int $i Value to use for the check
+     * @param int $newranking New ranking of the topic
+     * @param int $numgoals Number of goals that the topic should contain
      * @param bool $checkgoals Whether to check the goals of the topic or not
      */
     private function check_topic($topic, $i, $newranking, $numgoals, $checkgoals) {
@@ -172,9 +172,9 @@ trait utils {
      * The data must be generated with create_taxonomy
      *
      * @param stdClass $goal Goal to check
-     * @param number $i Topic-value to use for the check
-     * @param number $ii Goal-value to use for the check
-     * @param number $newranking New ranking
+     * @param int $i Topic-value to use for the check
+     * @param int $ii Goal-value to use for the check
+     * @param int $newranking New ranking
      */
     private function check_goal($goal, $i, $ii, $newranking = -2) {
         if ($newranking == -2) {
