@@ -10,7 +10,7 @@
   </tr>
   <tr>
     <td>Plugins directory entry</td>
-    <td>-</td>
+    <td><a href="https://moodle.org/plugins/mod_learninggoalwidget">mod_learniggoalwidget</a></td>
   </tr>
   <tr>
     <td>Discussion</td>
