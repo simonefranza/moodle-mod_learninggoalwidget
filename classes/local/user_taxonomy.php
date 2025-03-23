@@ -28,7 +28,7 @@ use stdClass;
 use mod_learninggoalwidget\local\topic;
 
 /**
- * Class userTaxonomy
+ * Class user_taxonomy
  *
  * hierarchy of topics and goals with a user's progress
  *
@@ -36,7 +36,7 @@ use mod_learninggoalwidget\local\topic;
  * @copyright 2021 Know Center GmbH
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class userTaxonomy {
+class user_taxonomy {
     /**
      * return json represenation of the taxonomy
      *

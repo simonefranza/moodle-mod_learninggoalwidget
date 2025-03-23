@@ -25,7 +25,7 @@
 
 namespace mod_learninggoalwidget\external;
 
-use mod_learninggoalwidget\local\userTaxonomy;
+use mod_learninggoalwidget\local\user_taxonomy;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
@@ -75,6 +75,6 @@ class get_taxonomy_for_user extends \core_external\external_api {
         self::validate_context($context);
         require_capability('mod/learninggoalwidget:view', $context);
 
-        return userTaxonomy::get_taxonomy_as_json($instanceid);
+        return user_taxonomy::get_taxonomy_as_json($instanceid);
     }
 }

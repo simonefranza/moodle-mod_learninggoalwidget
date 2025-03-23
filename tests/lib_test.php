@@ -31,7 +31,7 @@ global $CFG;
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 
 use mod_learninggoalwidget\local\taxonomy;
-use mod_learninggoalwidget\local\userTaxonomy;
+use mod_learninggoalwidget\local\user_taxonomy;
 use mod_learninggoalwidget\external\update_user_progress;
 use core_external\external_api;
 
@@ -149,7 +149,7 @@ final class lib_test extends \advanced_testcase {
         $this->assertTrue($DB->record_exists('learninggoalwidget_progs',
             ['learninggoalwidgetid' => $lgwid]));
 
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
         $this->assertSame($taxonomy->name, $newname);
         $this->assertSame(count($taxonomy->children), 1);
         $this->check_topic($taxonomy->children[0], 0, 1, 1, true);

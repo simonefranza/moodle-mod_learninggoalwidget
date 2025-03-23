@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 use externallib_advanced_testcase;
 use core_external\external_api;
 
-use mod_learninggoalwidget\local\userTaxonomy;
+use mod_learninggoalwidget\local\user_taxonomy;
 use mod_learninggoalwidget\local\taxonomy;
 use mod_learninggoalwidget\local\topic;
 use mod_learninggoalwidget\local\goal;
@@ -52,33 +52,33 @@ use mod_learninggoalwidget\external\update_user_progress;
 final class user_taxonomy_test extends externallib_advanced_testcase {
     use \mod_learninggoalwidget\utils;
     /**
-     * testing method userTaxonomy::get_taxonomy_as_json to trigger exception
+     * testing method user_taxonomy::get_taxonomy_as_json to trigger exception
      * @return void
      *
-     * @covers \mod_learninggoalwidget\local\userTaxonomy::get_taxonomy_as_json
+     * @covers \mod_learninggoalwidget\local\user_taxonomy::get_taxonomy_as_json
      */
     public function test_update_taxonomy_exc(): void {
         $this->expectException(\dml_missing_record_exception::class);
-        userTaxonomy::get_taxonomy_as_json(-1);
+        user_taxonomy::get_taxonomy_as_json(-1);
     }
     /**
-     * testing method userTaxonomy::get_taxonomy_as_json
+     * testing method user_taxonomy::get_taxonomy_as_json
      * @return void
      *
-     * @covers \mod_learninggoalwidget\local\userTaxonomy::get_taxonomy_as_json
-     * @covers \mod_learninggoalwidget\local\userTaxonomy::get_topics
+     * @covers \mod_learninggoalwidget\local\user_taxonomy::get_taxonomy_as_json
+     * @covers \mod_learninggoalwidget\local\user_taxonomy::get_topics
      */
     public function test_update_taxonomy(): void {
-        $this->assertSame(userTaxonomy::get_taxonomy_as_json(null), '{}');
+        $this->assertSame(user_taxonomy::get_taxonomy_as_json(null), '{}');
         $res = $this->setup_widget();
         $lgwid = $res->instance->id;
 
         // Test with teacher user.
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
 
         // Test with student user.
         $student = $this->create_user('student', $res->course->id, true);
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
         $this->assertSame(count($taxonomy->children), 0);
 
         $taxonomy = new \stdClass;
@@ -89,7 +89,7 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
         $taxonomy->children[1]->children[1]->deleted = true;
         $this->setUser($res->user);
         taxonomy::update_taxonomy($lgwid, $taxonomy);
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
         $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
         $this->check_topic($taxonomy->children[1], 1, 2, 0, true);
         $this->assertFalse(isset($taxonomy->children[0]->children[0]->pro));
@@ -98,7 +98,7 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
 
         // Update progress.
         $this->setUser($student);
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
         $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
         $this->check_topic($taxonomy->children[1], 1, 2, 0, true);
         $topic0 = $taxonomy->children[0];
@@ -128,7 +128,7 @@ final class user_taxonomy_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
         $this->check_topic($taxonomy->children[0], 0, 1, 2, true);
         $this->check_topic($taxonomy->children[1], 1, 2, 0, true);
         $this->assertSame($taxonomy->children[0]->children[0]->pro, 50);

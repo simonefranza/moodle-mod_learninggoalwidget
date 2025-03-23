@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/mod/learninggoalwidget/tests/utils.php');
 
 use mod_learninggoalwidget\local\taxonomy;
-use mod_learninggoalwidget\local\userTaxonomy;
+use mod_learninggoalwidget\local\user_taxonomy;
 use externallib_advanced_testcase;
 use core_external\external_api;
 
@@ -101,7 +101,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
 
         for ($i = 0; $i < 2; $i++) {
             $topic = $taxonomy->children[$i];
@@ -125,7 +125,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
 
         for ($i = 0; $i < 2; $i++) {
             $topic = $taxonomy->children[$i];
@@ -149,7 +149,7 @@ final class update_user_progress_test extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = external_api::clean_returnvalue(update_user_progress::execute_returns(), $result);
 
-        $taxonomy = json_decode(userTaxonomy::get_taxonomy_as_json($lgwid));
+        $taxonomy = json_decode(user_taxonomy::get_taxonomy_as_json($lgwid));
 
         for ($i = 0; $i < 2; $i++) {
             $topic = $taxonomy->children[$i];
