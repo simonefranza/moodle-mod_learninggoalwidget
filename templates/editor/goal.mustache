@@ -29,11 +29,19 @@
     Context variables required for this template:
     * topicid
     * goalid
+    * buttonedit
+    * buttondelete
+    * buttonmoveup
+    * buttonmovedown
 
     Example context (json):
     {
         "topicid": "1",
-        "goalid": "1"
+        "goalid": "1",
+        "buttonedit": "Edit",
+        "buttondelete": "Delete",
+        "buttonmoveup": "Move up",
+        "buttonmovedown": "Move down"
     }
 }}
 <li class="listitem listitem-goals list-group-item list-group-item-action" data-selected="0" data-visible="1">
@@ -42,16 +50,16 @@
         <div class="float-right">
             <span class="goals-item-actions item-actions">
                 <a id="{{topicid}}-goal-{{goalid}}-action-edit" class="no-underline action-edit" role="button" data-topicid="{{topicid}}" data-goalid="{{goalid}}">
-                    <i class="icon fa fa-cog fa-fw" title="Edit" aria-label="Edit"></i>
+                    <i class="icon fa fa-cog fa-fw" title="{{buttonedit}}" aria-label="{{buttonedit}}"></i>
                 </a>
                 <a id="{{topicid}}-goal-{{goalid}}-action-delete" class="no-underline action-delete" role="button"  data-topicid="{{topicid}}" data-goalid="{{goalid}}">
-                    <i class="icon fa fa-trash fa-fw" title="Delete" aria-label="Delete"></i>
+                    <i class="icon fa fa-trash fa-fw" title="{{buttondelete}}" aria-label="{{buttondelete}}"></i>
                 </a>
                 <a id="{{topicid}}-goal-{{goalid}}-action-moveup" class="no-underline action-moveup" data-action="moveup" role="button" data-topicid="{{topicid}}" data-goalid="{{goalid}}">
-                    <i class="icon fa fa-arrow-up fa-fw" title="Nach oben" aria-label="Nach oben"></i>
+                    <i class="icon fa fa-arrow-up fa-fw" title="{{buttonmoveup}}" aria-label="{{buttonmoveup}}"></i>
                 </a>
                 <a id="{{topicid}}-goal-{{goalid}}-action-movedown" class="no-underline action-movedown" data-action="movedown" role="button" data-topicid="{{topicid}}" data-goalid="{{goalid}}">
-                    <i class="icon fa fa-arrow-down fa-fw" title="Nach unten" aria-label="Nach unten"></i>
+                    <i class="icon fa fa-arrow-down fa-fw" title="{{buttonmovedown}}" aria-label="{{buttonmovedown}}"></i>
                 </a>
             </span>
         </div>

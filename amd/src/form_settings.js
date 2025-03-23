@@ -40,6 +40,7 @@ import Templates from "core/templates";
 import ModalSaveCancel from "core/modal_save_cancel";
 import ModalEvents from "core/modal_events";
 import * as CoreStr from "core/str";
+import Notification from "core/notification";
 
 var TEMPLATES = {
   GOAL_MODAL_VIEW: "mod_learninggoalwidget/editor/goalmodalview",
@@ -85,45 +86,59 @@ const init = () => {
 const loadTopics = async() => {
   $("#topics-list").children().remove();
   taxonomy.children.sort((a, b) => a.ranking - b.ranking);
+  try {
+    let nTopics = 0;
+    for (let topic of taxonomy.children) {
+      if (DELETE_KEY in topic && topic[DELETE_KEY]) {
+        continue;
+      }
+      nTopics++;
+      const strings = [
+        {key: 'settings:button:delete', component: 'mod_learninggoalwidget'},
+        {key: 'settings:button:edit', component: 'mod_learninggoalwidget'},
+        {key: 'settings:button:movedown', component: 'mod_learninggoalwidget'},
+        {key: 'settings:button:moveup', component: 'mod_learninggoalwidget'},
+      ];
+      const results = await CoreStr.get_strings(strings);
 
-  let nTopics = 0;
-  for (let topic of taxonomy.children) {
-    if (DELETE_KEY in topic && topic[DELETE_KEY]) {
-      continue;
+      const topicContext = {
+        topicname: topic.name,
+        topicid: topic.topicid,
+        buttondelete: results[0],
+        buttonedit: results[1],
+        buttonmovedown: results[2],
+        buttonmoveup: results[3],
+      };
+      const html = await Templates.render(TEMPLATES.TOPIC, topicContext);
+
+      $("#notopics").addClass("d-none");
+      $("#topics-list").append(html);
+
+      const topicid = topic.topicid;
+      $("#topic-item-" + topicid).click(clickedTopicName);
+      const baseID = `#${topicid}-action-`;
+      $(baseID + "edit").click(clickedEditTopic);
+      $(baseID + "delete").click(clickedDeleteTopic);
+      $(baseID + "moveup").click(clickedMoveupTopic);
+      $(baseID + "movedown").click(clickedMovedownTopic);
     }
-    nTopics++;
-
-    const topicContext = {
-      topicname: topic.name,
-      topicid: topic.topicid
-    };
-    const html = await Templates.render(TEMPLATES.TOPIC, topicContext);
-
-    $("#notopics").addClass("d-none");
-    $("#topics-list").append(html);
-
-    const topicid = topic.topicid;
-    $("#topic-item-" + topicid).click(clickedTopicName);
-    const baseID = `#${topicid}-action-`;
-    $(baseID + "edit").click(clickedEditTopic);
-    $(baseID + "delete").click(clickedDeleteTopic);
-    $(baseID + "moveup").click(clickedMoveupTopic);
-    $(baseID + "movedown").click(clickedMovedownTopic);
+    if (nTopics === 0) {
+      $("#notopics").removeClass("d-none");
+    }
+    if (!selectedTopic || selectedTopic == -1) {
+      const showGoalStr = await CoreStr.get_string('settings:showgoals', 'mod_learninggoalwidget');
+      $('#learninggoals-list').children().remove();
+      $("#goalsfortopic").removeClass("d-none");
+      $("#goalsfortopicstatusmessage").html(showGoalStr);
+      return;
+    }
+    const selectedTopicObj = getTopicById(selectedTopic);
+    selectedTopicElement = document.querySelector(`#topic-item-${selectedTopic}`);
+    selectedTopicElement.style.backgroundColor = 'gainsboro';
+    loadGoals(selectedTopicObj);
+  } catch (e) {
+    Notification.exception(e).then(() => location.reload());
   }
-  if (nTopics === 0) {
-    $("#notopics").removeClass("d-none");
-  }
-  if (!selectedTopic || selectedTopic == -1) {
-    const showGoalStr = await CoreStr.get_string('settings:showgoals', 'mod_learninggoalwidget');
-    $('#learninggoals-list').children().remove();
-    $("#goalsfortopic").removeClass("d-none");
-    $("#goalsfortopicstatusmessage").html(showGoalStr);
-    return;
-  }
-  const selectedTopicObj = getTopicById(selectedTopic);
-  selectedTopicElement = document.querySelector(`#topic-item-${selectedTopic}`);
-  selectedTopicElement.style.backgroundColor = 'gainsboro';
-  loadGoals(selectedTopicObj);
 };
 
 /**
@@ -145,10 +160,22 @@ const loadGoals = async(topic) => {
 
     const goalid = goal.goalid;
 
+    const strings = [
+      {key: 'settings:button:delete', component: 'mod_learninggoalwidget'},
+      {key: 'settings:button:edit', component: 'mod_learninggoalwidget'},
+      {key: 'settings:button:movedown', component: 'mod_learninggoalwidget'},
+      {key: 'settings:button:moveup', component: 'mod_learninggoalwidget'},
+    ];
+    const results = await CoreStr.get_strings(strings);
+
     var goalContext = {
       topicid: topicid,
       goalid: goalid,
-      learninggoaltitle: goal.name
+      learninggoaltitle: goal.name,
+      buttondelete: results[0],
+      buttonedit: results[1],
+      buttonmovedown: results[2],
+      buttonmoveup: results[3],
     };
 
     const html = await Templates.render(TEMPLATES.GOAL, goalContext);
@@ -223,7 +250,7 @@ const clickedNewTopic = async() => {
 
     loadTopics();
   } catch (e) {
-    // A console.error("Failed to create new topic", e);
+    Notification.exception(e).then(() => location.reload());
   }
 };
 
@@ -281,7 +308,7 @@ const clickedEditTopic = async(e) => {
 
     loadTopics();
   } catch (e) {
-    // A console.error("Failed to edit topic", e);
+    Notification.exception(e).then(() => location.reload());
   }
 };
 
@@ -337,7 +364,7 @@ const clickedDeleteTopic = async(e) => {
     selectedTopic = newSelectedTopicId;
     loadTopics();
   } catch (e) {
-    // A console.error("Failed to delete topic", e);
+    Notification.exception(e).then(() => location.reload());
   }
 };
 
@@ -438,7 +465,7 @@ const clickedNewGoal = async() => {
 
     loadGoals(topic);
   } catch (e) {
-    // A console.error("Failed to create new goal", e);
+    Notification.exception(e).then(() => location.reload());
   }
 };
 
@@ -502,7 +529,7 @@ const clickedEditGoal = async(e) => {
 
     loadGoals(topic);
   } catch (e) {
-    // A console.error("Failed to edit goal", e);
+    Notification.exception(e).then(() => location.reload());
   }
 };
 
@@ -541,7 +568,7 @@ const clickedDeleteGoal = async(e) => {
 
     loadGoals(topic);
   } catch (e) {
-    // A console.error("Failed to delete goal", e);
+    Notification.exception(e).then(() => location.reload());
   }
 };
 
@@ -897,7 +924,7 @@ const clickedJSONUpload = () => {
 
       loadTopics();
     } catch (e) {
-      // Do nothing
+      Notification.exception(e).then(() => location.reload());
     }
   };
 };
