@@ -38,7 +38,14 @@ $string['modulenameplural'] = 'Lernziele Widgets';
 $string['noaccess'] = 'Dafür müssen sie angemeldet sein';
 $string['pluginadministration'] = 'Lernziele Widget Administration';
 $string['pluginname'] = 'Lernziele Widget';
+
 $string['privacy:metadata'] = '';
+$string['privacy:metadata:learninggoalwidget_progs'] = 'Informationen über den vom Benutzer gesetzten Fortschritt für ein Lernziel.';
+$string['privacy:metadata:learninggoalwidget_progs:goalid'] = 'Die ID des Lernziels, für das der Fortschritt gesetzt wird.';
+$string['privacy:metadata:learninggoalwidget_progs:learninggoalwidgetid'] = 'Die ID des Aktivitätsmoduls, das das Lernziel enthält.';
+$string['privacy:metadata:learninggoalwidget_progs:progress'] = 'Der vom Benutzer gesetzte Fortschritt.';
+$string['privacy:metadata:learninggoalwidget_progs:topicid'] = 'Die ID des Themenbereichs, der das Lernziel enthält.';
+$string['privacy:metadata:learninggoalwidget_progs:userid'] = 'Die ID des Benutzers.';
 
 $string['progressdialogtitle'] = 'Lernzielfortschritt aktualisieren';
 $string['progresslabel0'] = 'Gering (0%)';

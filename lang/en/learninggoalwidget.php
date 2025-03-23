@@ -38,7 +38,14 @@ $string['modulenameplural'] = 'Learning Goal Widgets';
 $string['noaccess'] = 'You need to login first';
 $string['pluginadministration'] = 'Learning Goal Widget administration';
 $string['pluginname'] = 'Learning Goal Widget';
+
 $string['privacy:metadata'] = '';
+$string['privacy:metadata:learninggoalwidget_progs'] = 'Information about the progress set by the user for a learning goal.';
+$string['privacy:metadata:learninggoalwidget_progs:goalid'] = 'The ID of the learning goal for which the progress is set.';
+$string['privacy:metadata:learninggoalwidget_progs:learninggoalwidgetid'] = 'The ID of the activity module that includes the learning goal.';
+$string['privacy:metadata:learninggoalwidget_progs:progress'] = 'The progress set by the user.';
+$string['privacy:metadata:learninggoalwidget_progs:topicid'] = 'The ID of the topic that contains the learning goal.';
+$string['privacy:metadata:learninggoalwidget_progs:userid'] = 'The ID of the user.';
 
 $string['progressdialogtitle'] = 'Update learning goal orogress';
 $string['progresslabel0'] = 'Low (0%)';
