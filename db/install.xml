@@ -21,14 +21,14 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="learninggoalwidget_topics" COMMENT="themenbereich">
+    <TABLE NAME="learninggoalwidget_topics" COMMENT="Topic of a learninggoalwidget">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="learninggoalwidgetid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="url" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="stores the web url"/>
-        <FIELD NAME="ranking" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="url" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Stores the web url linked to a topic"/>
+        <FIELD NAME="ranking" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the topic within the widget. Topics are displayed in ascending order based on their ranking"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -37,15 +37,15 @@
         <INDEX NAME="learninggoalwidgetid" UNIQUE="false" FIELDS="learninggoalwidgetid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="learninggoalwidget_goals" COMMENT="lernziel in einem themenbereich">
+    <TABLE NAME="learninggoalwidget_goals" COMMENT="Learning goal of a topic">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="learninggoalwidgetid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="topicid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="url" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="stores the web url"/>
-        <FIELD NAME="ranking" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="url" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Stores the web url linked to a topic"/>
+        <FIELD NAME="ranking" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The order of the learning goal within the topic. Learning goals are displayed in ascending order based on their ranking"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -55,14 +55,14 @@
         <INDEX NAME="topicid" UNIQUE="false" FIELDS="topicid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="learninggoalwidget_progs" COMMENT="Lernziel Fortschritt Kursteilnehmerinnen">
+    <TABLE NAME="learninggoalwidget_progs" COMMENT="Progress set by the user for a learning goal">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="learninggoalwidgetid" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="topicid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="goalid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="progress" TYPE="number" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2"/>
+        <FIELD NAME="progress" TYPE="number" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2" COMMENT="Progress set by the user for a learning goal"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
