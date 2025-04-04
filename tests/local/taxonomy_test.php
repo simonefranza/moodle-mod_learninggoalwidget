@@ -162,12 +162,12 @@ final class taxonomy_test extends \advanced_testcase {
         $this->assertTrue(isset($taxonomy->children) && is_array($taxonomy->children));
         $this->assertTrue(count($taxonomy->children) == 0);
 
-        // Make topic invalid -> has to be removed.
+        // Make topic invalid -> has to be marked as invalid.
         $taxonomy->children = $this->create_taxonomy(1, 0);
         $this->assertSame(count($taxonomy->children), 1);
         unset($taxonomy->children[0]->name);
         taxonomy::validate_taxonomy($taxonomy);
-        $this->assertSame(count($taxonomy->children), 0);
+        $this->assertFalse($taxonomy->children[0]->valid);
 
         // Make 2 topics and change ranking -> has to reassign rankings.
         $taxonomy->children = $this->create_taxonomy(2, 0);
@@ -191,15 +191,16 @@ final class taxonomy_test extends \advanced_testcase {
             $this->check_topic($taxonomy->children[$i], 1 - $i, $i + 1, 0, true);
         }
 
-        // Create 1 topics w/ 1 goal and remove prop from goal -> has to delete goal.
+        // Create 1 topics w/ 1 goal and remove prop from goal -> has to mark goal as invalid.
         $taxonomy->children = $this->create_taxonomy(1, 1);
         $this->assertSame(count($taxonomy->children), 1);
         $this->assertSame(count($taxonomy->children[0]->children), 1);
         unset($taxonomy->children[0]->children[0]->name);
         taxonomy::validate_taxonomy($taxonomy);
         $this->assertSame(count($taxonomy->children), 1);
-        $this->assertSame(count($taxonomy->children[0]->children), 0);
-        $this->check_topic($taxonomy->children[0], 0, 1, 0, true);
+        $this->assertFalse($taxonomy->children[0]->children[0]->valid);
+        $this->assertFalse($taxonomy->children[0]->children[0]->namevalid);
+        $this->check_topic($taxonomy->children[0], 0, 1, 1, false);
 
         // Create 1 topics w/ 2 goal and change ranking of goal -> has to reassign_rankings.
         $taxonomy->children = $this->create_taxonomy(1, 2);
@@ -242,40 +243,46 @@ final class taxonomy_test extends \advanced_testcase {
         // Change rankings of goals of topic 3.
         $taxonomy->children[3]->children[2]->ranking = 100;
         $taxonomy->children[3]->children[4]->ranking = 3;
-        // Remove name from topic 5 -> invalid -> should be removed.
+        // Remove name from topic 5 -> invalid -> should be invalid.
         unset($taxonomy->children[5]->name);
-        // Remove name from goal 0 of topic 7 -> invalid -> should be removed.
+        $extopic5 = &$taxonomy->children[5];
+        // Remove name from goal 0 of topic 7 -> invalid -> should be invalid.
         unset($taxonomy->children[7]->children[0]->name);
+        $exgoal70 = &$taxonomy->children[7]->children[0];
 
         taxonomy::validate_taxonomy($taxonomy);
-        $this->assertSame(count($taxonomy->children), $numtopics - 1);
+        $this->assertFalse($extopic5->valid);
+        $this->assertFalse($extopic5->namevalid);
+        $this->assertFalse($exgoal70->valid);
+        $this->assertFalse($exgoal70->namevalid);
 
-        $originalindex = [0, 8, 2, 3, 4, 6, 7, 9, 1];
+        $originalindex = [5, 0, 8, 2, 3, 4, 6, 7, 9, 1];
 
-        for ($i = 0; $i <= 2; $i++) {
-            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
+        for ($i = 1; $i <= 3; $i++) {
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i, $numgoals, true);
         }
 
         // Need to check children manually.
-        $this->check_topic($taxonomy->children[3], $originalindex[3], 4, $numgoals, false);
+        $this->check_topic($taxonomy->children[4], $originalindex[4], 4, $numgoals, false);
         $originalgoalsindex = [0, 1, 4, 3, 5, 6, 7, 8, 9, 2];
         for ($ii = 0; $ii < $numgoals; $ii++) {
-            $this->check_goal($taxonomy->children[3]->children[$ii], $originalindex[3], $originalgoalsindex[$ii], $ii + 1);
+            $this->check_goal($taxonomy->children[4]->children[$ii], $originalindex[4], $originalgoalsindex[$ii], $ii + 1);
         }
 
-        for ($i = 4; $i <= 5; $i++) {
-            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
+        for ($i = 5; $i <= 6; $i++) {
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i, $numgoals, true);
         }
 
         // Need to check children manually.
-        $this->check_topic($taxonomy->children[6], $originalindex[6], 7, $numgoals - 1, false);
-        $originalgoalsindex = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        for ($ii = 0; $ii < $numgoals - 1; $ii++) {
-            $this->check_goal($taxonomy->children[6]->children[$ii], $originalindex[6], $originalgoalsindex[$ii], $ii + 1);
+        $this->check_topic($taxonomy->children[7], $originalindex[7], 7, $numgoals, false);
+        $originalgoalsindex = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        // Start from 1 since 0 is invalid goal.
+        for ($ii = 1; $ii < $numgoals; $ii++) {
+            $this->check_goal($taxonomy->children[7]->children[$ii], $originalindex[7], $originalgoalsindex[$ii], $ii);
         }
 
-        for ($i = 7; $i <= 8; $i++) {
-            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i + 1, $numgoals, true);
+        for ($i = 8; $i <= 9; $i++) {
+            $this->check_topic($taxonomy->children[$i], $originalindex[$i], $i, $numgoals, true);
         }
     }
 

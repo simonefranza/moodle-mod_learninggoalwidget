@@ -47,12 +47,19 @@ trait shared {
         $isvalid = true;
         if (!(isset($child->name) && is_string($child->name))) {
             $isvalid = false;
-        } else if (!(isset($child->shortname) && is_string($child->shortname))) {
+            $child->namevalid = false;
+        }
+        if (!(isset($child->shortname) && is_string($child->shortname))) {
             $isvalid = false;
-        } else if (!(isset($child->url) && is_string($child->url))) {
+            $child->shortnamevalid = false;
+        }
+        if (!(isset($child->url) && is_string($child->url))) {
             $isvalid = false;
-        } else if (!(isset($child->ranking) && is_int($child->ranking))) {
+            $child->urlvalid = false;
+        }
+        if (!(isset($child->ranking) && is_int($child->ranking))) {
             $isvalid = false;
+            $child->rankingvalid = false;
         }
 
         $child->valid = $isvalid;

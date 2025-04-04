@@ -147,6 +147,9 @@ class taxonomy {
         // Start ranking from 1.
         $ranking = 1;
         foreach ($array as &$child) {
+            if (isset($child->valid) && !$child->valid) {
+                $child->ranking = -1;
+            }
             if ($child->ranking !== -1) {
                 $child->ranking = $ranking++;
             }
@@ -154,8 +157,8 @@ class taxonomy {
     }
 
     /**
-     * Validates the taxonomy, by checking that all topics and goals are valid
-     * and removing those that are not. It also reassings the rankings to make sure
+     * Validates the taxonomy, by checking that all topics and goals are valid.
+     * It also reassings the rankings to make sure
      * they are contiguous
      *
      * @param stdClass $taxonomy Taxonomy to validate
@@ -168,18 +171,33 @@ class taxonomy {
         for ($i = count($taxonomy->children) - 1; $i >= 0; $i--) {
             $topic = &$taxonomy->children[$i];
             // Validate topic.
+            if (!is_object($topic)) {
+                $taxonomy->children[$i] = new stdClass;
+                $taxonomy->children[$i]->valid = false;
+                $taxonomy->children[$i]->namevalid = false;
+                $taxonomy->children[$i]->ranking = -1;
+                $taxonomy->children[$i]->children = [];
+                continue;
+            }
             if (!topic::validate_topic($topic)) {
-                // Topic is not valid. Remove and skip.
-                array_splice($taxonomy->children, $i, 1);
+                // Topic is not valid. Skip.
+                $topic->ranking = -1;
                 continue;
             }
 
             for ($ii = count($topic->children) - 1; $ii >= 0; $ii--) {
                 $goal = &$topic->children[$ii];
                 // Validate goals.
+                if (!is_object($goal)) {
+                    $topic->children[$ii] = new stdClass;
+                    $topic->children[$ii]->valid = false;
+                    $topic->children[$ii]->namevalid = false;
+                    $topic->children[$ii]->ranking = -1;
+                    continue;
+                }
                 if (!goal::validate_goal($goal)) {
-                    // Goal is not valid, remove.
-                    array_splice($topic->children, $ii, 1);
+                    // Goal is not valid.
+                    $goal->ranking = -1;
                 }
             }
             self::sort_by_ranking($topic->children);
@@ -216,6 +234,12 @@ class taxonomy {
         // Add all topics and goals to db.
         foreach ($taxonomy->children as $topic) {
             // Check if topic is deleted or added.
+            $topicvalid = !isset($topic->valid) || $topic->valid;
+            // Topic isn't valid. Skip.
+            if (!$topicvalid) {
+                continue;
+            }
+
             $topicdeleted = isset($topic->deleted) && $topic->deleted;
             $topicnew = isset($topic->new) && $topic->new;
 
@@ -242,6 +266,11 @@ class taxonomy {
      */
     private static function update_topic_goals($lgwid, &$topic) {
         foreach ($topic->children as $goal) {
+            $goalvalid = !isset($goal->valid) || $goal->valid;
+            // Goal isn't valid. Skip.
+            if (!$goalvalid) {
+                continue;
+            }
             // Check if goal is deleted or added.
             $goaldeleted = isset($goal->deleted) && $goal->deleted;
             $goalnew = isset($goal->new) && $goal->new;

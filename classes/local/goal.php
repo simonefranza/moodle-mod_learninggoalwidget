@@ -45,6 +45,7 @@ final class goal {
         self::validate_children_properties($goal);
         if (!(isset($goal->goalid) && is_int($goal->goalid))) {
             $goal->valid = false;
+            $goal->idvalid = false;
         }
         return $goal->valid;
     }

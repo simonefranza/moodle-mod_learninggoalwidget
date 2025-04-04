@@ -25,7 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->libdir . "/formslib.php");
 
 use mod_learninggoalwidget\local\taxonomy;
 
@@ -112,24 +111,86 @@ class mod_learninggoalwidget_mod_form extends \moodleform_mod {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        $jsontaxonomy = json_decode(taxonomy::get_taxonomy_as_json($this->_instance));
+        $taxonomy = json_decode($data['taxonomy']);
+        taxonomy::validate_taxonomy($taxonomy);
 
-        if (count($jsontaxonomy->children) == 0) {
+        if (count($taxonomy->children) == 0) {
             return $errors;
         }
+        $error = '';
         $topicsnochild = '';
-        foreach ($jsontaxonomy->children as $topic) {
-            if (count($topic->children) != 0) {
+
+        for ($i = 0; $i < count($taxonomy->children); $i++) {
+            $topic = &$taxonomy->children[$i];
+            $topicname = $topic->name ?? '??';
+            // Ignore topic if it is deleted AND has valid ID otherwise we cannot delete it.
+            if (($topic->idvalid ?? true) && ($topic->deleted ?? false)) {
                 continue;
             }
-            if ($topicsnochild !== '') {
-                $topicsnochild .= ", '";
+            // Check topic validity fields.
+            if (!($topic->namevalid ?? true)) {
+                $error .= '<br/>' . get_string('validation:topic:nameinvalid', 'mod_learninggoalwidget', $topicname);
             }
-            $topicsnochild .= "'" . $topic->name . "'";
+            if (!($topic->shortnamevalid ?? true)) {
+                $error .= '<br/>' . get_string('validation:topic:shortnameinvalid', 'mod_learninggoalwidget', $topicname);
+            }
+            if (!($topic->urlvalid ?? true)) {
+                $error .= '<br/>' . get_string('validation:topic:urlinvalid', 'mod_learninggoalwidget', $topicname);
+            }
+            if (!($topic->rankingvalid ?? true)) {
+                $error .= '<br/>' . get_string('validation:topic:rankinginvalid', 'mod_learninggoalwidget', $topicname);
+            }
+            if (!($topic->idvalid ?? true)) {
+                $error .= '<br/>' . get_string('validation:topic:idinvalid', 'mod_learninggoalwidget', $topicname);
+            }
+            if (!($topic->childrenvalid ?? true)) {
+                $error .= '<br/>' . get_string('validation:topic:childreninvalid', 'mod_learninggoalwidget', $topicname);
+                continue;
+            }
+
+            $goalscount = 0;
+            for ($ii = 0; $ii < count($topic->children); $ii++) {
+                $goal = &$topic->children[$ii];
+                $goalname = $goal->name ?? '??';
+                // Ignore topic if it is deleted AND has valid ID otherwise we cannot delete it.
+                if (($goal->idvalid ?? true) && ($goal->deleted ?? false)) {
+                    continue;
+                }
+                // Check goal validity fields.
+                if (!($goal->namevalid ?? true)) {
+                    $error .= '<br/>' . get_string('validation:goal:nameinvalid', 'mod_learninggoalwidget', $goalname);
+                }
+                if (!($goal->shortnamevalid ?? true)) {
+                    $error .= '<br/>' . get_string('validation:goal:shortnameinvalid', 'mod_learninggoalwidget', $goalname);
+                }
+                if (!($goal->urlvalid ?? true)) {
+                    $error .= '<br/>' . get_string('validation:goal:urlinvalid', 'mod_learninggoalwidget', $goalname);
+                }
+                if (!($goal->rankingvalid ?? true)) {
+                    $error .= '<br/>' . get_string('validation:goal:rankinginvalid', 'mod_learninggoalwidget', $goalname);
+                }
+                if (!($goal->idvalid ?? true)) {
+                    $error .= '<br/>' . get_string('validation:goal:idinvalid', 'mod_learninggoalwidget', $goalname);
+                }
+                // If goal is valid and not marked for deletion it counts towards
+                // the number of goals in the topic.
+                if (($goal->valid ?? true) && !($goal->deleted ?? false)) {
+                    $goalscount++;
+                }
+            }
+            if (!$goalscount) {
+                if ($topicsnochild !== '') {
+                    $topicsnochild .= ", ";
+                }
+                $topicsnochild .= "'" . $topicname . "'";
+            }
         }
 
         if ($topicsnochild !== '') {
-            $errors["errorfield"] = get_string('validation:missinggoal', 'mod_learninggoalwidget', $topicsnochild);
+            $error .= '<br/>' . get_string('validation:missinggoal', 'mod_learninggoalwidget', $topicsnochild);
+        }
+        if ($error !== '') {
+            $errors['errorfield'] = $error;
         }
         return $errors;
     }

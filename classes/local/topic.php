@@ -24,8 +24,6 @@
 
 namespace mod_learninggoalwidget\local;
 
-use mod_learninggoalwidget\local\goal;
-
 /**
  * Topics class
  *
@@ -47,8 +45,11 @@ final class topic {
         self::validate_children_properties($topic);
         if (!(isset($topic->topicid) && is_int($topic->topicid))) {
             $topic->valid = false;
-        } else if (!(isset($topic->children) && is_array($topic->children))) {
+            $topic->idvalid = false;
+        }
+        if (!(isset($topic->children) && is_array($topic->children))) {
             $topic->valid = false;
+            $topic->childrenvalid = false;
         }
         return $topic->valid;
     }

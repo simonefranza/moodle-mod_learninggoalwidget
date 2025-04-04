@@ -119,6 +119,11 @@ $string['treemapaccessibilitytext'] = 'Welcome to the Learning Goals Widget <br/
  We wish you a happy learning experience!';
 
 $string['validation:close'] = 'Close';
+$string['validation:goal:idinvalid'] = 'The "id" property of the learning goal "{$a}" is invalid. This is probably a coding error.';
+$string['validation:goal:nameinvalid'] = 'The "name" property of the learning goal "{$a}" is invalid. This is probably a coding error.';
+$string['validation:goal:rankinginvalid'] = 'The "ranking" property of the learning goal "{$a}" is invalid. This is probably a coding error.';
+$string['validation:goal:shortnameinvalid'] = 'The "shortname" property of the learning goal "{$a}" is invalid. This is probably a coding error.';
+$string['validation:goal:urlinvalid'] = 'The "url" property of the learning goal "{$a}" is invalid. This is probably a coding error.';
 $string['validation:invalid'] = 'Invalid taxonomy';
 $string['validation:invalidfile'] = 'The uploaded file is invalid';
 $string['validation:invalidurl'] = 'The URL is invalid';
@@ -139,3 +144,9 @@ $string['validation:jsontopic5'] = 'The "shortname" property of the topic "{$a}"
 $string['validation:jsontopic6'] = 'The "children" property of the topic "{$a}" is not an array.';
 $string['validation:missinggoal'] = 'The topics [{$a}] have no learning goals. Please add at least one to each of them.';
 $string['validation:missingtitle'] = 'The title is mandatory';
+$string['validation:topic:childreninvalid'] = 'The "children" property of the topic "{$a}" is invalid. This is probably a coding error.';
+$string['validation:topic:idinvalid'] = 'The "id" property of the topic "{$a}" is invalid. This is probably a coding error.';
+$string['validation:topic:nameinvalid'] = 'The "name" property of the topic "{$a}" is invalid. This is probably a coding error.';
+$string['validation:topic:rankinginvalid'] = 'The "ranking" property of the topic "{$a}" is invalid. This is probably a coding error.';
+$string['validation:topic:shortnameinvalid'] = 'The "shortname" property of the topic "{$a}" is invalid. This is probably a coding error.';
+$string['validation:topic:urlinvalid'] = 'The "url" property of the topic "{$a}" is invalid. This is probably a coding error.';
